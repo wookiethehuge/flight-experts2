@@ -25,7 +25,9 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 const WEB = path.resolve(dirname, '../../../web/src')
 const SEED_DIR = path.resolve(process.env.SEED_DIR || path.join(WEB, 'content/seed'))
 const ASSETS_DIR = path.resolve(process.env.SEED_ASSETS_DIR || path.join(WEB, 'assets/seed'))
-const context = { disableDeployHook: true, skipEnquiryNotify: true }
+// A fresh object per call: hooks write flags into req.context (the storage plugin sets skipCloudStorage and clears it on
+// a copy), so a shared object would leak them into later calls and silently skip every upload after the first.
+const context = () => ({ disableDeployHook: true, skipEnquiryNotify: true })
 
 type Json = any
 type Id = number | string
@@ -84,14 +86,14 @@ async function main() {
     let id: Id
     if (found.docs[0]) {
       id = found.docs[0].id
-      if (alt && found.docs[0].alt !== alt) await payload.update({ collection: 'media', id, data: { alt }, context })
+      if (alt && found.docs[0].alt !== alt) await payload.update({ collection: 'media', id, data: { alt }, context: context() })
     } else {
       const doc = await payload.create({
         collection: 'media',
         data: { alt: alt || file },
         filePath,
         overwriteExistingFiles: true,
-        context,
+        context: context(),
       })
       id = doc.id
       console.log(`  + media ${file}`)
@@ -121,8 +123,8 @@ async function main() {
     const run = (asDraft: boolean) => {
       const body = drafts ? { ...data, _status: asDraft ? 'draft' : 'published' } : data
       return existing
-        ? payload.update({ collection, id: existing.id, data: body, draft: asDraft, context, depth: 0 })
-        : payload.create({ collection, data: body, draft: asDraft, context, depth: 0 })
+        ? payload.update({ collection, id: existing.id, data: body, draft: asDraft, context: context(), depth: 0 })
+        : payload.create({ collection, data: body, draft: asDraft, context: context(), depth: 0 })
     }
     try {
       const doc = await run(false)
@@ -237,7 +239,7 @@ async function main() {
       continue
     }
     try {
-      await payload.updateGlobal({ slug, data: await resolveMedia(readJson(file)), context, depth: 0 })
+      await payload.updateGlobal({ slug, data: await resolveMedia(readJson(file)), context: context(), depth: 0 })
       stats.updated++
       console.log(`  ~ global ${slug}`)
     } catch (err) {
@@ -272,7 +274,7 @@ async function seedAdmin(payload: Payload) {
     console.log(`  = admin user ${email} exists`)
     return
   }
-  await payload.create({ collection: 'users', data: { email, password, name: 'Admin' }, context })
+  await payload.create({ collection: 'users', data: { email, password, name: 'Admin' }, context: context() })
   console.log(`  + admin user ${email}`)
 }
 

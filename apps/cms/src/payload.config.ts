@@ -1,7 +1,6 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import {
@@ -50,8 +49,11 @@ const DATABASE_URI =
   'file:./flight-experts.db'
 const SERVER_URL = serverUrl() || `http://localhost:${process.env.PORT || 3000}`
 
-/** Postgres when DATABASE_URI is a postgres:// URL, otherwise SQLite (local dev). */
-function database() {
+/**
+ * Postgres when DATABASE_URI is a postgres:// URL, otherwise SQLite (local dev). The SQLite adapter is imported lazily:
+ * its native libsql module isn't traced into the Vercel function bundle, so a static import crashes every request there.
+ */
+async function database() {
   if (process.env.VERCEL && !/^postgres(ql)?:\/\//i.test(DATABASE_URI)) {
     throw new Error(
       'No Postgres database: connect a Neon database to this Vercel project (Storage tab), then redeploy. See DEPLOY.md.',
@@ -65,6 +67,7 @@ function database() {
       migrationDir: path.resolve(dirname, 'migrations'),
     })
   }
+  const { sqliteAdapter } = await import('@payloadcms/db-sqlite')
   return sqliteAdapter({
     client: { url: DATABASE_URI, authToken: process.env.DATABASE_AUTH_TOKEN },
     push: process.env.DB_PUSH !== 'false',
@@ -127,7 +130,7 @@ export default buildConfig({
       InlineToolbarFeature(),
     ],
   }),
-  db: database(),
+  db: await database(),
   email,
   sharp,
   // Serverless hosts (Vercel) have no persistent disk: with BLOB_READ_WRITE_TOKEN set (Vercel Blob store connected to
