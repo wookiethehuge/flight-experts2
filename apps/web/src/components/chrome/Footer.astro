@@ -9,7 +9,7 @@
  * smallest gap between the last content and the arc across the frames; pages add any extra space themselves.
  * The plane image spills up to ~70px above the footer box through its transparent top (no content is covered).
  *
- * Socials: an icon is rendered only when its URL is set in Site Settings (seed URLs are empty, so none show).
+ * Socials: all three icons always show (as in the frames); each becomes a link once its URL is set in Site Settings.
  */
 import wordmarkRaw from '../../assets/seed/footer-wordmark.svg?raw';
 import Img from '../ui/Img.astro';
@@ -25,8 +25,7 @@ const socials = [
   { key: 'facebook', label: 'Facebook', icon: 'facebook' },
   { key: 'linkedin', label: 'LinkedIn', icon: 'linkedin' },
   { key: 'instagram', label: 'Instagram', icon: 'instagram' },
-].map((s) => ({ ...s, url: (settings.socials as Record<string, string | undefined>)?.[s.key]?.trim() }))
- .filter((s) => s.url && s.url !== '#');
+].map((s) => ({ ...s, url: (settings.socials as Record<string, string | undefined>)?.[s.key]?.trim().replace(/^#$/, '') }));
 const tel = settings.phone.href;
 const mail = `mailto:${settings.email}`;
 ---
@@ -62,13 +61,15 @@ const mail = `mailto:${settings.email}`;
           <h2 id="sf-accept" class="sf__h">We accept</h2>
           <div class="sf__accept">
             <div class="sf__pay"><Img media={settings.paymentMethods} sizes="(min-width: 64rem) 200px, 120px" widths={[188, 200, 300, 400]} /></div>
-            {socials.length > 0 && (
-              <ul role="list" class="sf__social">
-                {socials.map((s) => (
-                  <li><a href={s.url} target="_blank" rel="noopener me" aria-label={`Flight Experts on ${s.label}`}><Icon name={s.icon} class={`i-${s.key}`} /></a></li>
-                ))}
-              </ul>
-            )}
+            <ul role="list" class="sf__social">
+              {socials.map((s) => (
+                <li>
+                  {s.url
+                    ? <a href={s.url} target="_blank" rel="noopener me" aria-label={`Flight Experts on ${s.label}`}><Icon name={s.icon} class={`i-${s.key}`} /></a>
+                    : <span><Icon name={s.icon} class={`i-${s.key}`} /></span>}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       </div>
@@ -197,7 +198,7 @@ const mail = `mailto:${settings.email}`;
   .sf__pay { flex: none; width: clamp(5.875rem, calc(5.875rem + 106 * (100vw - 24.375rem) / 1050), 12.5rem); }
   .sf__pay :global(img) { display: block; width: 100%; height: auto; }
   .sf__social { display: flex; align-items: center; gap: 1.4rem; margin: 3px 0.375rem 0 0; }
-  .sf__social a { display: grid; place-items: center; min-width: 44px; min-height: 44px; margin: -11px; }
+  .sf__social a, .sf__social span { display: grid; place-items: center; min-width: 44px; min-height: 44px; margin: -11px; }
   .sf__social :global(svg) { height: clamp(1.3125rem, calc(1.3125rem + 14 * (100vw - 24.375rem) / 1050), 2.1875rem); width: auto; } /* 21 -> 35 */
 
   .sf__copy {

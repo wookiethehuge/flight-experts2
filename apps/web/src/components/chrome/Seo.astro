@@ -17,7 +17,7 @@ if (ogImage) {
   if (local && typeof local === 'object') ogImage = (await getImage({ src: local, width: 1200, format: 'jpeg' })).src;
   ogImage = new URL(ogImage, Astro.site).href;
 } else {
-  const hero = seedAsset('/seed/hero-desktop.webp');
+  const hero = seedAsset('/seed/hero-desktop.png');
   ogImage = hero && typeof hero === 'object' ? new URL((await getImage({ src: hero, width: 1200, format: 'jpeg' })).src, Astro.site).href : undefined;
 }
 ---

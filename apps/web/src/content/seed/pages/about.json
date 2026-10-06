@@ -11,35 +11,7 @@
     {
       "blockType": "aboutHero",
       "heading": "The *Unfair Advantage*\nin Premium Travel.",
-      "body": "You know where you need to be. Let a specialist figure out **the smartest way to get you there**. Public booking sites only show you what the airlines want you to see. A dedicated flight expert looks behind the curtain. From finding unlisted premium fares to managing tight international connections, having a professional build your itinerary means you just pack your bags and go. Backed by our own AI search technology."
-    },
-    {
-      "blockType": "technology",
-      "eyebrow": "Expertise, amplified",
-      "heading": "Our people, *powered by AI*",
-      "intro": "Every request is handled by a dedicated flight expert, supported by search and monitoring technology we built in-house. The AI does the legwork at speed; your expert makes the calls.",
-      "items": [
-        {
-          "icon": "ai-search",
-          "title": "Wider fare search",
-          "text": "Our in-house AI scans thousands of fare and routing combinations across airlines and alliances in seconds, including nearby airports and alternative connections most booking sites never show."
-        },
-        {
-          "icon": "ai-route",
-          "title": "Smarter multi-city routing",
-          "text": "Complex itineraries are optimised for price, total travel time and cabin quality, so every leg of a multi-stop trip can stay in business or first."
-        },
-        {
-          "icon": "ai-watch",
-          "title": "Fare watch",
-          "text": "Prices and award availability are monitored after you enquire, and your expert is alerted when a better option appears."
-        },
-        {
-          "icon": "ai-expert",
-          "title": "Faster options, human judgement",
-          "text": "AI does the heavy lifting in minutes; your dedicated expert checks every option, applies insider fares and sends only what is worth your time."
-        }
-      ]
+      "body": "You know where you need to be. Let a specialist figure out **the smartest way to get you there**. Public booking sites only show you what the airlines want you to see. A dedicated flight expert looks behind the curtain. From finding unlisted premium fares to managing tight international connections, having a professional build your itinerary means you just pack your bags and go."
     },
     {
       "blockType": "expertise",

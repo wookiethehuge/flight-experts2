@@ -3,11 +3,11 @@
  * Site header.
  *   dark : over a dark hero (home, contact). Positioned over the top of the page, transparent; light logo, outline
  *          phone pill, sky hamburger. (Main / Mobile / Contact artboards)
- *   light: in flow on cream pages; navy logo, navy-tinted accreditation logos (>= 80rem), filled phone pill,
+ *   light: in flow on cream pages; navy logo, burgundy-tinted accreditation logos (>= 80rem, as the Figma), filled phone pill,
  *          navy hamburger. (About / BlogCollection ... artboards)
  * Phone pill from 48rem; below that only logo + hamburger (Mobile artboards).
  * Also defines the shared logo <symbol id="fe-logo"> (used by the menu and footer) and the SVG filters that tint
- * the accreditation logos navy, and holds the menu + "open-booking" script.
+ * the accreditation logos burgundy, and holds the menu + "open-booking" script.
  */
 import logoRaw from '../../assets/seed/logo-light.svg?raw';
 import Img from '../ui/Img.astro';
@@ -24,13 +24,13 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
 <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
   <defs>
     <symbol id="fe-logo" viewBox="0 0 312 60">{logoPaths.map((d) => <path d={d} />)}</symbol>
-    <filter id="mono-navy" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+    <filter id="mono-brand" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
       <feFlood flood-color="#ffffff" result="bg" /><feComposite in="SourceGraphic" in2="bg" operator="over" result="flat" />
-      <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.059  0 0 0 0 0.082  0 0 0 0 0.141  -0.8333 -0.8333 -0.8333 0 2.5" />
+      <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.502  0 0 0 0 0.027  0 0 0 0 0.196  -0.8333 -0.8333 -0.8333 0 2.5" />
     </filter>
-    <filter id="mono-navy-seal" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+    <filter id="mono-brand-seal" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
       <feFlood flood-color="#ffffff" result="bg" /><feComposite in="SourceGraphic" in2="bg" operator="over" result="flat" />
-      <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.059  0 0 0 0 0.082  0 0 0 0 0.141  -1.3333 -1.3333 -1.3333 0 4" />
+      <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.502  0 0 0 0 0.027  0 0 0 0 0.196  -1.3333 -1.3333 -1.3333 0 4" />
     </filter>
   </defs>
 </svg>
@@ -134,8 +134,8 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
       height: 54px;
     }
     .site-header__accreds li, .site-header__accreds a { display: block; }
-    .site-header__accreds :global(img) { width: auto; height: 54px; filter: url(#mono-navy); }
-    .site-header__accreds .seal :global(img) { filter: url(#mono-navy-seal); }
+    .site-header__accreds :global(img) { width: auto; height: 54px; filter: url(#mono-brand); }
+    .site-header__accreds .seal :global(img) { filter: url(#mono-brand-seal); }
   }
 </style>
 

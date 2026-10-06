@@ -27,8 +27,8 @@ export async function heroVariants(media: Media, widths: readonly number[]) {
   if (!w.length || w[w.length - 1] < intrinsic) w.push(intrinsic);
   const base: any = isLocal ? { src: local } : { src: media.url, ...(media.width ? { width: media.width, height: media.height } : { inferSize: true }) };
   const [avif, webp] = await Promise.all([
-    getImage({ ...base, widths: w, format: 'avif' }),
-    getImage({ ...base, widths: w, format: 'webp' }),
+    getImage({ ...base, widths: w, format: 'avif', quality: 80 }),
+    getImage({ ...base, widths: w, format: 'webp', quality: 90 }),
   ]);
   const width = isLocal ? (local as ImageMetadata).width : media.width;
   const height = isLocal ? (local as ImageMetadata).height : media.height;

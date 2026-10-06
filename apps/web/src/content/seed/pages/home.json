@@ -19,7 +19,7 @@
         { "label": "Get curated options" },
         { "label": "Book securely" }
       ],
-      "image": { "file": "hero-desktop.webp", "alt": "A business traveller working on a laptop in a private cabin seat" },
+      "image": { "file": "hero-desktop.png", "alt": "A business traveller working on a laptop in a private cabin seat" },
       "mobileImage": { "file": "hero-mobile.webp", "alt": "A business traveller working on a laptop in a private cabin seat" }
     },
     {

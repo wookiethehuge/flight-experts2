@@ -288,4 +288,16 @@ const steps = block.steps ?? [];
     .hero__steps b { display: inline-block; min-width: 1.25rem; }
     .hero__rating--d :global(.hero__stars) { margin-left: -1px; }
   }
+
+  /* ---------- wider than the 1440 artboard: the photo stays at its natural 1440x841 (no upscaling, so it stays sharp
+     and keeps the designed crop), centred, with its side edges faded into the navy background ---------- */
+  @media (min-width: 90.0625rem) {
+    .hero__bg img {
+      left: 50%;
+      width: 90rem;
+      translate: -50% 0;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+    }
+  }
 </style>
