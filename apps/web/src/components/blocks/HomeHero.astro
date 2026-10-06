@@ -9,7 +9,7 @@
  *   48-64rem : no design; stacked like mobile but with the desktop photo across the top, subheading, desktop rating
  *              row, logos, steps line and a 474px form.
  *   >= 64rem : Main artboard layout (form column 400 -> 474 wide up to 1440). Text column left (H1 y 273), form column right (form x 896 y 193, 474 wide;
- *              the steps are a vertical 01/02/03 list right-aligned above it, ending 13px above the form),
+ *              the steps are one line right-aligned above it, ending 13px above the form),
  *              photo covers the 841px hero with the bottom navy gradient.
  * The photo is the LCP element: art-directed <picture> (portrait crop < 48rem), eager, fetchpriority high.
  */
@@ -273,19 +273,18 @@ const steps = block.steps ?? [];
     }
     .hero__text { padding-top: 6.8125rem; padding-left: 1px; } /* H1 y 273, x 71 */
     .hero__h1 { max-width: 44.25rem; }                        /* 708 */
-    /* steps: a vertical 01 / 02 / 03 list (client feedback), right-aligned above the form and growing upwards from
-       13px above it, so the form keeps its designed y 193 (164 + one 16.2px line + 13) */
+    /* steps: one line, right-aligned with the form and ending 13px above it (Main: x 1022-1370, y 164), so the form
+       keeps its designed y 193 (164 + one 16.2px line + 13) */
     .hero__formcol { position: relative; margin-top: 1.825rem; }
     .hero__steps {
       position: absolute;
       right: 0;
       bottom: calc(100% + 0.8125rem);
-      display: grid;
-      justify-items: start;
-      row-gap: 0.125rem;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: flex-end;
       margin: 0;
     }
-    .hero__steps b { display: inline-block; min-width: 1.25rem; }
     .hero__rating--d :global(.hero__stars) { margin-left: -1px; }
   }
 
