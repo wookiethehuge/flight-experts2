@@ -90,8 +90,10 @@ const mail = `mailto:${settings.email}`;
   .sf {
     /* distance from the top of the footer box to the top of the arc (E) */
     --zone: clamp(4.875rem, calc(4.875rem + 72 * (100vw - 24.375rem) / 1050), 9.375rem);           /* 78 -> 150 */
-    --arc-w: clamp(32.4375rem, calc(32.4375rem + 1355 * (100vw - 24.375rem) / 1050), 117.125rem);  /* 519 -> 1874 */
-    --arc-h: clamp(18.375rem, calc(18.375rem + 766 * (100vw - 24.375rem) / 1050), 66.25rem);       /* 294 -> 1060 */
+    /* 519 -> 1874; wider than 1440 the arc keeps the Main proportions (1874 / 1440 of the viewport) so it always runs
+       off both screen edges as drawn */
+    --arc-w: max(clamp(32.4375rem, calc(32.4375rem + 1355 * (100vw - 24.375rem) / 1050), 117.125rem), 130.1389vw);
+    --arc-h: max(clamp(18.375rem, calc(18.375rem + 766 * (100vw - 24.375rem) / 1050), 66.25rem), 73.6111vw);   /* 294 -> 1060 */
     --pad-x: clamp(2rem, calc(2rem + 39 * (100vw - 24.375rem) / 1050), 4.4375rem);                 /* 32 -> 71 */
     position: relative;
     padding-top: var(--zone);
