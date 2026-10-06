@@ -170,8 +170,10 @@ const tpUrl = settings.trustpilot?.url;
   .rv__card :global(.rv__cstars) { display: block; width: 6.125rem; height: auto; }   /* 98 */
   .rv__body {
     font-size: clamp(0.875rem, calc(0.875rem + 2 * var(--f)), 1rem);             /* 14 -> 16 */
-    line-height: clamp(1.125rem, calc(1.125rem + 2.3 * var(--f)), 1.2688rem);    /* 18 -> 20.3 */
+    line-height: clamp(1.125rem, calc(1.125rem + 2 * var(--f)), 1.25rem);        /* 18 -> 20 (Main: lines 20px apart) */
   }
+  /* Main: browsers set General Sans a hair wider than Figma; 2px of slack keeps the designed line breaks */
+  @media (min-width: 48rem) { .rv__body { margin-right: -0.125rem; } }
   .rv__fade {
     position: absolute;
     top: -1.25rem;

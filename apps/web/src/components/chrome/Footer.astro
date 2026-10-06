@@ -29,7 +29,7 @@ const socials = [
 const tel = settings.phone.href;
 const mail = `mailto:${settings.email}`;
 ---
-<footer class="sf">
+<footer class:list={['sf', isHome && 'sf--home']}>
   <div class="sf__art" aria-hidden="true"><div class="sf__arc"></div><div class="sf__fill"></div></div>
   <div class="sf__frame">
     <div class="sf__plane" aria-hidden="true">
@@ -120,6 +120,13 @@ const mail = `mailto:${settings.email}`;
     left: clamp(-15.9375rem, calc(-5.6875rem - 164 * (100vw - 24.375rem) / 1050), -5.6875rem);    /* -91 -> -255 */
     width: clamp(29.5625rem, calc(29.5625rem + 1211 * (100vw - 24.375rem) / 1050), 105.25rem);    /* 473 -> 1684 */
     pointer-events: none;
+  }
+  /* Main (home) draws a different layer, "plane 1": 1669x562 at -256, 230 above the arc; the 2172x724 image fills it
+     at 1686 wide */
+  .sf--home .sf__plane {
+    top: clamp(-14.375rem, calc(-4.1875rem - 163 * (100vw - 24.375rem) / 1050), -4.1875rem);       /* -67 -> -230 */
+    left: clamp(-16.5313rem, calc(-5.6875rem - 173.5 * (100vw - 24.375rem) / 1050), -5.6875rem);  /* -91 -> -264.5 */
+    width: clamp(29.5625rem, calc(29.5625rem + 1213 * (100vw - 24.375rem) / 1050), 105.375rem);   /* 473 -> 1686 */
   }
   /* soft shadow under the plane so it sits less flat on the arc (client feedback; filter only, no new image) */
   .sf__plane :global(img) {

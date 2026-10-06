@@ -47,7 +47,7 @@
           "title": "Travel stress-free",
           "text": "We handle the details so your journey runs smoothly from start to finish.",
           "visual": "image",
-          "image": { "file": "traveller-woman.webp", "alt": "A smiling traveller relaxing in a business class seat" }
+          "image": { "file": "traveller-woman.png", "alt": "A smiling traveller relaxing in a business class seat" }
         }
       ],
       "badge": { "label": "Get *Flight*\nOptions", "href": "#hero-form" }

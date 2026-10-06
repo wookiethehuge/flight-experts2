@@ -84,7 +84,7 @@ const id = `expertise-${index}`;
     max-width: var(--page-max);
     margin-inline: auto;
     padding-top: clamp(3.7188rem, calc(3.7188rem + 40.5 * (100vw - 24.375rem) / 1050), 6.25rem);     /* 59.5 -> 100 */
-    padding-bottom: clamp(3.0625rem, calc(3.0625rem + 26 * (100vw - 24.375rem) / 1050), 4.6875rem);  /* 49 -> 75 */
+    padding-bottom: clamp(3.0625rem, calc(3.0625rem + 24 * (100vw - 24.375rem) / 1050), 4.5625rem);  /* 49 -> 73 */
     padding-left: clamp(1.5625rem, calc(1.5625rem + 45 * (100vw - 24.375rem) / 1050), 4.375rem);     /* 25 -> 70 */
     padding-right: clamp(0.75rem, calc(0.75rem + 50 * (100vw - 24.375rem) / 1050), 3.875rem);        /* 12 -> 62 */
   }
@@ -102,7 +102,7 @@ const id = `expertise-${index}`;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 0.8125rem;                                                                          /* 13 */
-    row-gap: clamp(1.3125rem, calc(1.3125rem + 20 * (100vw - 24.375rem) / 1050), 2.5625rem);        /* 21 -> 41 */
+    row-gap: clamp(1.3125rem, calc(1.3125rem + 22 * (100vw - 24.375rem) / 1050), 2.6875rem);        /* 21 -> 43 (rows 192 apart) */
     margin: clamp(2.2813rem, calc(2.2813rem + 8.5 * (100vw - 24.375rem) / 1050), 2.8125rem) 0 0;  /* 36.5 -> 45 */
     padding: 0;
     list-style: none;
@@ -145,10 +145,17 @@ const id = `expertise-${index}`;
     .expertise__mark { left: -27.5rem; top: 0.4213rem; width: 84.3125rem; }  /* -440, 6.74, 1349 */
     .expertise__title { max-width: none; margin-right: 0.5rem; text-align: center; }  /* centre on the 1300 content box */
     .expertise__title :global(em) { font-weight: var(--fw-regular); }
+    /* About (1440): columns at x 70 / 558 / 1052 of the 1308 content box; each text box has its own width there
+       (310 / 310 / 311 on the first row, 330 / 324 / 318 on the second), so the lines break as drawn */
     .expertise__list {
-      grid-template-columns: repeat(3, minmax(0, 20.375rem));   /* 326: every item wraps as in the 1440 frame */
-      justify-content: space-between;
-      column-gap: 2rem;
+      grid-template-columns: minmax(0, 488fr) minmax(0, 494fr) minmax(0, 326fr);
+      column-gap: 0;
     }
+    .expertise__item:nth-child(1) { max-width: 63.52%; }
+    .expertise__item:nth-child(2) { max-width: 62.75%; }
+    .expertise__item:nth-child(3) { max-width: 95.4%; }
+    .expertise__item:nth-child(4) { max-width: 67.62%; }
+    .expertise__item:nth-child(5) { max-width: 65.59%; }
+    .expertise__item:nth-child(6) { max-width: 97.55%; }
   }
 </style>

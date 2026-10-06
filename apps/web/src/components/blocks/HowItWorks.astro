@@ -166,6 +166,9 @@ const rules = [48, 113, 179, 247];
   .hiw__title--light { color: rgba(255, 255, 255, 0.88); }
   /* card 1 breaks "Tell us your / plans" at 390 but "Tell us / your plans" at 1440 (Mobile / Main) */
   .hiw__item:nth-child(1) .hiw__title { max-width: clamp(9.375rem, calc(9.375rem + 22 * var(--f)), 10.75rem); }  /* 150 -> 172 */
+  /* "Review your options" starts at x 10 (Mobile) / 31 (Main) and "Travel stress-free" at 11 / 47 inside their cards */
+  .hiw__item:nth-child(2) .hiw__title { left: clamp(0.625rem, calc(0.625rem + 21 * var(--f)), 1.9375rem); }     /* 10 -> 31 */
+  .hiw__item:nth-child(4) .hiw__title { left: clamp(0.6875rem, calc(0.6875rem + 36 * var(--f)), 2.9375rem); }   /* 11 -> 47 */
   .hiw__cap {
     margin-top: clamp(0.8rem, calc(0.8rem + 22.2 * var(--f)), 2.1875rem);     /* 12.8 -> 35 */
     padding-left: clamp(0.1875rem, calc(0.9375rem - 12 * var(--f)), 0.9375rem); /* 15 -> 3 */
@@ -199,11 +202,11 @@ const rules = [48, 113, 179, 247];
   .opt__row { position: absolute; left: 0; right: 0; top: calc(var(--y) * var(--u)); height: calc(32 * var(--u)); }
   .opt__row > :global(*) { position: absolute; }
   .opt__row :global(.opt__plane) { left: 0; top: calc(6 * var(--u)); width: calc(20 * var(--u)); height: calc(20 * var(--u)); }
-  .opt__route { left: calc(35.7 * var(--u)); top: 0; font-weight: var(--fw-semibold); }
-  .opt__cabin { left: calc(35.7 * var(--u)); top: calc(16 * var(--u)); }
-  .opt__was { left: calc(161.7 * var(--u)); top: 0; color: var(--c-navy-60); }
-  .opt__now { left: calc(200.7 * var(--u)); top: 0; }
-  .opt__off { left: calc(161.7 * var(--u)); top: calc(16 * var(--u)); font-weight: var(--fw-semibold); }
+  .opt__route { left: calc(31 * var(--u)); top: 0; font-weight: var(--fw-semibold); }
+  .opt__cabin { left: calc(31 * var(--u)); top: calc(16 * var(--u)); }
+  .opt__was { left: calc(157 * var(--u)); top: 0; color: var(--c-navy-60); }
+  .opt__now { left: calc(196 * var(--u)); top: 0; }
+  .opt__off { left: calc(157 * var(--u)); top: calc(16 * var(--u)); font-weight: var(--fw-semibold); }
   .opt__rule { position: absolute; left: 0; width: 100%; top: calc(var(--y) * var(--u)); height: 1px; background: var(--c-sky); }
 
   .chk { left: calc(34 * var(--u)); width: calc(241 * var(--u)); height: calc(265 * var(--u)); }

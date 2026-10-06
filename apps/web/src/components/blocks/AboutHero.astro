@@ -47,6 +47,9 @@ const heading = inline(block.heading).replace(/<br>/g, ' <br>');
   @media (min-width: 48rem) {
     .about-hero { text-align: center; }
     .about-hero__title :global(br) { display: inline; }
+    /* About (1440): the H1 box spans x 313-1101, so its centred lines sit 13px left of the page centre */
+    .about-hero__title { translate: calc(-13 * (100vw - 48rem) / 672) 0; }
     .about-hero__body { max-width: 61.25rem; margin-inline: auto; text-wrap: pretty; }  /* 980: wraps as the 1440 frame */
   }
+  @media (min-width: 90rem) { .about-hero__title { translate: -13px 0; } }
 </style>
