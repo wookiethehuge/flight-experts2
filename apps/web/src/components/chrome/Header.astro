@@ -54,7 +54,7 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
     )}
 
     <div class="site-header__actions">
-      <PhonePill class="site-header__pill" phone={settings.phone} label={settings.headerPhoneLabel} variant={theme === 'dark' ? 'outline' : 'filled'} />
+      <PhonePill class="site-header__pill" phone={settings.phone} label={settings.headerPhoneLabel} support={settings.supportPhone} variant={theme === 'dark' ? 'outline' : 'filled'} />
       <button type="button" class="site-header__burger" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu" data-menu-open>
         <Icon name="hamburger" width={39} height={33} />
       </button>

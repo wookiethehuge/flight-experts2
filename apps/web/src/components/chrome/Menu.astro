@@ -22,7 +22,7 @@ const isBooking = (href: string) => href === '#get-flight-options';
       <a class="menu__logo" href="/" aria-label="Flight Experts home">
         <svg viewBox="0 0 312 60" aria-hidden="true" focusable="false"><use href="#fe-logo" /></svg>
       </a>
-      <PhonePill class="menu__pill" phone={settings.phone} label={settings.headerPhoneLabel} variant="outline" />
+      <PhonePill class="menu__pill" phone={settings.phone} label={settings.headerPhoneLabel} support={settings.supportPhone} variant="outline" />
       <button type="button" class="menu__close" data-menu-close aria-label="Close menu">
         <Icon name="close" width={19} height={20} class="menu__x menu__x--sm" />
         <Icon name="close-lg" width={26} height={26} class="menu__x menu__x--lg" />

@@ -3,30 +3,51 @@
  * "24/7 PHONE DEALS / (888) 855-2389" pill (Figma: 223 x 52, radius 26, 1px #c7e8ff).
  *   outline: transparent with a sky border and cream text (dark header, menu panel)
  *   filled : sky fill with navy text (light header)
- * A tel: link; the chevron is decorative.
+ * A button: it opens the "Phone numbers Drop down" (Figma 223 wide frame, panel right-aligned under the pill): a sky
+ * card listing the phone-deals line and the customer-service line as tel: links. The chevron flips while open.
+ * Closes on outside click, Escape (focus returns to the pill) or when focus leaves.
+ * Without JS the pill falls back to calling the main number (the panel stays in the DOM, hidden).
  */
 import Icon from '../ui/Icon.astro';
 
+interface Line { display: string; href: string }
 interface Props {
-  phone: { display: string; href: string };
+  phone: Line;
   label: string;                       // settings.headerPhoneLabel
+  support?: Line;                      // settings.supportPhone
+  supportLabel?: string;
   variant?: 'outline' | 'filled';
   class?: string;
 }
-const { phone, label, variant = 'outline', class: cls } = Astro.props;
-const spoken = `${label.charAt(0)}${label.slice(1).toLowerCase()}, ${phone.display}`;
+const { phone, label, support, supportLabel = 'CUSTOMER SERVICE', variant = 'outline', class: cls } = Astro.props;
+const lines = [{ label, ...phone }, ...(support ? [{ label: supportLabel, ...support }] : [])];
+const uid = `pill-${Math.random().toString(36).slice(2, 8)}`;
+const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
 ---
-<a class:list={['pill', `pill--${variant}`, cls]} href={phone.href} aria-label={spoken}>
-  <span class="pill__text">
-    <span class="pill__label">{label}</span>
-    <span class="pill__num">{phone.display}</span>
-  </span>
-  <Icon name="chevron-down" width={11} height={6.793} class="pill__chev" />
-</a>
+<div class:list={['pill-wrap', cls]} data-phone-pill>
+  <a class:list={['pill', `pill--${variant}`]} href={phone.href} role="button" aria-expanded="false" aria-controls={uid}
+     aria-label={`${spoken(label)}, ${phone.display}. Show phone numbers`} data-pill-toggle>
+    <span class="pill__text">
+      <span class="pill__label">{label}</span>
+      <span class="pill__num">{phone.display}</span>
+    </span>
+    <Icon name="chevron-down" width={11} height={6.793} class="pill__chev" />
+  </a>
+  <ul class="pill__menu" id={uid} role="list" hidden>
+    {lines.map((l) => (
+      <li>
+        <a href={l.href} aria-label={`${spoken(l.label)}: call ${l.display}`}>
+          <span class="pill__label">{l.label}</span>
+          <span class="pill__num">{l.display}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
 
 <style>
+  .pill-wrap { position: relative; flex: none; }
   .pill {
-    flex: none;
     display: flex;
     align-items: flex-start;
     width: 13.9375rem;               /* 223 */
@@ -35,17 +56,58 @@ const spoken = `${label.charAt(0)}${label.slice(1).toLowerCase()}, ${phone.displ
     border: 1px solid var(--c-sky);
     border-radius: 26px;
     text-decoration: none;
+    cursor: pointer;
     transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
   }
   .pill__text { display: flex; flex-direction: column; align-items: center; width: 7.25rem; margin-top: -1px; }
   .pill__label { font-size: var(--fs-12); font-weight: var(--fw-light); line-height: 12px; white-space: nowrap; }
   .pill__num { margin-top: 1.5px; font-size: var(--fs-16); font-weight: var(--fw-medium); line-height: 16px; white-space: nowrap; }
-  .pill :global(.pill__chev) { flex: none; align-self: center; margin: -1px 0 0 auto; color: var(--c-sky); }
+  .pill :global(.pill__chev) {
+    flex: none; align-self: center; margin: -1px 0 0 auto; color: var(--c-sky);
+    transition: transform var(--dur) var(--ease);
+  }
+  .pill[aria-expanded='true'] :global(.pill__chev) { transform: rotate(180deg); }
 
   .pill--outline { color: var(--c-cream); background: transparent; }
-  .pill--outline:hover { background: var(--c-sky-8); }
+  .pill--outline:hover, .pill--outline[aria-expanded='true'] { background: var(--c-sky-8); }
   .pill--filled { color: var(--c-navy); background: var(--c-sky); }
   .pill--filled :global(.pill__chev) { color: var(--c-navy); }
-  .pill--filled:hover { box-shadow: inset 0 0 0 1px var(--c-navy); }
+  .pill--filled:hover, .pill--filled[aria-expanded='true'] { box-shadow: inset 0 0 0 1px var(--c-navy); }
   .pill--filled:focus-visible { outline-color: var(--c-navy); }
+
+  /* drop-down: sky card right-aligned under the pill (Figma: 155 wide, 9px below, right-aligned text) */
+  .pill__menu {
+    position: absolute;
+    z-index: 60;
+    top: calc(100% + 0.5625rem);
+    right: 0;
+    display: grid;
+    gap: 0.6875rem;
+    min-width: 9.6875rem;
+    margin: 0;
+    padding: 0.8125rem 1.3125rem 0.8125rem 1.3125rem;
+    border-radius: var(--r-7);
+    background: var(--c-sky);
+    box-shadow: 0 6px 24px -12px rgba(15, 21, 36, 0.35);
+    list-style: none;
+    text-align: right;
+  }
+  .pill__menu[hidden] { display: none; }
+  .pill__menu a { display: grid; justify-items: end; color: var(--c-navy); text-decoration: none; }
+  .pill__menu a:hover .pill__num { text-decoration: underline; text-underline-offset: 2px; }
+  .pill__menu a:focus-visible { outline-color: var(--c-navy); outline-offset: 3px; border-radius: 2px; }
+  .pill__menu .pill__num { margin-top: 2px; }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-phone-pill]').forEach((wrap) => {
+    const btn = wrap.querySelector<HTMLAnchorElement>('[data-pill-toggle]')!;
+    const menu = wrap.querySelector<HTMLElement>('.pill__menu')!;
+    const set = (open: boolean) => { menu.hidden = !open; btn.setAttribute('aria-expanded', String(open)); };
+    btn.addEventListener('click', (e) => { e.preventDefault(); set(menu.hidden); });
+    btn.addEventListener('keydown', (e) => { if (e.key === ' ') { e.preventDefault(); set(menu.hidden); } });
+    document.addEventListener('click', (e) => { if (!wrap.contains(e.target as Node)) set(false); });
+    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+    wrap.addEventListener('focusout', (e) => { if (!wrap.contains(e.relatedTarget as Node)) set(false); });
+  });
+</script>
