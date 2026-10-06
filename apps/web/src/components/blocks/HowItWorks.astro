@@ -270,9 +270,10 @@ const rules = [48, 113, 179, 247];
   /* options appear one by one (client animation brief); hidden start state only with JS + motion allowed */
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) [data-hiw-anim='options']:not([data-play]) :is(.opt__row, .opt__rule) { opacity: 0; translate: 0 calc(10 * var(--u)); }
-    [data-hiw-anim='options'] :is(.opt__row, .opt__rule) {
-      transition: opacity 380ms var(--ease), translate 380ms var(--ease);
-      transition-delay: calc(150ms + var(--k) * 280ms);
+    [data-hiw-anim='options'] :is(.opt__row, .opt__rule) { transition: opacity 300ms var(--ease), translate 300ms var(--ease); }
+    [data-hiw-anim='options'][data-play] :is(.opt__row, .opt__rule) {
+      transition-duration: 380ms;
+      transition-delay: calc(150ms + var(--k) * 280ms);              /* stagger only on the way in */
     }
   }
 
@@ -287,19 +288,24 @@ const rules = [48, 113, 179, 247];
 </style>
 
 <script>
-  // How it works animations: play when the card is half in view, reset once it has fully left so they replay
+  // How it works animations: play when the card is half in view and replay every 10s while it stays in view;
+  // reset once it has fully left so they start over on the way back
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const timers = new WeakMap<Element, number[]>();
     const clear = (el: Element) => { (timers.get(el) ?? []).forEach(clearTimeout); timers.set(el, []); };
     const later = (el: Element, ms: number, fn: () => void) => timers.get(el)!.push(window.setTimeout(fn, ms));
     const play = (art: HTMLElement) => {
       clear(art);
-      if (art.dataset.hiwAnim === 'options') { art.setAttribute('data-play', ''); return; }
       const chk = art.querySelector<HTMLElement>('.chk');
-      if (!chk) return;
-      later(art, 1500, () => (chk.dataset.state = 'pressed'));     // after the options have landed
-      later(art, 1700, () => (chk.dataset.state = 'busy'));
-      later(art, 3300, () => (chk.dataset.state = 'done'));
+      if (art.dataset.hiwAnim === 'options') art.setAttribute('data-play', '');
+      else if (chk) {
+        later(art, 1500, () => (chk.dataset.state = 'pressed'));     // after the options have landed
+        later(art, 1700, () => (chk.dataset.state = 'busy'));
+        later(art, 3300, () => (chk.dataset.state = 'done'));
+      }
+      // every 10s: back to the start state (fade out), then play again
+      later(art, 9600, () => { art.removeAttribute('data-play'); if (chk) delete chk.dataset.state; });
+      later(art, 10000, () => play(art));
     };
     const reset = (art: HTMLElement) => {
       clear(art);
