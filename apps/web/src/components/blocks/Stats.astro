@@ -1,0 +1,67 @@
+---
+/**
+ * Burgundy stats band: 3 icon stats.
+ * Artboards: About (band 216 tall: icon, 16/20 semibold title + 16/20 supporting line, centred in 3 columns) and
+ * AboutMobile (band 191 tall: icon + 14/18 semibold title only; the supporting line is not in the mobile frame, so it
+ * is shown from 48rem up). Titles/lines are balanced so they break where the frames do.
+ */
+import type { StatsBlock, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+import Img from '../ui/Img.astro';
+
+interface Props { block: StatsBlock; settings: SiteSettings; page: string; index: number }
+const { block } = Astro.props;
+---
+<section class="stats" aria-label="Flight Experts in numbers">
+  <ul class="stats__list" role="list">
+    {block.items.map((item, i) => (
+      <li class="stats__item" data-reveal style={`--i: ${i}`}>
+        <Img media={item.icon} class="stats__icon" sizes="46px" decorative />
+        <p class="stats__text">
+          <strong class="stats__label" set:html={inline(item.label, { breaks: false })} />
+          {item.text && <span class="stats__sub">{item.text}</span>}
+        </p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .stats {
+    background: var(--c-burgundy);
+    color: var(--c-cream);
+    padding-top: clamp(2.3125rem, calc(2.875rem + -9 * (100vw - 24.375rem) / 1050), 2.875rem);     /* 46 -> 37 */
+    padding-bottom: clamp(3.0625rem, calc(3.15rem + -1.4 * (100vw - 24.375rem) / 1050), 3.15rem);  /* 50.4 -> 49 */
+  }
+  .stats__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 0.75rem;
+    list-style: none;
+  }
+  .stats__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .stats__item :global(.stats__icon) { display: block; height: 2.75rem; width: auto; }  /* 44 tall */
+  .stats__text {
+    max-width: 18.75rem;                                                                           /* 300 */
+    margin-top: clamp(0.9125rem, calc(0.9125rem + 11.24 * (100vw - 24.375rem) / 1050), 1.615rem);  /* 14.6 -> 25.84 */
+    font-size: var(--fs-14);
+    line-height: 1.125rem;                                                                         /* 18 */
+    text-wrap: balance;
+  }
+  .stats__label { display: block; max-width: 7.5rem; margin-inline: auto; font-weight: var(--fw-semibold); text-wrap: balance; }
+  .stats__sub { display: none; }
+
+  @media (min-width: 48rem) {
+    .stats__text { font-size: var(--fs-16); line-height: 1.25rem; }                               /* 16/20 */
+    .stats__list { padding: 0; }
+    .stats__label { max-width: none; }
+    .stats__sub { display: block; font-weight: var(--fw-regular); text-wrap: balance; }
+  }
+</style>

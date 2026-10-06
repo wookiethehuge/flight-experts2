@@ -1,0 +1,72 @@
+---
+/**
+ * Blog pagination (BlogCollection / BlogCollectionMobile): page numbers 18px navy, the current page boxed
+ * (47x44, 1px navy border, radius 8px, semibold). Page 1 lives at `base` ('/blog/'), page n at `${base}page/n/`.
+ * Long ranges collapse with an ellipsis (first, last and the current page's neighbours stay visible).
+ * Renders nothing when there is a single page.
+ *
+ * Props: current (1-based), total (page count), base (default '/blog/'), label (nav aria-label).
+ */
+interface Props { current: number; total: number; base?: string; label?: string }
+import { pageHref } from '../../lib/blog';
+const { current, total, base = '/blog/', label = 'Blog pages' } = Astro.props;
+
+const items: (number | '…')[] = [];
+if (total <= 7) {
+  for (let i = 1; i <= total; i++) items.push(i);
+} else {
+  const set = new Set([1, total, current - 1, current, current + 1].filter((n) => n >= 1 && n <= total));
+  const sorted = [...set].sort((a, b) => a - b);
+  sorted.forEach((n, i) => {
+    if (i > 0 && n - sorted[i - 1] > 1) items.push('…');
+    items.push(n);
+  });
+}
+---
+{total > 1 && (
+  <nav class="pagination on-light" aria-label={label}>
+    <ul class="pagination__list" role="list">
+      {items.map((n) =>
+        n === '…' ? (
+          <li class="pagination__gap" aria-hidden="true">…</li>
+        ) : (
+          <li>
+            <a
+              href={pageHref(n, base)}
+              class:list={['pagination__link', n === current && 'is-current']}
+              aria-current={n === current ? 'page' : undefined}
+              rel={n === current - 1 ? 'prev' : n === current + 1 ? 'next' : undefined}
+              aria-label={`Page ${n}`}
+            >{n}</a>
+          </li>
+        )
+      )}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .pagination { display: flex; justify-content: center; }
+  .pagination__list { display: flex; align-items: center; gap: 0.625rem; }
+  .pagination__link,
+  .pagination__gap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 47px;
+    height: 44px;
+    padding-inline: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: var(--fs-18);
+    line-height: 1.25;
+    font-weight: var(--fw-regular);
+    color: var(--c-navy);
+    text-decoration: none;
+    transition: border-color var(--dur) var(--ease);
+  }
+  .pagination__link.is-current { border-color: var(--c-navy); font-weight: var(--fw-semibold); }
+  @media (hover: hover) {
+    .pagination__link:not(.is-current):hover { border-color: color-mix(in srgb, var(--c-navy) 35%, transparent); }
+  }
+</style>

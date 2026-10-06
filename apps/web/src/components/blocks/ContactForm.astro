@@ -1,0 +1,410 @@
+---
+/**
+ * ContactForm block: the Contact page enquiry form, with the contact details card beside it.
+ *
+ * Block shape (ContactFormBlock in lib/types.ts):
+ *   details?[]   rows of the light-blue details card (ContactDetailItem: phone / email rows read Site Settings)
+ *   submitLabel  "Submit now"
+ *   note         small print under the form
+ * Field labels / placeholders and the inquiry-type options are fixed in code (they map to the enquiry contract in
+ * lib/forms.ts). The consent line under the button is Site Settings > Forms > consentNote (shared with the quote form).
+ *
+ * Inquiry type: a radio group at the top of the form ("Sales inquiry" / "Support inquiry", default Sales) styled as a
+ * segmented control. Changing it swaps the email row of the details card to that line's email and moves the marker to
+ * the matching phone row; the choice is sent as `topic: 'sales' | 'support'`.
+ *
+ * Layout: mobile (390) = card, then the form in one column (labels in an aligned column, 5px apart), full-width button,
+ * centred 12px note. Desktop (>= 1280) = card 420 | 130 gap | form 640 | 110 (Contact artboard). The form switches to
+ * two columns (Figma desktop) when it is at least 38rem wide (container query).
+ *
+ * Behaviour: novalidate + small script. Required: first name, email (format checked), message; phone optional
+ * (format checked when given). Inline errors (aria-invalid + aria-describedby), focus moves to the first invalid field.
+ * Submits JSON through submitEnquiry (kind 'contact', honeypot, elapsed-time check). When PUBLIC_TURNSTILE_SITE_KEY is
+ * set, a visible Turnstile check renders above the button (script loaded once the form is near the viewport) and a
+ * token is required before sending; the CMS verifies it with TURNSTILE_SECRET_KEY. Loading state on the button;
+ * success -> /thank-you/; failure -> alert above the button (server field errors shown inline).
+ */
+import type { ContactFormBlock, SiteSettings } from '../../lib/types';
+import { FORMS_ENDPOINT, TURNSTILE_SITE_KEY } from '../../lib/forms';
+import { inline } from '../../lib/inline';
+import ContactDetails from './ContactDetails.astro';
+import Honeypot from '../form/Honeypot.astro';
+import Button from '../ui/Button.astro';
+
+interface Props { block: ContactFormBlock; settings: SiteSettings; page: string; index: number }
+const { block, settings } = Astro.props;
+const id = `cf${Astro.props.index}`;
+const topics = [
+  { value: 'sales', label: 'Sales inquiry' },
+  { value: 'support', label: 'Support inquiry' },
+] as const;
+
+type F = { name: string; label: string; type: 'text' | 'email' | 'tel'; ac: string; ph?: string; required?: boolean; wide?: boolean; area?: boolean };
+const fields: F[] = [
+  { name: 'firstName', label: 'First Name', type: 'text', ac: 'given-name', ph: 'Name', required: true },
+  { name: 'lastName', label: 'Last Name', type: 'text', ac: 'family-name', ph: 'Last name' },
+  // Figma label reads "Email Adress" (typo) - corrected
+  { name: 'email', label: 'Email Address', type: 'email', ac: 'email', ph: 'Enter your email', required: true },
+  { name: 'phone', label: 'Phone number', type: 'tel', ac: 'tel', ph: 'Enter your phone number' },
+  { name: 'subject', label: 'Subject', type: 'text', ac: 'off', wide: true },
+  { name: 'message', label: 'Message', type: 'text', ac: 'off', required: true, wide: true, area: true },
+];
+---
+<section class="contact on-light" aria-label="Contact details and enquiry form">
+  <div class="contact__grid">
+    {block.details?.length ? <ContactDetails embedded block={{ blockType: 'contactDetails', items: block.details }} settings={settings} class="contact__details" /> : null}
+    <div class="contact__main">
+      <form id="contact-form" class="cform" novalidate data-endpoint={FORMS_ENDPOINT} data-turnstile={TURNSTILE_SITE_KEY || undefined} data-contact-form aria-label="Send us your travel requirements">
+        <fieldset class="cform__topic">
+          <legend class="sr-only">Inquiry type</legend>
+          {topics.map((t) => (
+            <label class="cform__topic-opt">
+              <input type="radio" name="topic" value={t.value} checked={t.value === 'sales'} />
+              <span>{t.label}</span>
+            </label>
+          ))}
+        </fieldset>
+        <div class="cform__grid">
+          {fields.map((f) => (
+            <div class:list={['field', f.wide && 'field--wide', f.area && 'field--area']} data-field={f.name}>
+              <div class="field__box">
+                <label for={`${id}-${f.name}`}>{f.label}</label>
+                {f.area ? (
+                  <textarea id={`${id}-${f.name}`} name={f.name} rows="5" required={f.required} aria-describedby={`${id}-${f.name}-err`} maxlength="5000" />
+                ) : (
+                  <input id={`${id}-${f.name}`} name={f.name} type={f.type} autocomplete={f.ac} placeholder={f.ph} required={f.required}
+                    aria-describedby={`${id}-${f.name}-err`} maxlength="200" />
+                )}
+              </div>
+              <p class="field__error" id={`${id}-${f.name}-err`} hidden></p>
+            </div>
+          ))}
+        </div>
+        <Honeypot />
+        {TURNSTILE_SITE_KEY && (
+          <div class="cform__captcha" data-field="turnstile">
+            <div class="cform__captcha-slot" data-turnstile-slot aria-describedby={`${id}-turnstile-err`}></div>
+            <p class="field__error" id={`${id}-turnstile-err`} hidden></p>
+          </div>
+        )}
+        <div class="cform__alert" role="alert" hidden>
+          <p class="cform__alert-text"></p>
+          <p><a href={settings.phone.href} class="nowrap">Call {settings.phone.display}</a></p>
+        </div>
+        <Button type="submit" variant="primary" class="cform__submit" data-label={block.submitLabel}>{block.submitLabel}</Button>
+        {settings.consentNote && <p class="cform__consent" set:html={inline(settings.consentNote, { breaks: false })} />}
+      </form>
+      {block.note && <p class="cform__note">{block.note}</p>}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { submitEnquiry, startTimer, THANK_YOU_URL } from '../../scripts/enquiry';
+  import { renderWhenNear, turnstileFor } from '../../scripts/turnstile';
+
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const phoneOk = (v: string) => /^\+?[\d\s().-]+$/.test(v) && v.replace(/\D/g, '').length >= 7 && v.replace(/\D/g, '').length <= 15;
+  const MESSAGES: Record<string, string> = {
+    firstName: 'Please enter your first name.',
+    email: 'Please enter your email address.',
+    emailFormat: 'Please enter a valid email address, like name@example.com.',
+    phoneFormat: 'Please enter a valid phone number, including the area code.',
+    message: 'Please tell us about your trip.',
+    turnstile: 'Please complete the security check.',
+  };
+  const CHECKED = ['firstName', 'email', 'phone', 'message'];
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-contact-form]')) {
+    const t0 = startTimer();
+    const button = form.querySelector<HTMLButtonElement>('.cform__submit')!;
+    const alert = form.querySelector<HTMLElement>('.cform__alert')!;
+    const alertText = alert.querySelector<HTMLElement>('.cform__alert-text')!;
+    let attempted = false;
+
+    // ---- inquiry type: swap the details card's email row and move the marker to the matching phone row
+    const card = form.closest('.contact')?.querySelector<HTMLElement>('[data-details]');
+    const topic = () => (form.querySelector<HTMLInputElement>('input[name="topic"]:checked')?.value === 'support' ? 'support' : 'sales');
+    const paintTopic = () => {
+      if (!card) return;
+      const t = topic();
+      card.querySelectorAll<HTMLElement>('[data-line]').forEach((row) => row.classList.toggle('is-active', row.dataset.line === t));
+      const a = card.querySelector<HTMLAnchorElement>('[data-topic-email]');
+      const email = a?.dataset[t];
+      if (a && email && a.textContent !== email) {
+        a.href = `mailto:${email}`;
+        const [user, domain = ''] = email.split('@');
+        a.replaceChildren(`${user}@`, document.createElement('wbr'), domain);
+      }
+    };
+    form.addEventListener('change', (e) => { if ((e.target as HTMLInputElement).name === 'topic') paintTopic(); });
+    paintTopic();   // restores the card if the browser kept a Support choice on back/forward
+
+    // ---- Turnstile (only when a site key is configured): render once the form is near the viewport
+    const tsWrap = form.querySelector<HTMLElement>('[data-field="turnstile"]');
+    const tsErr = tsWrap?.querySelector<HTMLElement>('.field__error');
+    const setTsError = (msg: string) => { if (tsErr) { tsErr.textContent = msg; tsErr.hidden = !msg; } tsWrap?.classList.toggle('field--invalid', Boolean(msg)); };
+    const ts = turnstileFor(form.querySelector<HTMLElement>('[data-turnstile-slot]'), form.dataset.turnstile, {
+      theme: 'light',
+      onChange: (token) => { if (token) setTsError(''); },
+    });
+    renderWhenNear(ts, form);
+
+    const control = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | null;
+    const setError = (name: string, msg: string) => {
+      const el = control(name);
+      const wrap = form.querySelector<HTMLElement>(`[data-field="${name}"]`);
+      const err = wrap?.querySelector<HTMLElement>('.field__error');
+      if (!el || !wrap || !err) return;
+      wrap.classList.toggle('field--invalid', Boolean(msg));
+      if (msg) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+      err.textContent = msg;
+      err.hidden = !msg;
+    };
+    const check = (name: string): string => {
+      const v = (control(name)?.value ?? '').trim();
+      if (name === 'firstName' && !v) return MESSAGES.firstName;
+      if (name === 'email') return !v ? MESSAGES.email : EMAIL.test(v) ? '' : MESSAGES.emailFormat;
+      if (name === 'phone') return v && !phoneOk(v) ? MESSAGES.phoneFormat : '';
+      if (name === 'message' && !v) return MESSAGES.message;
+      return '';
+    };
+    const validate = () => {
+      let first: string | null = null;
+      for (const name of CHECKED) {
+        const msg = check(name);
+        setError(name, msg);
+        if (msg && !first) first = name;
+      }
+      return first;
+    };
+
+    form.addEventListener('input', (e) => {
+      const name = (e.target as HTMLInputElement).name;
+      if (attempted && CHECKED.includes(name)) setError(name, check(name));
+    });
+    form.addEventListener('focusout', (e) => {
+      const el = e.target as HTMLInputElement;
+      // after a failed submit, or once an email / phone has been typed, re-check on leaving the field
+      if ((el.name === 'email' || el.name === 'phone') && el.value.trim()) setError(el.name, check(el.name));
+      else if (attempted && CHECKED.includes(el.name)) setError(el.name, check(el.name));
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (form.getAttribute('aria-busy') === 'true') return;
+      attempted = true;
+      alert.hidden = true;
+      const firstInvalid = validate();
+      if (firstInvalid) { control(firstInvalid)?.focus(); return; }
+      if (ts && !ts.token()) {
+        await ts.ensure();
+        setTsError(MESSAGES.turnstile);
+        tsWrap?.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        return;
+      }
+
+      const val = (n: string) => (control(n)?.value ?? '').trim();
+      form.setAttribute('aria-busy', 'true');
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      const res = await submitEnquiry(form, {
+        kind: 'contact',
+        topic: topic(),
+        firstName: val('firstName'),
+        lastName: val('lastName') || undefined,
+        email: val('email'),
+        phone: val('phone') || undefined,
+        subject: val('subject') || undefined,
+        message: val('message'),
+      }, t0);
+      if (res.ok) { location.assign(THANK_YOU_URL); return; }
+
+      form.removeAttribute('aria-busy');
+      button.disabled = false;
+      button.textContent = button.dataset.label || 'Submit now';
+      let firstField: string | null = null;
+      for (const [path, msg] of Object.entries(res.fieldErrors ?? {})) {
+        if (path === 'turnstileToken') { setTsError(msg); continue; }
+        if (control(path)) { setError(path, msg); firstField ??= path; }
+      }
+      ts?.reset();
+      alertText.textContent = res.message;
+      alert.hidden = false;
+      if (firstField) control(firstField)?.focus();
+    });
+  }
+</script>
+
+<style>
+  .contact {
+    width: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    /* the Contact frames inset this section 4px more than the page gutter on phones (24 vs 20) */
+    padding-inline: calc(var(--gutter) + clamp(0rem, calc(0.25rem + -4 * (100vw - 24.375rem) / 1050), 0.25rem));
+    padding-block: clamp(3.5rem, calc(3.5rem + 17 * (100vw - 24.375rem) / 1050), 4.5625rem)       /* 56 -> 73 */
+      clamp(3.375rem, calc(3.375rem + 19 * (100vw - 24.375rem) / 1050), 4.5625rem);               /* 54 -> 73 */
+  }
+  .contact__grid { display: grid; row-gap: 2.25rem; }                                            /* card -> form 36 */
+  .contact__main { container-type: inline-size; min-width: 0; }
+
+  /* ---- fields: mobile = one column, labels in an aligned column ---- */
+  .cform { position: relative; margin: 0; }
+  .cform__grid {
+    --label-min: 6.5625rem;                                                                       /* 105: inputs start at x 152 (390) */
+    --label-gap: 0.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: clamp(0.3125rem, calc(0.3125rem + 3.5 * (100vw - 24.375rem) / 1050), 0.5313rem);  /* 5 -> 8.5 (Figma rows 9/8/8 apart) */
+    column-gap: 1.25rem;
+  }
+  .field { min-width: 0; }
+  .field__box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    column-gap: var(--label-gap);
+    min-height: 3.25rem;                                                                          /* 52 */
+    padding-inline: 13px 4px;                                                                     /* label at 14 incl. border */
+    background: var(--c-white);
+    border: 1px solid var(--c-sky);
+    border-radius: 1.5px;
+    transition: border-color var(--dur) var(--ease);
+  }
+  .field__box:focus-within { outline: 2px solid var(--c-burgundy); outline-offset: 2px; }
+  .field__box label {
+    flex: none;
+    min-width: var(--label-min);
+    font-size: var(--fs-16);
+    line-height: 1.375rem;
+    color: var(--c-navy);
+    cursor: pointer;
+  }
+  .field__box input, .field__box textarea {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--ff-sans);
+    font-size: var(--fs-14);
+    line-height: 1.1875rem;                                                                       /* 19 */
+    color: var(--c-navy);
+    text-overflow: ellipsis;
+  }
+  .field__box input { align-self: stretch; }
+  .field__box :is(input, textarea):focus-visible { outline: none; }
+  .field__box :is(input, textarea)::placeholder { color: var(--c-grey); opacity: 1; }
+  .field--area .field__box {
+    flex-direction: column;
+    align-items: stretch;
+    height: 10.25rem;                                                                             /* 164 */
+    padding: 13px 17px 13px 13px;
+  }
+  .field--area textarea { margin-top: 0.5rem; resize: none; }
+  .field--invalid .field__box { border-color: var(--c-burgundy); }
+  .field__error {
+    margin-top: 0.25rem;
+    font-size: var(--fs-13);
+    line-height: 1.25;
+    font-weight: var(--fw-medium);
+    color: var(--c-burgundy);
+  }
+
+  /* ---- inquiry type: segmented control (two radio pills) ---- */
+  .cform__topic {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    min-width: 0;
+    margin: 0 0 clamp(0.875rem, calc(0.875rem + 6 * (100vw - 24.375rem) / 1050), 1.25rem);       /* 14 -> 20 */
+    padding: 3px;
+    border: 1px solid var(--c-sky);
+    border-radius: var(--r-pill);
+    background: var(--c-white);
+  }
+  .cform__topic-opt { position: relative; display: block; min-width: 0; cursor: pointer; }
+  .cform__topic-opt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .cform__topic-opt span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;                                                                           /* 40 + 3px padding x2 + border = 48 */
+    padding: 0 0.75rem;
+    border-radius: var(--r-pill);
+    font-size: var(--fs-14);
+    font-weight: var(--fw-medium);
+    line-height: 1.2;
+    text-align: center;
+    color: var(--c-navy);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .cform__topic-opt:hover span { background: color-mix(in srgb, var(--c-sky) 45%, transparent); }
+  .cform__topic-opt input:checked + span { background: var(--c-navy); color: var(--c-cream); }
+  .cform__topic-opt input:focus-visible + span { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+
+  .cform__captcha { margin-top: 1rem; }
+  .cform__captcha-slot { min-height: 65px; }                                                     /* reserve the widget's height: no layout shift */
+  .cform__captcha.field--invalid .cform__captcha-slot { outline: 1px solid var(--c-burgundy); outline-offset: 2px; }
+  .cform__alert {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--r-7);
+    border: 1px solid var(--c-burgundy);
+    background: var(--c-white);
+    color: var(--c-burgundy);
+    font-size: var(--fs-14);
+    line-height: 1.4;
+  }
+  .cform__alert[hidden] { display: none; }
+  .cform__alert a { color: inherit; font-weight: var(--fw-semibold); }
+
+  .cform :global(.cform__submit) {
+    width: 100%;
+    margin-top: clamp(1.125rem, calc(1.1875rem + -1 * (100vw - 24.375rem) / 1050), 1.1875rem);   /* 19 -> 18 */
+  }
+  .cform :global(.cform__submit[disabled]) { cursor: progress; }
+
+  .cform__consent {
+    margin-top: 0.625rem;
+    font-size: var(--fs-12);
+    line-height: 1rem;
+    text-align: center;
+    color: var(--c-navy);
+  }
+  .cform__consent :global(a) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .cform__consent :global(a:hover) { color: var(--c-burgundy); }
+  .nowrap { white-space: nowrap; }
+
+  .cform__note {
+    max-width: 21.5rem;                                                                          /* 344 */
+    margin: clamp(0.625rem, calc(0.625rem + 18 * (100vw - 24.375rem) / 1050), 1.75rem) auto 0;   /* 10 -> 28 */
+    font-size: clamp(0.75rem, calc(0.75rem + 2 * (100vw - 24.375rem) / 1050), 0.875rem);          /* 12 -> 14 */
+    line-height: clamp(1rem, calc(1rem + 3 * (100vw - 24.375rem) / 1050), 1.1875rem);             /* 16 -> 19 */
+    text-align: center;
+    color: var(--c-navy);
+  }
+
+  /* ---- form wide enough for the desktop two-column grid (Figma: 310 | 20 | 310, labels 21px before the input) ---- */
+  @container (min-width: 38rem) {
+    .cform__grid { --label-min: 0px; --label-gap: 1.3125rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .field--wide { grid-column: 1 / -1; }
+    .cform :global(.cform__submit) { width: calc(50% - 0.625rem); }
+    .cform__topic { width: calc(50% - 0.625rem); }
+    .cform__consent { text-align: left; }
+    .cform__note { max-width: 23.6875rem; margin-inline: 0; text-align: left; }                  /* 379, under the button */
+  }
+
+  /* ---- desktop (>= 1280, where the card rows fit on one line): details card | form ---- */
+  @media (min-width: 80rem) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 420fr) minmax(0, 640fr);
+      align-items: start;
+      column-gap: clamp(3rem, calc(3rem + 82 * (100vw - 80rem) / 160), 8.125rem);               /* 48 -> 130 at 1440 */
+      padding-inline-end: clamp(0rem, calc(110 * (100vw - 80rem) / 160), 6.875rem);             /* 0 -> 110 at 1440 */
+    }
+  }
+</style>

@@ -1,0 +1,629 @@
+---
+/**
+ * Quote form: the site's main conversion path (home hero and booking modal).
+ *
+ * Designs: artboards Main (desktop panel 474x523 at 896,193) and Mobile (360x596 at 15,193); states tripOpen, isMulti
+ * (Main, 630px tall scrolling panel) and the contact step (HomeContact 742px / MobileContact 827px). Popups: Figma
+ * components "Drop down button active", "Traveller number pop up" and "Dates pop up".
+ *
+ * Flow: step 1 (trip) -> "Request Your Itinerary" validates route + dates and extends the SAME panel in place with the
+ * contact step -> "Get your Booking" validates and posts via submitEnquiry (kind 'quote') -> /thank-you/.
+ * Contact step: name, email and phone are required for every trip type (phone format checked); the SMS opt-in checkbox
+ * is optional. The consent line (Site Settings consentNote) sits under the submit button (under the sticky footer
+ * button for Multi-City). With PUBLIC_TURNSTILE_SITE_KEY set, a visible Turnstile check renders in the contact step
+ * and a token is required before sending (verified by the CMS).
+ *
+ * Public API
+ *   <QuoteForm settings={settings} id="hero-form" variant="hero" showRating="mobile" ratingText="5 star rating" />
+ *   - `id` goes on the outer element (the sticky phone tab observes #hero-form) and prefixes every inner id.
+ *   - width: fluid 360px (390 viewport) -> 474px (1440), never wider than its container. The parent positions it.
+ *   - `showRating`: true | 'mobile' renders the Trustpilot row under the panel ('mobile' hides it from 48rem up).
+ *   - Root attributes (read-only for other code): data-trip="round|oneway|multi", data-step="trip|contact".
+ *   - Events dispatched on the root (bubbling): `quote:step` {detail:{step}}, `quote:submitted`.
+ */
+import Icon from '../ui/Icon.astro';
+import Img from '../ui/Img.astro';
+import Honeypot from './Honeypot.astro';
+import CallPill from './CallPill.astro';
+import TravellersPopup from './TravellersPopup.astro';
+import DatePicker from './DatePicker.astro';
+import { FORMS_ENDPOINT, TURNSTILE_SITE_KEY } from '../../lib/forms';
+import { inline } from '../../lib/inline';
+import type { SiteSettings, Media } from '../../lib/types';
+
+interface Props {
+  settings: SiteSettings;
+  id: string;
+  variant?: 'hero' | 'modal';
+  /** Trustpilot stars row under the panel (Mobile artboard). 'mobile' = only below 48rem. */
+  showRating?: boolean | 'mobile';
+  ratingText?: string;
+}
+const { settings, id, variant = 'hero', showRating = false, ratingText = '5 star rating' } = Astro.props;
+const p = id;
+const trips = [
+  ['round', 'Round trip'],
+  ['oneway', 'One-Way'],
+  ['multi', 'Multi-City'],
+] as const;
+const stars: Media = { url: '/seed/trustpilot-stars.webp', alt: '' };
+const trustpilot: Media = { url: '/seed/trustpilot-logo.webp', alt: 'Trustpilot' };
+const DATE_PLACEHOLDER = 'Day, Aug 20';
+const consent = settings.consentNote ? inline(settings.consentNote, { breaks: false }) : '';
+---
+<div class:list={['qf', `qf--${variant}`]} id={id} data-quote-form data-trip="round" data-step="trip">
+  <form class="qf__panel" novalidate data-endpoint={FORMS_ENDPOINT} data-turnstile={TURNSTILE_SITE_KEY || undefined} aria-label="Request your flight options">
+    <div class="qf__body" data-body>
+      <div class="qf__pills">
+        <div class="qf__trip">
+          <button type="button" class="qf__pill qf__pill--trip" id={`${p}-trip`} aria-haspopup="listbox" aria-expanded="false" aria-controls={`${p}-trip-list`} aria-labelledby={`${p}-trip-lbl ${p}-trip-val`} data-trip-btn>
+            <span class="sr-only" id={`${p}-trip-lbl`}>Trip type</span>
+            <span class="qf__pill-text" id={`${p}-trip-val`} data-trip-val>Round trip</span>
+            <span class="qf__chev" aria-hidden="true"><Icon name="chevron-down" /></span>
+          </button>
+          <ul class="qf__menu on-light" id={`${p}-trip-list`} role="listbox" tabindex="-1" aria-labelledby={`${p}-trip-lbl`} hidden data-trip-list>
+            {trips.map(([v, l]) => (
+              <li role="option" id={`${p}-trip-${v}`} data-value={v} aria-selected={v === 'round' ? 'true' : 'false'}><span>{l}</span><Icon name="check" class="qf__menu-check" /></li>
+            ))}
+          </ul>
+        </div>
+        <button type="button" class="qf__pill qf__pill--cabin" aria-haspopup="dialog" aria-expanded="false" aria-controls={`${p}-tp`} data-cabin-btn>
+          <span class="sr-only">Cabin and travellers: </span>
+          <span class="qf__pill-text" data-cabin-val>Business / 1 Traveler</span>
+          <span class="qf__chev" aria-hidden="true"><Icon name="chevron-down" /></span>
+        </button>
+      </div>
+
+      <div class="qf__leg" data-leg>
+        <div class="qf__box qf__route">
+          <div class="qf__row">
+            <label for={`${p}-from`}>From</label>
+            <input class="qf__input" id={`${p}-from`} name="from" type="text" autocomplete="off" placeholder="Example" required aria-describedby={`${p}-from-err`} data-field="from" />
+          </div>
+          <div class="qf__row">
+            <label for={`${p}-to`}>Going to</label>
+            <input class="qf__input" id={`${p}-to`} name="to" type="text" autocomplete="off" placeholder="Airport or city" required aria-describedby={`${p}-to-err`} data-field="to" />
+          </div>
+        </div>
+        <div class="qf__errs"><p class="qf__err" id={`${p}-from-err`} hidden></p><p class="qf__err" id={`${p}-to-err`} hidden></p></div>
+        <div class="qf__box qf__dates">
+          <div class="qf__date">
+            <span class="qf__notch" id={`${p}-dep-lbl`}>Departure</span>
+            <button type="button" class="qf__date-btn" aria-haspopup="dialog" aria-labelledby={`${p}-dep-lbl ${p}-dep-val`} aria-describedby={`${p}-dep-err`} data-date-btn="depart">
+              <span id={`${p}-dep-val`} data-date-val><span class="qf__ph" data-ph={DATE_PLACEHOLDER}></span><span class="sr-only">not selected</span></span>
+            </button>
+          </div>
+          <div class="qf__date qf__date--ret">
+            <span class="qf__notch" id={`${p}-ret-lbl`}>Return</span>
+            <button type="button" class="qf__date-btn" aria-haspopup="dialog" aria-labelledby={`${p}-ret-lbl ${p}-ret-val`} aria-describedby={`${p}-ret-err`} data-date-btn="return">
+              <span id={`${p}-ret-val`} data-date-val><span class="qf__ph" data-ph={DATE_PLACEHOLDER}></span><span class="sr-only">not selected</span></span>
+            </button>
+          </div>
+        </div>
+        <div class="qf__errs"><p class="qf__err" id={`${p}-dep-err`} hidden></p><p class="qf__err" id={`${p}-ret-err`} hidden></p></div>
+      </div>
+
+      <div class="qf__legs" data-legs></div>
+      <button type="button" class="qf__add" data-add-leg>+ Add another flight</button>
+
+      <p class="qf__compare"><span>Compare booking options based on<br class="qf__br" /> flexibility, amenities and more</span></p>
+      <button type="submit" class="qf__btn qf__btn--request" data-submit>Request Your Itinerary</button>
+
+      <div class="qf__contact" data-contact>
+        <p class="qf__c-title" id={`${p}-c-title`}>Let us know where we can send you the information</p>
+        <div class="qf__box qf__cbox" role="group" aria-labelledby={`${p}-c-title`}>
+          <div class="qf__row">
+            <label for={`${p}-name`}>Name</label>
+            <input class="qf__input" id={`${p}-name`} name="name" type="text" autocomplete="name" placeholder="Example" required aria-describedby={`${p}-name-err`} data-field="name" />
+          </div>
+          <div class="qf__row">
+            <label for={`${p}-email`}>Email</label>
+            <input class="qf__input" id={`${p}-email`} name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="Example" required aria-describedby={`${p}-email-err`} data-field="email" />
+          </div>
+          <div class="qf__row">
+            <label for={`${p}-phone`}>Phone</label>
+            <input class="qf__input" id={`${p}-phone`} name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Example" required aria-describedby={`${p}-phone-err`} data-field="phone" />
+          </div>
+        </div>
+        <div class="qf__errs"><p class="qf__err" id={`${p}-name-err`} hidden></p><p class="qf__err" id={`${p}-email-err`} hidden></p><p class="qf__err" id={`${p}-phone-err`} hidden></p></div>
+        {TURNSTILE_SITE_KEY && <div class="qf__turnstile" data-turnstile-slot aria-describedby={`${p}-ts-err`}></div>}
+        {TURNSTILE_SITE_KEY && <div class="qf__errs"><p class="qf__err" id={`${p}-ts-err`} hidden data-ts-err></p></div>}
+        <p class="qf__alert" role="alert" data-alert></p>
+        <button type="submit" class="qf__btn qf__btn--book" data-submit>Get your Booking</button>
+        <div class="qf__consent">
+          <span class="qf__cbx">
+            <input class="qf__cb" type="checkbox" id={`${p}-sms`} name="smsConsent" data-field="smsConsent" />
+            <span class="qf__cbx-box" aria-hidden="true"><Icon name="check" /></span>
+          </span>
+          <label for={`${p}-sms`}>By checking this box you agree to receive text messages from Flight-Experts, you can reply stop to opt-out at any time, here is our <a href="/privacy-policy/">Privacy Policy</a>.</label>
+        </div>
+        {consent && <p class="qf__note qf__note--body" set:html={consent} />}
+      </div>
+
+      <div class="qf__or"><span>or</span></div>
+      <CallPill settings={settings} class="qf__call" />
+    </div>
+    <div class="qf__foot">
+      <button type="submit" class="qf__btn qf__btn--foot" data-submit data-foot-btn>Request Your Itinerary</button>
+      {consent && <p class="qf__note qf__note--foot" set:html={consent} />}
+    </div>
+    <Honeypot />
+    <p class="sr-only" aria-live="polite" data-status></p>
+  </form>
+
+  <TravellersPopup id={p} />
+  <DatePicker id={p} />
+
+  {showRating && (
+    <div class:list={['qf__rating', showRating === 'mobile' && 'qf__rating--mobile']}>
+      <Img media={stars} sizes="109px" widths={[109, 218, 327]} class="qf__stars" decorative />
+      <span>{ratingText}</span>
+      <Img media={trustpilot} sizes="102px" widths={[102, 204, 306]} class="qf__tp" />
+    </div>
+  )}
+
+  <template data-leg-template>
+    <div class="qf__mleg" role="group" data-mleg>
+      <div class="qf__mleg-head">
+        <p class="qf__mleg-title" data-mleg-title>Flight 2</p>
+        <button type="button" class="qf__mleg-rm" data-remove-leg>Remove</button>
+      </div>
+      <div class="qf__box qf__mroute">
+        <div class="qf__mrow"><input class="qf__input qf__input--w" type="text" autocomplete="off" placeholder="Going from, airport or city" required data-field="from" /></div>
+        <div class="qf__mrow"><input class="qf__input qf__input--w" type="text" autocomplete="off" placeholder="Going to, airport or city" required data-field="to" /></div>
+      </div>
+      <div class="qf__errs"><p class="qf__err" hidden data-err="from"></p><p class="qf__err" hidden data-err="to"></p></div>
+      <div class="qf__box qf__dates">
+        <div class="qf__date">
+          <span class="qf__notch" data-lbl>Departure</span>
+          <button type="button" class="qf__date-btn" aria-haspopup="dialog" data-date-btn="depart">
+            <span data-date-val><span class="qf__ph" data-ph={DATE_PLACEHOLDER}></span><span class="sr-only">not selected</span></span>
+          </button>
+        </div>
+      </div>
+      <div class="qf__errs"><p class="qf__err" hidden data-err="depart"></p></div>
+    </div>
+  </template>
+</div>
+
+<script>
+  import { initQuoteForms } from './quote-form';
+  initQuoteForms();
+</script>
+
+<style>
+  /*
+   * Mobile-first. Base = the 390 artboards; fluid values reach the 1440 artboard values (see fluid.mjs).
+   * All offsets below are measured from the panel's outer edge in the artboards (the panel has a 1px border).
+   */
+  .qf {
+    --qf-w: clamp(22.5rem, calc(22.5rem + 114 * (100vw - 24.375rem) / 1050), 29.625rem);             /* 360 -> 474 */
+    --qf-pt: clamp(1.375rem, calc(1.875rem + -8 * (100vw - 24.375rem) / 1050), 1.875rem);            /* 30 -> 22 */
+    --qf-pl: clamp(1.25rem, calc(1.25rem + 13 * (100vw - 24.375rem) / 1050), 2.0625rem);             /* 20 -> 33 */
+    --qf-pr: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);                 /* 20 -> 24 */
+    --qf-pb: clamp(1.5rem, calc(1.5625rem + -1 * (100vw - 24.375rem) / 1050), 1.5625rem);            /* 25 -> 24 */
+    --qf-row-pl: clamp(0.875rem, calc(0.875rem + 1 * (100vw - 24.375rem) / 1050), 0.9375rem);        /* 14 -> 15 */
+    --qf-gap-date: clamp(1rem, calc(1.4375rem + -7 * (100vw - 24.375rem) / 1050), 1.4375rem);        /* 23 -> 16 */
+    --qf-gap-compare: clamp(1.0625rem, calc(1.0625rem + 7 * (100vw - 24.375rem) / 1050), 1.5rem);    /* 17 -> 24 */
+    --qf-btn-in: clamp(1.25rem, calc(1.25rem + 27.5 * (100vw - 24.375rem) / 1050), 2.9688rem);       /* 20 -> 47.5 */
+    --qf-pill-in: clamp(1.25rem, calc(1.25rem + 27 * (100vw - 24.375rem) / 1050), 2.9375rem);        /* 20 -> 47 */
+    --qf-or-l: clamp(1.5625rem, calc(1.5625rem + 29 * (100vw - 24.375rem) / 1050), 3.375rem);        /* 25 -> 54 */
+    --qf-or-r: clamp(1.375rem, calc(1.375rem + 32 * (100vw - 24.375rem) / 1050), 3.375rem);          /* 22 -> 54 */
+    --qf-or-mt: clamp(1.625rem, calc(1.625rem + 0.8 * (100vw - 24.375rem) / 1050), 1.675rem);        /* 26 -> 26.8 */
+    --qf-or-pill: clamp(1.75rem, calc(1.75rem + 0.2 * (100vw - 24.375rem) / 1050), 1.7625rem);       /* 28 -> 28.2 */
+    --qf-dshift: clamp(0rem, calc(0rem + 4.5 * (100vw - 24.375rem) / 1050), 0.2812rem);              /* 0 -> 4.5 */
+    --qf-ret-pad: clamp(1.925rem, calc(2.125rem + -3.2 * (100vw - 24.375rem) / 1050), 2.125rem);     /* 34 -> 30.8 */
+    --qf-c-gap: clamp(1.5rem, calc(1.5rem + 1 * (100vw - 24.375rem) / 1050), 1.5625rem);             /* 24 -> 25 */
+    --qf-c-indent: clamp(0rem, calc(0rem + 2 * (100vw - 24.375rem) / 1050), 0.125rem);               /* 0 -> 2 */
+    --qf-c-btn: clamp(1.1875rem, calc(1.6875rem + -8 * (100vw - 24.375rem) / 1050), 1.6875rem);      /* 27 -> 19 */
+    --qf-c-cb: clamp(1.0625rem, calc(1.0625rem + 2 * (100vw - 24.375rem) / 1050), 1.1875rem);        /* 17 -> 19 */
+    --qf-c-or: clamp(1.8125rem, calc(1.8125rem + 5.1 * (100vw - 24.375rem) / 1050), 2.1313rem);      /* 29 -> 34.1 */
+    --qf-c-or-pill: clamp(1.75rem, calc(1.75rem + 4.2 * (100vw - 24.375rem) / 1050), 2.0125rem);     /* 28 -> 32.2 */
+    --qf-c-pb: clamp(1.75rem, calc(1.75rem + 4 * (100vw - 24.375rem) / 1050), 2rem);                 /* 28 -> 32 */
+    --qf-error: #ffadbd;            /* not in the designs: light rose, 10:1 on navy (see report) */
+    --qf-menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    position: relative;
+    width: min(100%, var(--qf-w));
+    color: var(--c-cream);
+    font-family: var(--ff-sans);
+  }
+  .qf__panel {
+    position: relative;
+    margin: 0;
+    border: 1px solid var(--c-sky);
+    border-radius: var(--r-15);
+    background: var(--c-navy);
+  }
+  .qf__body {
+    padding: calc(var(--qf-pt) - 1px) calc(var(--qf-pr) - 1px) calc(var(--qf-pb) - 1px) calc(var(--qf-pl) - 1px);
+  }
+
+  /* ---------------------------------------------------------------- pills + trip menu */
+  .qf__pills { display: grid; gap: 13px; }
+  .qf__trip { position: relative; min-width: 0; }
+  .qf__pill {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    padding: 0 17.4px 0 0;
+    border: 1px solid var(--c-sky);
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-cream);
+    font-size: var(--fs-16);
+    line-height: 1.35;
+    white-space: nowrap;
+    transition: background-color var(--dur) var(--ease);
+  }
+  .qf__pill--cabin { padding-right: 26px; }
+  .qf__pill:hover { background: var(--c-sky-8); }
+  .qf__pill-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .qf__chev {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-top: -18px;
+    color: var(--c-sky);
+  }
+  .qf__chev :global(svg) { width: 18px; height: auto; }
+
+  .qf__menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 3px);
+    z-index: 5;
+    width: 159px;
+    margin: 0;
+    padding: 9px 0 8px;
+    list-style: none;
+    border-radius: var(--r-7);
+    background: var(--c-sky);
+    color: var(--c-navy);
+    box-shadow: var(--qf-menu-shadow);
+  }
+  .qf__menu:focus { outline: none; }
+  .qf__menu li {
+    display: flex;
+    align-items: center;
+    gap: 10.3px;
+    height: 37px;
+    padding-left: 18px;
+    font-size: var(--fs-16);
+    cursor: pointer;
+  }
+  .qf__menu li:hover { background: color-mix(in srgb, var(--c-navy) 6%, transparent); }
+  .qf__menu:focus-visible li.is-active { background: color-mix(in srgb, var(--c-navy) 10%, transparent); box-shadow: inset 3px 0 0 var(--c-navy); }
+  .qf__menu :global(.qf__menu-check) { width: 11.7px; visibility: hidden; }
+  .qf__menu li[aria-selected='true'] :global(.qf__menu-check) { visibility: visible; }
+
+  /* ---------------------------------------------------------------- field boxes */
+  .qf__box { border: 1px solid var(--c-sky); border-radius: var(--r-7); }
+  .qf__route { margin-top: 13px; }
+  .qf__row {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    height: 52px;
+    padding: 0 13px 0 var(--qf-row-pl);
+  }
+  .qf__row + .qf__row { height: 52px; border-top: 1px solid var(--c-sky); }
+  .qf__route .qf__row + .qf__row { height: 52px; }
+  .qf__row label { display: flex; align-items: center; font-size: var(--fs-16); color: var(--c-cream); cursor: pointer; white-space: nowrap; }
+  .qf__row:has([aria-invalid='true']), .qf__mrow:has([aria-invalid='true']) { box-shadow: inset 3px 0 0 var(--qf-error); }
+  .qf__input {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: transparent;
+    color: var(--c-cream);
+    font-size: var(--fs-14);
+  }
+  .qf__input::placeholder { color: var(--c-white-55); opacity: 1; }
+  .qf__input:focus-visible, .qf__date-btn:focus-visible { outline-offset: -3px; }
+  .qf__input:-webkit-autofill {
+    -webkit-text-fill-color: var(--c-cream);
+    box-shadow: inset 0 0 0 100px var(--c-navy);
+    caret-color: var(--c-cream);
+  }
+
+  /* dates: notched labels on the top border, 50/50 split with a 1px divider */
+  .qf__dates {
+    display: grid;
+    grid-template-columns: calc(50% - var(--qf-dshift)) minmax(0, 1fr);
+    height: 52px;
+    margin-top: var(--qf-gap-date);
+  }
+  .qf__date { position: relative; min-width: 0; }
+  .qf__notch {
+    position: absolute;
+    left: 15.5px;
+    top: -13.1px;
+    z-index: 1;
+    padding: 0 6px;
+    background: var(--c-navy);
+    color: var(--c-cream);
+    font-size: var(--fs-16);
+    line-height: 28.5px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .qf__date--ret .qf__notch { left: 21.75px; }
+  .qf__date--ret::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 1px;
+    height: 37px;
+    background: var(--c-sky);
+  }
+  /* Placeholder date drawn as generated content with empty alt text: the button's accessible name is
+     "Departure not selected" and there is no visible text missing from it (WCAG 2.5.3 label in name). */
+  .qf__ph::before { content: attr(data-ph); content: attr(data-ph) / ''; }
+  .qf__date-btn {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 2px 8px 0 23.9px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--c-sky);
+    font-size: var(--fs-14);
+    line-height: 1.35;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .qf__date--ret .qf__date-btn { padding-left: var(--qf-ret-pad); }
+  .qf__date-btn.has-value { color: var(--c-cream); }
+  .qf__date-btn:hover { background: var(--c-sky-8); }
+  .qf__date-btn[aria-invalid='true'] { box-shadow: inset 0 -3px 0 var(--qf-error); }
+
+  .qf__errs:not(:has(.qf__err:not([hidden]))) { display: none; }
+  .qf__err { margin: 6px 0 0; color: var(--qf-error); font-size: var(--fs-13); line-height: 1.3; }
+  .qf__err[hidden] { display: none; }
+
+  /* ---------------------------------------------------------------- step 1 footer area */
+  .qf__compare {
+    display: grid;
+    justify-items: center;
+    margin: var(--qf-gap-compare) calc(var(--qf-btn-in) - var(--qf-pr)) 0 calc(var(--qf-btn-in) - var(--qf-pl));
+    color: var(--c-sky);
+    font-size: var(--fs-14);
+    line-height: 19px;
+    text-align: center;
+  }
+  .qf__compare span { max-width: 317px; }
+  .qf__btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    height: 50px;
+    padding: 0 1rem;
+    border: 0;
+    border-radius: var(--r-7);
+    background: var(--c-burgundy);
+    color: var(--c-cream);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-semibold);
+    line-height: 1.2;
+    transition: background-color var(--dur) var(--ease);
+  }
+  .qf__btn:hover { background: var(--c-burgundy-hover); }
+  .qf__btn:disabled { cursor: progress; opacity: 0.8; }
+  .qf__btn[aria-busy='true']::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: qf-spin 0.8s linear infinite;
+  }
+  @keyframes qf-spin { to { transform: rotate(360deg); } }
+  .qf__btn--request {
+    width: calc(100% + var(--qf-pl) + var(--qf-pr) - 2 * var(--qf-btn-in));
+    margin: 10px calc(var(--qf-btn-in) - var(--qf-pr)) 0 calc(var(--qf-btn-in) - var(--qf-pl));
+  }
+  .qf__or {
+    position: relative;
+    height: 1px;
+    margin: var(--qf-or-mt) calc(var(--qf-or-r) - var(--qf-pr)) 0 calc(var(--qf-or-l) - var(--qf-pl));
+    background: var(--c-sky);
+  }
+  .qf__or span {
+    position: absolute;
+    left: 50%;
+    top: -11.2px;
+    width: 35px;
+    margin-left: -17.5px;
+    background: var(--c-navy);
+    color: var(--c-sky);
+    font-size: var(--fs-14);
+    line-height: 1.35;
+    text-align: center;
+  }
+  .qf__body > :global(.qf__call) {
+    margin: calc(var(--qf-or-pill) - 1px) calc(var(--qf-pill-in) - var(--qf-pr)) 0 calc(var(--qf-pill-in) - var(--qf-pl));
+  }
+
+  /* ---------------------------------------------------------------- contact step (HomeContact / MobileContact) */
+  .qf__contact { display: none; margin-top: var(--qf-c-gap); }
+  .qf[data-step='contact'] .qf__contact { display: block; }
+  .qf[data-step='contact'] :is(.qf__compare, .qf__btn--request) { display: none; }
+  .qf[data-step='contact'] .qf__or { margin-top: var(--qf-c-or); }
+  .qf[data-step='contact'] .qf__body > :global(.qf__call) { margin-top: calc(var(--qf-c-or-pill) - 1px); }
+  .qf[data-step='contact'] .qf__body { padding-bottom: calc(var(--qf-c-pb) - 1px); }
+  .qf__c-title {
+    margin: 0 0 0 var(--qf-c-indent);
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    line-height: 16.2px;
+  }
+  .qf__cbox { margin-top: 14.8px; }
+  .qf__cbox .qf__row { height: 51px; grid-template-columns: 60.5px minmax(0, 1fr); padding-left: 14px; }
+  .qf__cbox .qf__row + .qf__row { height: 52px; }
+  .qf__turnstile { margin-top: 1rem; min-height: 65px; }
+  .qf__alert { margin: 0; color: var(--qf-error); font-size: var(--fs-14); line-height: 1.35; }
+  .qf__alert:not(:empty) { margin-top: 1rem; padding: 0.625rem 0.75rem; border: 1px solid var(--qf-error); border-radius: var(--r-7); }
+  .qf__alert :global(a) { color: inherit; font-weight: var(--fw-semibold); }
+  .qf__btn--book { margin-top: var(--qf-c-btn); }
+  .qf__consent {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr);
+    column-gap: 12px;
+    margin-top: calc(var(--qf-c-cb) - 7.65px);
+  }
+  .qf__consent label {
+    font-size: var(--fs-12);
+    line-height: 14px;
+    letter-spacing: -0.24px;
+    color: var(--c-cream);
+    cursor: pointer;
+  }
+  .qf__consent a { color: inherit; text-underline-offset: 2px; }
+  .qf__cbx { position: relative; width: 12px; height: 12px; margin-top: 7.65px; }
+  .qf__cb { position: absolute; inset: -10px; width: 32px; height: 32px; margin: 0; opacity: 0; cursor: pointer; }
+  .qf__cbx-box {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 1px;
+    background: var(--c-white);
+    color: var(--c-navy);
+    pointer-events: none;
+  }
+  .qf__cbx-box :global(svg) { width: 9px; height: auto; visibility: hidden; }
+  .qf__cb:checked + .qf__cbx-box :global(svg) { visibility: visible; }
+  .qf__cb:focus-visible + .qf__cbx-box { outline: 2px solid var(--c-sky); outline-offset: 2px; }
+
+  .qf__note {
+    margin: 0.75rem 0 0;
+    font-size: var(--fs-12);
+    line-height: 14px;
+    letter-spacing: -0.24px;
+    color: var(--c-cream);
+  }
+  .qf__note :global(a) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .qf__note :global(a:hover) { color: var(--c-sky); }
+  .qf__note--foot { display: none; margin-top: 0.5rem; text-align: center; }
+  .qf[data-trip='multi'] .qf__note--body { display: none; }
+  .qf[data-trip='multi'][data-step='contact'] .qf__note--foot { display: block; }
+
+  /* ---------------------------------------------------------------- one-way / multi-city */
+  .qf:not([data-trip='round']) .qf__date--ret { display: none; }
+  .qf:not([data-trip='round']) .qf__dates { grid-template-columns: minmax(0, 1fr); }
+  .qf__legs, .qf__add, .qf__foot { display: none; }
+  .qf[data-trip='multi'] .qf__legs { display: block; }
+  .qf[data-trip='multi'] .qf__add:not([hidden]) { display: block; }
+  .qf[data-trip='multi'] .qf__foot { display: block; }
+  .qf[data-trip='multi'] :is(.qf__compare, .qf__btn--request, .qf__btn--book, .qf__or) { display: none; }
+  .qf[data-trip='multi'] .qf__body { padding-bottom: 34px; }
+  .qf[data-trip='multi'] .qf__body > :global(.qf__call) { margin-top: 13px; }
+  .qf[data-trip='multi'] .qf__contact { margin-top: 1.5rem; }
+  .qf__mleg { margin-top: 18px; }
+  .qf__mleg-head { display: flex; align-items: center; justify-content: space-between; margin-left: -3px; }
+  .qf__mleg-title { margin: 0; font-size: var(--fs-12); font-weight: var(--fw-semibold); line-height: 16.2px; }
+  .qf__mleg-rm, .qf__add {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--c-sky);
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    line-height: 16.2px;
+  }
+  .qf__mleg-rm { position: relative; }
+  .qf__mleg-rm::before { content: ''; position: absolute; inset: -14px -8px; }        /* 44px touch target */
+  .qf__mleg-rm:hover, .qf__add:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .qf__mroute { margin-top: 15.8px; }
+  .qf__mrow { height: 50px; padding: 0 13px 0 15px; }
+  .qf__mrow + .qf__mrow { height: 52px; border-top: 1px solid var(--c-sky); }
+  .qf__input--w { font-size: var(--fs-16); }
+  .qf__input--w::placeholder { color: var(--c-cream); }
+  .qf__mleg .qf__dates { margin-top: 18px; }
+  .qf__add { width: 100%; height: 26px; margin-top: 13px; }
+  .qf__foot {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding: 16px calc(var(--qf-btn-in) - 1px) 14px;
+    border-top: 1px solid var(--c-sky);
+    border-radius: 0 0 14px 14px;
+    background: var(--c-navy);
+  }
+
+  /* ---------------------------------------------------------------- Trustpilot row (Mobile artboard) */
+  .qf__rating {
+    display: flex;
+    align-items: center;
+    margin-top: 17px;
+    padding-left: 27px;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-medium);
+    color: var(--c-cream);
+    white-space: nowrap;
+  }
+  /* margins, not gap: the <source> children of <picture style="display: contents"> count as flex items */
+  .qf[data-step='contact'] .qf__rating { margin-top: 23px; }   /* MobileContact */
+  .qf__rating :global(.qf__stars) { width: 109px; height: auto; margin-right: 15px; }
+  .qf__rating :global(.qf__tp) { width: 102px; height: auto; margin: -1px 0 0 14px; }
+
+  @media (max-width: 47.99rem) {
+    .qf__br { display: inline; }
+  }
+  @media (max-width: 23.4rem) {
+    /* below the 390 design the row would not fit: scale it down */
+    .qf__rating { padding-left: 10px; }
+    .qf__rating :global(.qf__stars) { width: 92px; margin-right: 10px; }
+    .qf__rating :global(.qf__tp) { width: 86px; margin-left: 10px; }
+  }
+  @media (min-width: 48rem) {
+    .qf__br { display: none; }
+    .qf__rating--mobile { display: none; }
+
+    /* multi-city: fixed 630px panel, the fields scroll, the submit bar stays at the bottom (Main isMulti) */
+    .qf[data-trip='multi'] .qf__panel { display: flex; flex-direction: column; height: 630px; }
+    .qf[data-trip='multi'] .qf__body {
+      flex: 1 1 auto;
+      min-height: 0;
+      margin-right: 6px;
+      padding-right: calc(var(--qf-pr) - 12px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border-radius: 14px 0 0 0;
+    }
+    .qf[data-trip='multi'] .qf__body::-webkit-scrollbar { width: 5px; }
+    .qf[data-trip='multi'] .qf__body::-webkit-scrollbar-track { background: transparent; margin: 22px 0 160px; }
+    .qf[data-trip='multi'] .qf__body::-webkit-scrollbar-thumb { background: var(--c-sky); border-radius: 3px; }
+    @supports not selector(::-webkit-scrollbar) {
+      .qf[data-trip='multi'] .qf__body { scrollbar-width: thin; scrollbar-color: var(--c-sky) transparent; }
+    }
+    .qf[data-trip='multi'] .qf__foot { position: static; flex: none; }
+  }
+  @media (min-width: 80rem) {
+    /* side-by-side pills (Main); below 1280 the cabin pill is too narrow for its label, so they stay stacked */
+    .qf__pills { grid-template-columns: 188fr 223fr; gap: 6px; }
+    .qf__pill--trip { justify-content: flex-start; padding: 0 44px 0 25px; }
+    .qf__pill--cabin { padding: 0 34px 0 0; }
+    .qf__chev { width: 22px; height: 22px; margin-top: -11px; }
+    .qf__chev :global(svg) { width: 11px; }
+    .qf__pill--cabin .qf__chev { right: 23px; }
+  }
+</style>

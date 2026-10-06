@@ -1,0 +1,74 @@
+---
+/**
+ * Round "Get *Flight* Options ->" badge (badge.svg in the frames): 136px burgundy disc with a 1.29px sky ring and a
+ * soft drop shadow inside a 156px box, IBM Plex Serif 22/600 sky text, Figma arrow glyph. Built in HTML/CSS.
+ * Renders a <button> that opens the booking modal (open-booking event) unless `href` is given.
+ * `label` uses the inline syntax (*italic*, \n line break); default "Get *Flight*\nOptions".
+ * Size scales with the --badge-size custom property (default 117px: the client asked for the design's 156px badge 25%
+ * smaller; every inner value, text included, scales with it through --u).
+ */
+import Icon from '../ui/Icon.astro';
+import { inline, plain } from '../../lib/inline';
+
+interface Props { label?: string; href?: string; class?: string }
+const { label = 'Get *Flight*\nOptions', href, class: cls } = Astro.props;
+const html = inline(label, { breaks: true });
+const aria = plain(label);
+---
+{href ? (
+  <a class:list={['badge', cls]} href={href} aria-label={aria}>
+    <span class="badge__disc"><span class="badge__text" set:html={html} /><Icon name="badge-arrow" width={15.62} height={9.94} class="badge__arrow" /></span>
+  </a>
+) : (
+  <button type="button" class:list={['badge', cls]} data-open-booking aria-label={aria} aria-haspopup="dialog">
+    <span class="badge__disc"><span class="badge__text" set:html={html} /><Icon name="badge-arrow" width={15.62} height={9.94} class="badge__arrow" /></span>
+  </button>
+)}
+
+<style>
+  .badge {
+    --badge-size: 117px;
+    --u: calc(var(--badge-size) / 156);          /* 1 design px at this size */
+    position: relative;
+    display: block;
+    width: var(--badge-size);
+    height: var(--badge-size);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .badge__disc {
+    position: absolute;
+    left: calc(6.97 * var(--u));
+    top: calc(4.39 * var(--u));
+    width: calc(136 * var(--u));
+    height: calc(136 * var(--u));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: calc(38.5 * var(--u));
+    border: calc(1.29 * var(--u)) solid var(--c-sky);
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    box-shadow: calc(2.58 * var(--u)) calc(5.17 * var(--u)) calc(13.43 * var(--u)) calc(-3.88 * var(--u)) rgba(0, 0, 0, 0.25);
+    color: var(--c-sky);
+    transition: transform var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+  .badge__text {
+    display: block;
+    font-family: var(--ff-serif);
+    font-size: calc(22 * var(--u));
+    font-weight: var(--fw-semibold);
+    line-height: calc(25 * var(--u));
+    text-align: center;
+    white-space: nowrap;
+  }
+  .badge__text :global(em) { font-style: italic; }
+  .badge :global(.badge__arrow) { width: calc(15.62 * var(--u)); height: auto; margin-top: calc(8.4 * var(--u)); }
+  .badge:hover .badge__disc { background: var(--c-burgundy-hover); transform: scale(1.03); }
+  .badge:focus-visible { outline-offset: -4px; border-radius: 50%; }
+</style>

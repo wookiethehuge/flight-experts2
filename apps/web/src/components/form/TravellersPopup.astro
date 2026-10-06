@@ -1,0 +1,148 @@
+---
+/**
+ * Cabin and travellers picker (Figma component "Traveller number pop up", 394x478, light blue, radius 7):
+ * Adults / Children / Infants steppers, cabin choice (First, Business, Premium Economy) and Apply.
+ * A native modal <dialog> opened by the cabin pill of QuoteForm; behaviour lives in quote-form.ts.
+ * Changes are staged and only committed on Apply; Close / Esc / click outside discard them.
+ */
+import Icon from '../ui/Icon.astro';
+interface Props { id: string }
+const { id } = Astro.props;
+const rows = [
+  { key: 'adults', label: 'Adults', sub: '11+ years', one: 'adult', many: 'adults' },
+  { key: 'children', label: 'Children', sub: '2–11 years', one: 'child', many: 'children' },
+  { key: 'infants', label: 'Infants', sub: '0–2 years', one: 'infant', many: 'infants' },
+];
+const cabins = [
+  { value: 'first', label: 'First' },
+  { value: 'business', label: 'Business' },
+  { value: 'premium-economy', label: 'Premium Economy' },
+];
+---
+<dialog class="tp on-light" id={`${id}-tp`} aria-labelledby={`${id}-tp-title`} data-travellers>
+  <h2 class="sr-only" id={`${id}-tp-title`}>Cabin and travellers</h2>
+  <button type="button" class="tp__close" aria-label="Close without saving" data-tp-close><Icon name="close" width={15} height={16} /></button>
+  <div class="tp__rows">
+    {rows.map((r) => (
+      <div class="tp__row" role="group" aria-labelledby={`${id}-tp-${r.key}`} data-pax={r.key}>
+        <p class="tp__label"><span id={`${id}-tp-${r.key}`}>{r.label}</span><span class="tp__sub">{r.sub}</span></p>
+        <div class="tp__stepper">
+          <button type="button" class="tp__step tp__step--minus" data-delta="-1" aria-label={`Remove one ${r.one}`}></button>
+          <output class="tp__count" data-count>{r.key === 'adults' ? 1 : 0}</output>
+          <button type="button" class="tp__step tp__step--plus" data-delta="1" aria-label={`Add one ${r.one}`}></button>
+        </div>
+      </div>
+    ))}
+  </div>
+  <p class="sr-only" aria-live="polite" data-tp-live></p>
+  <p class="sr-only" id={`${id}-tp-rules`}>Up to 9 travellers. Each infant travels on an adult's lap, so there can be no more infants than adults.</p>
+  <fieldset class="tp__cabins" aria-describedby={`${id}-tp-rules`}>
+    <legend class="sr-only">Cabin</legend>
+    {cabins.map((c) => (
+      <label class="tp__cabin">
+        <input type="radio" class="tp__radio" name={`${id}-cabin`} value={c.value} checked={c.value === 'business'} />
+        <span>{c.label}</span>
+        <Icon name="check" class="tp__check" />
+      </label>
+    ))}
+  </fieldset>
+  <button type="button" class="tp__apply" data-tp-apply>Apply</button>
+</dialog>
+
+<style>
+  /* Geometry from "Traveller number pop up.svg" (394x478): 29px side padding, 48px row pitch, 44px cabin rows. */
+  .tp {
+    --tp-rule: color-mix(in srgb, var(--c-navy) 36%, transparent);
+    width: min(394px, calc(100vw - 2rem));
+    max-height: calc(100dvh - 1rem);
+    margin: auto;
+    padding: 56px 29px 23px;
+    border: 0;
+    border-radius: var(--r-7);
+    background: var(--c-sky);
+    color: var(--c-navy);
+    font-family: var(--ff-sans);
+    overflow: auto;
+    overscroll-behavior: contain;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+  .tp::backdrop { background: var(--c-overlay, rgba(0, 0, 0, 0.5)); }
+  @media (min-width: 48rem) {
+    .tp::backdrop { background: transparent; }
+  }
+  .tp__close {
+    position: absolute;
+    top: 6px;
+    right: 9px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--c-navy);
+  }
+  .tp__close:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); }
+
+  .tp__rows { display: grid; gap: 18px; }
+  .tp__row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .tp__label { display: grid; margin: 0; }
+  .tp__label > span:first-child { font-size: var(--fs-16); line-height: 18px; }
+  .tp__sub { margin-top: -1px; font-size: var(--fs-12); line-height: 13px; opacity: 0.86; }
+  .tp__stepper { display: grid; grid-template-columns: 20px 39px 20px; align-items: center; margin: -2px -1px 0 0; }
+  .tp__count { font-size: var(--fs-16); font-weight: var(--fw-semibold); line-height: 20px; text-align: center; }
+  .tp__step {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+  }
+  .tp__step::before { content: ''; position: absolute; inset: -12px; }       /* 44px touch target */
+  .tp__step::after { content: ''; position: absolute; left: 5px; top: 9px; width: 10px; height: 2px; background: currentColor; }
+  .tp__step--minus { background: var(--c-cream); color: var(--c-burgundy); }
+  .tp__step--plus { background: var(--c-burgundy); color: var(--c-cream); }
+  .tp__step--plus::after { top: 9.4px; height: 1.2px; }
+  .tp__step--plus { background-image: linear-gradient(currentColor, currentColor); background-size: 1.2px 10px; background-position: center; background-repeat: no-repeat; } /* vertical bar of the + */
+  .tp__step:hover:not(:disabled) { filter: brightness(0.94); }
+  .tp__step:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .tp__cabins {
+    margin: 32px 0 0;
+    padding: 13px 0 17px;
+    border: 0;
+    border-block: 1px solid var(--tp-rule);
+  }
+  .tp__cabin {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    font-size: var(--fs-16);
+    cursor: pointer;
+  }
+  .tp__radio { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .tp__cabin :global(.tp__check) { width: 11.7px; margin: 6px 0 0 19px; visibility: hidden; }
+  .tp__cabin:has(.tp__radio:checked) { font-weight: var(--fw-semibold); }
+  .tp__cabin:has(.tp__radio:checked) :global(.tp__check) { visibility: visible; }
+  .tp__cabin:hover span { text-decoration: underline; text-underline-offset: 3px; }
+  .tp__cabin:has(.tp__radio:focus-visible) { outline: 2px solid var(--c-navy); outline-offset: 2px; border-radius: 2px; }
+
+  .tp__apply {
+    display: block;
+    width: 100%;
+    height: 50px;
+    margin-top: 27px;
+    border: 0;
+    border-radius: var(--r-7);
+    background: var(--c-burgundy);
+    color: var(--c-cream);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-semibold);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .tp__apply:hover { background: var(--c-burgundy-hover); }
+</style>

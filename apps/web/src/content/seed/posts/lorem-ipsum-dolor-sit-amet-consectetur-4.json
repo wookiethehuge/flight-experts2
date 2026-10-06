@@ -1,0 +1,26 @@
+{
+  "title": "Lorem ipsum dolor sit amet consectetur.",
+  "slug": "lorem-ipsum-dolor-sit-amet-consectetur-4",
+  "excerpt": "Lorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim.",
+  "publishedAt": "2024-11-29T09:00:00.000Z",
+  "readTime": 7,
+  "heroImage": {
+    "file": "traveller-man-laptop.webp",
+    "alt": "Man working on a laptop beside an aircraft window"
+  },
+  "cardImage": null,
+  "author": "sarah-smith",
+  "content": "Lorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim. Diam quis id suspendisse vulputate a. At mi in aliquam integer accumsan donec sollicitudin. Dapibus cursus massa in orci nulla iaculis tincidunt aliquam. Nulla diam bibendum vivamus varius consequat morbi maecenas. In quis viverra malesuada mattis.\n\n## Lorem ipsum dolor sit amet consectetur.\n\nLorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim. Diam quis id suspendisse vulputate a. At mi in aliquam integer accumsan donec sollicitudin. Dapibus cursus massa in orci nulla iaculis tincidunt aliquam. Nulla diam bibendum vivamus varius consequat morbi maecenas. In quis viverra malesuada mattis.\n\nLorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim. Diam quis id suspendisse vulputate a. At mi in aliquam integer accumsan donec sollicitudin. Dapibus cursus massa in orci nulla iaculis tincidunt aliquam. Nulla diam bibendum vivamus varius consequat morbi maecenas. In quis viverra malesuada mattis.\n\n## Lorem ipsum dolor sit amet consectetur.\n\nLorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim. Diam quis id suspendisse vulputate a. At mi in aliquam integer accumsan donec sollicitudin. Dapibus cursus massa in orci nulla iaculis tincidunt aliquam. Nulla diam bibendum vivamus varius consequat morbi maecenas. In quis viverra malesuada mattis.\n\n- Lorem ipsum\n- Lorem ipsum\n- Lorem ipsum\n\nn justo bibendum dignissim. Diam quis id suspendisse vulputate a. At mi in aliquam integer accumsan donec sollicitudin. Dapibus cursus massa in orci nulla iaculis tincidunt aliquam. Nulla diam bibendum vivamus varius consequat morbi maecenas. In quis viverra malesuada mattis.\n\n## Lorem ipsum dolor sit amet consectetur.\n\nLorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim. Diam quis id suspendisse vulputate a. At mi in aliquam integer accumsan donec sollicitudin. Dapibus cursus massa in orci nulla iaculis tincidunt aliquam. Nulla diam bibendum vivamus varius consequat morbi maecenas. In quis viverra malesuada mattis.\n\nLorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim. Diam quis id suspendisse vulputate a. At mi in aliquam integer accumsan donec sollicitudin. Dapibus cursus massa in orci nulla iaculis tincidunt aliquam. Nulla diam bibendum vivamus varius consequat morbi maecenas. In quis viverra malesuada mattis.",
+  "art": {
+    "cardCrop": {
+      "x": 23.4,
+      "y": 12.5,
+      "w": 56
+    },
+    "heroPosition": "60% 35%"
+  },
+  "seo": {
+    "title": "Lorem ipsum dolor sit amet consectetur. | Flight Experts Blog",
+    "description": "Lorem ipsum dolor sit amet consectetur. Sed suspendisse sit in justo bibendum dignissim."
+  }
+}

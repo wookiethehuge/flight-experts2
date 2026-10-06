@@ -1,0 +1,185 @@
+---
+/**
+ * Floating actions.
+ *   < 64rem : 51px burgundy circles at the right edge in the upper middle of the viewport (BlogArticleMobile: x 331,
+ *             y 374 / 434 in a 390x844 viewport = right 8px, top 44.3% / +60px). Plane opens the booking modal
+ *             (open-booking event); chat opens the live chat (ChatWidget: Jivo when configured, otherwise a small
+ *             built-in panel with WhatsApp, call and the quote form).
+ *             Home page: per the Figma note "The sticky icon becomes smaller and turns into a plane icon as you
+ *             scroll", the circles stay hidden until the How it works badge ([data-sticky-anchor]) has scrolled out
+ *             of view upwards, then appear with a quick shrink + fade from the badge's size (220ms; no animation
+ *             with reduced motion). They hide again when the badge comes back. Other pages show them from load.
+ *             The home page's light-blue phone tab (Mobile artboard 353,1315) slides in from the right edge once the
+ *             hero form (#hero-form) has scrolled out of view; it sits low on the screen, clear of the circles.
+ *   >= 64rem: on inner pages the round "Get Flight Options" badge (117px) floats at the right (centred where the
+ *             designed 156px badge was: About/BlogCollection x 1247, y 419) and opens the booking modal. Not on the
+ *             home page (its badge lives in How it works).
+ * `plane` also controls the desktop badge (pass plane: false to hide both, e.g. on the thank-you page).
+ * The desktop badge fades out while the footer columns are on screen.
+ */
+import Icon from '../ui/Icon.astro';
+import FlightOptionsBadge from './FlightOptionsBadge.astro';
+import ChatWidget from './ChatWidget.astro';
+import type { SiteSettings } from '../../lib/types';
+
+interface Props { settings: SiteSettings; plane?: boolean; chat?: boolean; phoneTab?: boolean }
+const { settings, plane = true, chat = true, phoneTab = false } = Astro.props;
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
+const showBadge = plane && !isHome;
+---
+{(plane || chat || phoneTab || showBadge) && (
+  <aside class="sticky" data-sticky aria-label="Quick actions">
+    {phoneTab && (
+      <a class="sticky__tab" href={settings.phone.href} aria-label={`Call ${settings.phone.display}`} data-phone-tab>
+        <Icon name="phone" width={14} height={14} />
+      </a>
+    )}
+    {(plane || chat) && (
+      <div class:list={['sticky__circles', !plane && 'sticky__circles--chat-only']} data-circles data-await-anchor={isHome ? '' : undefined}>
+        {plane && (
+          <button type="button" class="sticky__btn" data-open-booking aria-haspopup="dialog" aria-label="Get flight options">
+            <Icon name="plane-up" width={26.4} height={25.2} />
+          </button>
+        )}
+        {chat && <ChatWidget settings={settings} />}
+      </div>
+    )}
+    {showBadge && <FlightOptionsBadge class="sticky__badge" />}
+  </aside>
+)}
+
+<style>
+  .sticky {
+    --edge-r: max(0.5rem, env(safe-area-inset-right));            /* x 331 + 51 = 382 in a 390 frame: 8px from the edge */
+    --circles-top: 44.3%;                                           /* y 374 of 844 */
+  }
+
+  .sticky__circles {
+    position: fixed;
+    z-index: 40;
+    top: var(--circles-top);
+    right: var(--edge-r);
+    display: grid;
+    gap: 9px;                                                       /* 434 - 374 - 51 */
+    pointer-events: none;                                           /* only the buttons take clicks */
+    transform-origin: 100% 0;
+  }
+  .sticky__circles > :global(*) { pointer-events: auto; }
+  .sticky__circles--chat-only { padding-top: 60px; }                /* chat keeps its own slot (y 434) */
+  .sticky__btn, .sticky__circles :global(.sticky__btn) {
+    display: grid;
+    place-items: center;
+    width: 51px;
+    height: 51px;
+    padding: 0;
+    border: 1px solid var(--c-sky);
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    box-shadow: var(--sh-float);
+    color: var(--c-sky);
+    text-decoration: none;
+    transition: background-color var(--dur) var(--ease);
+  }
+  .sticky__btn:hover { background: var(--c-burgundy-hover); }
+
+  /* home: hidden until the How it works badge has scrolled away, then shrink + fade in from the badge's size (75px) */
+  :global(html.js) .sticky__circles[data-await-anchor] {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.47);
+    transition: opacity 220ms var(--ease), transform 220ms var(--ease), visibility 0s linear 220ms;
+  }
+  :global(html.js) .sticky__circles[data-await-anchor][data-shown] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 220ms var(--ease), transform 220ms var(--ease), visibility 0s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .sticky__circles[data-await-anchor], :global(html.js) .sticky__circles[data-await-anchor][data-shown] { transform: none; transition: none; }
+  }
+
+  /* phone tab: 100 x 31 pill clipped by the viewport edge -> 37px visible. Low on the screen, and never above the
+     circles' bottom edge + 16px on short viewports */
+  .sticky__tab {
+    position: fixed;
+    z-index: 40;
+    right: 0;
+    bottom: max(calc(0.5rem + env(safe-area-inset-bottom)), min(calc(143px + env(safe-area-inset-bottom)), calc(55.7vh - 158px)));
+    display: flex;
+    align-items: center;
+    width: calc(37px + env(safe-area-inset-right));
+    height: 31px;
+    padding-left: 12px;
+    border-radius: 15.5px 0 0 15.5px;
+    background: var(--c-sky);
+    box-shadow: var(--sh-tab);
+    color: var(--c-navy);
+    clip-path: inset(-10px -10px -10px 100%);      /* slides in from the right edge without leaving the viewport */
+    visibility: hidden;
+    transition: clip-path calc(var(--dur) * 1.5) var(--ease), visibility 0s linear calc(var(--dur) * 1.5);
+  }
+  .sticky__tab::before { content: ''; position: absolute; inset: -7px 0 -7px -8px; }   /* 44px tall hit area */
+  .sticky__tab[data-shown] { clip-path: inset(-10px -10px -10px -10px); visibility: visible; transition: clip-path calc(var(--dur) * 1.5) var(--ease), visibility 0s; }
+  .sticky__tab:focus-visible { outline-color: var(--c-navy); }
+
+  .sticky :global(.sticky__badge) { display: none; }
+
+  @media (min-width: 64rem) {
+    .sticky__circles, .sticky__tab { display: none; }
+    .sticky :global(.sticky__badge) {
+      display: block;
+      position: fixed;
+      z-index: 40;
+      /* the 117px badge centred where the designed 156px badge was (box y 419, x 1247 at 1440) */
+      top: min(27.4063rem, calc(100vh - 9.7813rem));
+      right: calc(max(0px, (100vw - var(--page-max)) / 2) + 3.5313rem);
+      transition: opacity var(--dur) var(--ease), visibility 0s linear 0s;
+    }
+    /* step aside while the footer columns are on screen (the badge would sit over "We accept") */
+    .sticky[data-away] :global(.sticky__badge) { opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur); }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-sticky]');
+  if (root && 'IntersectionObserver' in window) {
+    // phone tab: appear once the hero booking form is out of view
+    const tab = root.querySelector<HTMLElement>('[data-phone-tab]');
+    if (tab) {
+      const hero = document.getElementById('hero-form');
+      if (!hero) tab.setAttribute('data-shown', '');
+      else new IntersectionObserver(([e]) => tab.toggleAttribute('data-shown', !e.isIntersecting && e.boundingClientRect.bottom < 0)).observe(hero);
+    }
+    // home: circles appear once the How it works badge has scrolled out of view upwards
+    const circles = root.querySelector<HTMLElement>('[data-await-anchor]');
+    if (circles) {
+      const anchor = document.querySelector('[data-sticky-anchor]');
+      if (!anchor) circles.setAttribute('data-shown', '');
+      else new IntersectionObserver(([e]) => {
+        const shown = !e.isIntersecting && e.boundingClientRect.bottom < 0;
+        circles.toggleAttribute('data-shown', shown);
+        if (!shown) document.dispatchEvent(new CustomEvent('chat:close'));
+      }).observe(anchor);
+    }
+    // desktop badge steps aside while the footer columns are on screen, and below 1280px also while an element marked
+    // [data-badge-avoid] is (the blog article's sticky sidebar CTA, which the badge would cover in the narrower column)
+    const foot = document.querySelector('.sf__cols');
+    const narrow = matchMedia('(max-width: 79.99rem)');
+    const seen = new Set<Element>();
+    const forms = new Set(document.querySelectorAll('main form'));
+    const update = () => root.toggleAttribute('data-away', [...seen].some((el) => el === foot || forms.has(el) || narrow.matches));
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) e.isIntersecting ? seen.add(e.target) : seen.delete(e.target);
+      update();
+    });
+    if (foot) io.observe(foot);
+    // never cover an on-page form (contact form, hero quote form)
+    forms.forEach((el) => io.observe(el));
+    document.querySelectorAll('[data-badge-avoid]').forEach((el) => io.observe(el));
+    narrow.addEventListener('change', update);
+  } else {
+    root?.querySelector('[data-phone-tab]')?.setAttribute('data-shown', '');
+    root?.querySelector('[data-await-anchor]')?.setAttribute('data-shown', '');
+  }
+</script>

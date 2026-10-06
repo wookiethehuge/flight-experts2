@@ -1,0 +1,25 @@
+---
+/**
+ * H1 for text-style pages (Text page, Blog index), placed right after <Breadcrumbs/>.
+ * IBM Plex Serif 32/40 (mobile) -> 40/52 (desktop); text top at 143 (mobile) / 226 (desktop) in the frames.
+ * Mobile frames use a 24px left edge (gutter 20 + 4).
+ */
+import { inline } from '../../lib/inline';
+interface Props { text: string; class?: string }
+const { text, class: cls } = Astro.props;
+---
+<div class:list={['container', 'page-heading-wrap', cls]}><h1 class="page-heading" set:html={inline(text)} /></div>
+<style>
+  .page-heading-wrap {
+    margin-top: clamp(2.5525rem, calc(2.5525rem + 63.8 * (100vw - 24.375rem) / 1050), 6.54rem);
+    padding-inline-start: calc(var(--gutter) + clamp(0rem, calc(0.25rem - 4 * (100vw - 24.375rem) / 1050), 0.25rem));
+  }
+  .page-heading {
+    font-family: var(--ff-serif);
+    font-weight: 400;
+    font-size: var(--fs-h1-page);
+    line-height: clamp(2.5rem, calc(2.5rem + 12 * (100vw - 24.375rem) / 1050), 3.25rem);
+    letter-spacing: -0.03em;
+    color: var(--c-navy);
+  }
+</style>

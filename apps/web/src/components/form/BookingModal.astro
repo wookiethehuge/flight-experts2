@@ -1,0 +1,127 @@
+---
+/**
+ * Booking modal ("Booking form popup" screenshot + MobileBooking artboard): the quote form over a 50% black scrim with
+ * a 45px burgundy close button (1px light-blue ring, light-blue X) centred on the panel's top-right corner.
+ * Rendered once per page by BaseLayout. Native <dialog> + showModal(): focus is trapped, Esc closes, the page is inert.
+ *
+ * Opens on:
+ *   - document.dispatchEvent(new CustomEvent('open-booking'))
+ *   - a click on any [data-open-booking] element or a link whose href ends in "#get-flight-options"
+ *   - page load with location.hash === '#get-flight-options'
+ * Closes on the X, Esc or a click on the scrim; focus returns to the opener and page scroll is locked while open.
+ * Dispatches `booking:open` / `booking:close` on document.
+ */
+import Icon from '../ui/Icon.astro';
+import QuoteForm from './QuoteForm.astro';
+import type { SiteSettings } from '../../lib/types';
+interface Props { settings: SiteSettings }
+const { settings } = Astro.props;
+---
+<dialog class="bm" id="booking-modal" aria-label="Get your flight options" data-booking-modal>
+  <div class="bm__wrap" data-bm-wrap>
+    <div class="bm__panel">
+      <QuoteForm settings={settings} id="booking-form" variant="modal" />
+      <button type="button" class="bm__close" aria-label="Close booking form" data-bm-close><Icon name="close" width={16} height={17} /></button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-booking-modal]');
+  if (dialog) {
+    let opener: HTMLElement | null = null;
+    const HASH = '#get-flight-options';
+
+    const open = (e?: Event) => {
+      if (dialog.open) return;
+      // the menu passes its hamburger button as the trigger (the menu link itself is hidden once the menu closes)
+      const trigger = (e as CustomEvent | undefined)?.detail?.trigger;
+      opener = trigger instanceof HTMLElement ? trigger : document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      document.documentElement.classList.add('bm-lock');
+      dialog.showModal();
+      dialog.scrollTop = 0;
+      document.dispatchEvent(new CustomEvent('booking:open'));
+    };
+    const close = () => { if (dialog.open) dialog.close(); };
+
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('bm-lock');
+      if (location.hash === HASH) history.replaceState(history.state, '', location.pathname + location.search);
+      opener?.focus({ preventScroll: true });
+      opener = null;
+      document.dispatchEvent(new CustomEvent('booking:close'));
+    });
+    dialog.querySelector('[data-bm-close]')!.addEventListener('click', close);
+    // scrim: clicks that land on the dialog itself or the layout wrapper, not on the panel
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog || (e.target as HTMLElement).hasAttribute('data-bm-wrap')) close();
+    });
+
+    document.addEventListener('open-booking', open);
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-open-booking], a[href$="#get-flight-options"]');
+      if (!t || dialog.contains(t)) return;
+      e.preventDefault();       // the modal exists on every page, so "/#get-flight-options" links open it in place
+      open();
+    });
+    if (location.hash === HASH) open();
+    addEventListener('hashchange', () => { if (location.hash === HASH) open(); });
+  }
+</script>
+
+<style>
+  .bm {
+    --bm-close-r: clamp(-1.05rem, calc(-0.6562rem + -6.3 * (100vw - 24.375rem) / 1050), -0.6562rem);   /* -10.5 -> -16.8 */
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--c-cream);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .bm::backdrop { background: var(--c-overlay, rgba(0, 0, 0, 0.5)); }
+  .bm__wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100%;
+    padding: 101px 15px 1.5rem;          /* MobileBooking: panel at 15,101 in a 390x784 viewport */
+  }
+  .bm__panel {
+    position: relative;
+    width: min(100%, clamp(22.5rem, calc(22.5rem + 114 * (100vw - 24.375rem) / 1050), 29.625rem));  /* = form width */
+  }
+  .bm__close {
+    position: absolute;
+    top: -22.5px;
+    right: var(--bm-close-r);
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border: 1px solid var(--c-sky);
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    color: var(--c-sky);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .bm__close:hover { background: var(--c-burgundy-hover); }
+  @media (min-width: 48rem) {
+    .bm__wrap { align-items: center; padding-block: 3.5rem; }
+  }
+  @media (min-width: 64rem) {
+    /* desktop: the panel sits where the hero form sits, right-aligned in the 1440 container */
+    .bm__wrap { justify-content: flex-end; max-width: var(--page-max); margin-inline: auto; padding-inline: var(--gutter); }
+  }
+  :global(html.bm-lock) { overflow: hidden; }
+</style>

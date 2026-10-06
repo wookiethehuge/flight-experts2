@@ -1,0 +1,118 @@
+{
+  "phone": {
+    "display": "(888) 855-2389",
+    "href": "tel:+18888552389"
+  },
+  "salesPhone": {
+    "display": "(888) 855-2389",
+    "href": "tel:+18888552389"
+  },
+  "supportPhone": {
+    "display": "(888) 855-2389",
+    "href": "tel:+18888552389"
+  },
+  "phoneFull": "+1 (888) 855-2389",
+  "email": "cs@flight-experts.com",
+  "enquiriesEmail": "experts@flight-experts.com",
+  "salesEmail": "experts@flight-experts.com",
+  "supportEmail": "cs@flight-experts.com",
+  "address": "1150 Airport Rd, Unit 159, Destin, FL 32541",
+  "whatsappUrl": "https://wa.me/18888552389",
+  "socials": {
+    "facebook": "",
+    "linkedin": "",
+    "instagram": ""
+  },
+  "headerPhoneLabel": "24/7 PHONE DEALS",
+  "callPill": {
+    "title": "CALL US: (888) 855-2389",
+    "subtitle": "Phone-exclusive savings"
+  },
+  "trustpilot": {
+    "rating": "4.9/5.0",
+    "url": "https://www.trustpilot.com/review/flight-experts.com"
+  },
+  "accreditations": [
+    {
+      "name": "ASTA",
+      "logo": {
+        "file": "accreditation-asta.webp",
+        "alt": "ASTA, American Society of Travel Advisors"
+      }
+    },
+    {
+      "name": "IATA",
+      "logo": {
+        "file": "accreditation-iata.webp",
+        "alt": "IATA accredited agent"
+      }
+    },
+    {
+      "name": "IATAN",
+      "logo": {
+        "file": "accreditation-iatan.webp",
+        "alt": "IATAN endorsed"
+      }
+    },
+    {
+      "name": "FDACS",
+      "logo": {
+        "file": "accreditation-fdacs.webp",
+        "alt": "Florida Department of Agriculture and Consumer Services, registered seller of travel"
+      }
+    }
+  ],
+  "paymentMethods": {
+    "file": "payment-methods.webp",
+    "alt": "Visa, American Express, Mastercard, Discover, Affirm and Klarna"
+  },
+  "footerVision": "Our vision is to create a world where everyone has access to the resources and support they need to thrive.",
+  "copyright": "© 2026 All rights reserved. Flight Experts LLC",
+  "disclaimers": [
+    "*The prices shown are in U.S. dollars and are per person based on weekday travel (Monday-Thursday) from the United States including all taxes and fees. The fares will vary based on class of travel, availability, airline and city of departure. FLIGHT EXPERTS will not identify all travel partners or details to not compete with retail sales of our partners. Savings up to 60% off are based on un-restricted fares of major airlines and can vary depending on the fare rules. All fares are non-refundable and cannot be exchanged or transferred. Please call us directly to check the most current prices and availability. Other restrictions may apply. All fares are subject to change until ticketed.",
+    "*Payment options through Affirm are subject to an eligibility check and are provided by these lending partners: Affirm's lending partners."
+  ],
+  "menuContacts": [
+    {
+      "label": "24/7 phone deals",
+      "value": "(888) 855-2389",
+      "href": "tel:+18888552389"
+    },
+    {
+      "label": "Customer support",
+      "value": "(888) 855-2389",
+      "href": "tel:+18888552389"
+    },
+    {
+      "label": "Email",
+      "value": "cs@flight-experts.com",
+      "href": "mailto:cs@flight-experts.com"
+    }
+  ],
+  "blogCta": {
+    "heading": "Planning a **business-class trip?**",
+    "body": "Share your route and dates and let a flight expert compare your options.",
+    "primaryLabel": "Get My Flight Options",
+    "secondaryLabel": "Call (888) 855-2389"
+  },
+  "consentNote": "By submitting, you agree to be contacted about your trip by phone, text or email. Your privacy is protected. [Privacy Policy](/privacy-policy/) · [Terms](/terms-and-conditions/)",
+  "chat": {
+    "provider": "none",
+    "jivoWidgetId": "",
+    "businessHours": {
+      "timezone": "America/Chicago",
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ],
+      "open": "00:00",
+      "close": "23:59"
+    },
+    "note": "Message a flight expert on WhatsApp, call us 24/7, or send your route for tailored options."
+  }
+}

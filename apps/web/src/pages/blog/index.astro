@@ -1,0 +1,7 @@
+---
+/** Blog index, page 1 (pages 2+ are /blog/page/[page]/). Heading and SEO come from the 'blog' page document. */
+import BlogListing from '../../components/blog/BlogListing.astro';
+import { getPosts } from '../../lib/cms';
+const posts = await getPosts();
+---
+<BlogListing posts={posts} page={1} />

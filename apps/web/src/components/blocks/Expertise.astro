@@ -1,0 +1,154 @@
+---
+/**
+ * "The Scope of Our Expertise": navy section, champagne-cabin photo under a navy fade, faint logo-mark watermark and a
+ * numbered list (2 columns on mobile, 3 from 64rem).
+ * Artboards: About (section 1440x625: photo box 962 wide on the right, 53deg fade; H2 48/62 centred; numbers 40/52;
+ * items 16/24) and AboutMobile (390x811: photo 390x462 on top, vertical fade; H2 32/33; numbers 32/42; items 14/21).
+ * The watermark is the Flight Experts logo mark vector from the artboards (#c7e8ff at 5%).
+ */
+import type { ExpertiseBlock, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+import Img from '../ui/Img.astro';
+
+interface Props { block: ExpertiseBlock; settings: SiteSettings; page: string; index: number }
+const { block, index } = Astro.props;
+const id = `expertise-${index}`;
+---
+<section class="expertise" aria-labelledby={id}>
+  <div class="expertise__media">
+    <Img media={block.image} class="expertise__img" sizes="(min-width: 64rem) 67vw, (min-width: 48rem) 100vw, 183vw" widths={[480, 720, 960, 1052]} />
+  </div>
+  <svg class="expertise__mark" viewBox="0 0 1349 1219.63" aria-hidden="true" focusable="false"><path d="M1132.04 427.45C1096.87 416.09 1058.71 406.31 1018.65 398.27C1028.9 361.84 1037 326.57 1042.57 293.13C1072.38 118.28 1028.8 51.05 984.9 25.81L985.01 25.6L980.9 23.5L976.91 21.4L976.8 21.5C931.07 0 851 2.63 724.57 127.17C672.74 178.32 620.48 242.45 569.39 318L564.29 325.51L573.38 325.04C600.14 323.78 627.69 323.04 655.08 322.78L657.44 322.78L658.81 320.89C698.34 266.21 738.14 219.01 777.2 180.58C864.83 94.21 923.13 77.7 946.31 89.84C969.6 101.99 989.47 159.18 968.76 280.57C962.87 314.58 954.36 351.01 943.47 388.81L943.32 389.54C859.26 376.93 767.21 370.3 672.21 370.3C499.63 370.3 336.76 392.17 213.75 431.76C37.11 488.8 0 563.08 0 615.39C0 667.69 37.06 742.08 213.75 799.01C336.76 838.7 499.63 860.57 672.21 860.57C688.25 860.57 704.28 860.41 720.16 859.94C670.48 934.8 617.65 1000.62 567.23 1050.3C479.6 1136.62 421.3 1153.07 398.01 1141.03C374.72 1128.78 354.95 1071.48 375.61 950.31C378.61 932.65 382.5 913.72 387.6 892.32L388.7 887.59L383.92 886.86C362.52 883.49 340.76 879.6 319.31 875.24L315.05 874.35L313.95 878.6C309.32 898.16 305.27 918.03 301.91 937.8C271.16 1118.01 318.42 1183.88 363.57 1207.38C379.24 1215.52 396.59 1219.63 415.04 1219.63C472.87 1219.63 541.73 1180.57 619.91 1103.71C683.1 1041.47 748.54 957.41 809.16 860.41C930.7 852.06 1042.31 832.34 1132.1 803.43C1311.41 745.6 1349 669.27 1349 615.44C1349 561.61 1311.36 485.38 1132.1 427.45M775.41 771.52C774.99 772.31 774.51 773.15 774.04 773.94C740.76 775.72 706.8 776.67 672.27 776.67C508.19 776.67 354.48 756.27 239.56 719.21C124.8 682.2 84.11 640.15 84.11 615.44C84.11 590.73 124.8 548.73 239.56 511.72C354.48 474.66 508.19 454.26 672.27 454.26C758.01 454.26 840.96 459.78 916.98 470.5C891.11 542.68 858.26 617.17 819.25 692.14C804.48 720.21 789.81 746.86 775.36 771.52M1103.6 714.85C1036.26 736.61 956.56 752.49 866.72 762C872.45 751.59 878.5 740.13 885.49 726.73C927.7 645.77 962.98 565.39 990.47 487.43L990.58 487.43C1031.48 495.42 1069.38 505.04 1103.6 516.08C1223.78 554.77 1255.9 596.72 1255.9 615.44C1255.9 634.15 1223.83 676.16 1103.6 714.85ZM455.68 514.61L453.31 514.87L452.21 517.08C421.3 577.27 393.91 638.1 370.88 697.66L368.99 702.76L374.35 703.76C395.8 707.75 418.3 711.38 441.07 714.48L444.59 714.9L445.85 711.64C468.4 654.6 495.16 596.41 525.23 538.9C529.65 530.38 534.11 521.92 538.64 513.61L542.53 506.3L534.27 506.93C507.46 508.93 480.97 511.56 455.58 514.71Z" /></svg>
+  <div class="expertise__inner">
+    <h2 class="expertise__title" id={id} set:html={inline(block.heading)} />
+    <ol class="expertise__list" role="list">
+      {block.items.map((item, i) => (
+        <li class="expertise__item" data-reveal style={`--i: ${i}`}>
+          <span class="expertise__num" aria-hidden="true">{i + 1}</span>
+          <h3 class="expertise__item-title">{item.title}</h3>
+          <p>{item.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .expertise {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--c-navy);
+    color: var(--c-sky);
+  }
+
+  /* ---- photo + fade ---- */
+  .expertise__media {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 28.875rem;                   /* 462 */
+    overflow: hidden;
+    z-index: -2;
+  }
+  .expertise__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 21, 36, 0.568) 0%, var(--c-navy) 100%);
+  }
+  /* 390 frame: the photo is zoomed past "cover" (710.65px wide, offset -137.35 / -253.08 in a 390x462 box) */
+  .expertise__media :global(.expertise__img) {
+    position: absolute;
+    left: -35.22%;
+    top: -54.78%;
+    width: 182.22%;
+    max-width: none;
+    height: auto;
+  }
+
+  /* ---- logo-mark watermark ---- */
+  .expertise__mark {
+    position: absolute;
+    left: -16.1875rem;                   /* -259 */
+    top: 30.8613rem;                     /* 493.78 */
+    width: 39.0988rem;                   /* 625.58 */
+    height: auto;
+    z-index: -1;
+    fill: var(--c-sky);
+    fill-opacity: 0.05;
+    pointer-events: none;
+  }
+
+  /* ---- content ---- */
+  .expertise__inner {
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-top: clamp(3.7188rem, calc(3.7188rem + 40.5 * (100vw - 24.375rem) / 1050), 6.25rem);     /* 59.5 -> 100 */
+    padding-bottom: clamp(3.0625rem, calc(3.0625rem + 26 * (100vw - 24.375rem) / 1050), 4.6875rem);  /* 49 -> 75 */
+    padding-left: clamp(1.5625rem, calc(1.5625rem + 45 * (100vw - 24.375rem) / 1050), 4.375rem);     /* 25 -> 70 */
+    padding-right: clamp(0.75rem, calc(0.75rem + 50 * (100vw - 24.375rem) / 1050), 3.875rem);        /* 12 -> 62 */
+  }
+  .expertise__title {
+    max-width: 15rem;                    /* 390: "The Scope of / Our Expertise" */
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-h2);                                                                        /* 32 -> 48 */
+    line-height: clamp(2.0625rem, calc(2.0625rem + 29 * (100vw - 24.375rem) / 1050), 3.875rem);   /* 33 -> 62 */
+    color: var(--c-sky);
+  }
+  .expertise__title :global(em) { font-style: italic; font-weight: var(--fw-light); }
+
+  .expertise__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.8125rem;                                                                          /* 13 */
+    row-gap: clamp(1.3125rem, calc(1.3125rem + 20 * (100vw - 24.375rem) / 1050), 2.5625rem);        /* 21 -> 41 */
+    margin: clamp(2.2813rem, calc(2.2813rem + 8.5 * (100vw - 24.375rem) / 1050), 2.8125rem) 0 0;  /* 36.5 -> 45 */
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-body);                                                                      /* 14 -> 16 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 3 * (100vw - 24.375rem) / 1050), 1.5rem);       /* 21 -> 24 */
+  }
+  .expertise__num {
+    display: block;
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: clamp(2rem, calc(2rem + 8 * (100vw - 24.375rem) / 1050), 2.5rem);                   /* 32 -> 40 */
+    line-height: clamp(2.625rem, calc(2.625rem + 10 * (100vw - 24.375rem) / 1050), 3.25rem);       /* 42 -> 52 */
+  }
+  .expertise__item { max-width: 10.125rem; }   /* 390 frame: text wraps at ~162px inside the 170px columns */
+  .expertise__item-title {
+    margin-top: clamp(-0.1875rem, calc(-0.1875rem + 6 * (100vw - 24.375rem) / 1050), 0.1875rem);  /* -3 -> 3 */
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: var(--fw-semibold);
+  }
+
+  @media (min-width: 30rem) {
+    .expertise__item { max-width: none; }
+  }
+
+  @media (min-width: 48rem) {
+    .expertise__media :global(.expertise__img) {
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 46%;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    /* 1440 frame: photo box 962 wide on the right edge, full section height, 53deg fade */
+    .expertise__media { inset: 0 0 0 auto; width: 66.81%; height: auto; }
+    .expertise__media::after { background: linear-gradient(53deg, var(--c-navy) 25.4%, rgba(15, 21, 36, 0.447) 100%); }
+    .expertise__mark { left: -27.5rem; top: 0.4213rem; width: 84.3125rem; }  /* -440, 6.74, 1349 */
+    .expertise__title { max-width: none; margin-right: 0.5rem; text-align: center; }  /* centre on the 1300 content box */
+    .expertise__title :global(em) { font-weight: var(--fw-regular); }
+    .expertise__list {
+      grid-template-columns: repeat(3, minmax(0, 20.375rem));   /* 326: every item wraps as in the 1440 frame */
+      justify-content: space-between;
+      column-gap: 2rem;
+    }
+  }
+</style>

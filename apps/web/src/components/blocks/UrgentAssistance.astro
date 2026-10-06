@@ -1,0 +1,183 @@
+---
+/**
+ * UrgentAssistance block: dark photo band with a heading, a line of text and translucent white contact cards.
+ *
+ * Block shape (UrgentAssistanceBlock in lib/types.ts):
+ *   heading      Inline  "*Urgent* Assistance" (*italic*)
+ *   body         string
+ *   image        Media   desktop/tablet (>= 768px) band photo, 1440x563, dark vignette on the left baked in
+ *   mobileImage? Media   phone crop (< 768px): shown in a 390:277 strip at the top of the band under navy gradients
+ *   cards[]      ContactCard { icon: 'phone' | 'email' | 'whatsapp', title, body (Inline, links allowed), linkLabel, linkUrl }
+ *
+ * Values: ThankYou (1440: band 563 tall, cards 421 x 295, 18px apart) and ThankYouMobile (390: stacked cards 12px apart).
+ */
+import type { UrgentAssistanceBlock, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+import Img from '../ui/Img.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props { block: UrgentAssistanceBlock; settings: SiteSettings; page: string; index: number }
+const { block } = Astro.props;
+const hid = `urgent-h-${Astro.props.index}`;
+---
+<section class:list={['urgent', block.mobileImage && 'has-mobile']} aria-labelledby={hid}>
+  <div class="urgent__media" aria-hidden="true">
+    <Img media={block.image} sizes="100vw" widths={[768, 1024, 1440, 1920, 2880]} class="urgent__img urgent__img--d" decorative />
+    {block.mobileImage && (
+      <div class="urgent__crop">
+        <Img media={block.mobileImage} sizes="187vw" widths={[480, 730, 960, 1460, 2311]} class="urgent__img urgent__img--m" decorative />
+      </div>
+    )}
+  </div>
+  <div class="container urgent__inner">
+    <h2 id={hid} class="urgent__title" set:html={inline(block.heading)} />
+    {block.body && <p class="urgent__body">{block.body}</p>}
+    {block.cards?.length > 0 && (
+      <ul class="urgent__cards" role="list">
+        {block.cards.map((c, i) => (
+          <li class="ucard on-light lift" data-reveal style={`--i: ${i}`}>
+            <div class:list={['ucard__icon', `ucard__icon--${c.icon}`]}><Icon name={c.icon} /></div>
+            <h3 class="ucard__title">{c.title}</h3>
+            <p class="ucard__body" set:html={inline(c.body)} />
+            <a class="ucard__link" href={c.linkUrl} {...(/^https?:/.test(c.linkUrl) ? { target: '_blank', rel: 'noopener' } : {})}>
+              {c.linkLabel}<Icon name="chevron-right-6" class="ucard__chev" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+  .urgent {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--c-navy);
+    color: var(--c-cream);
+    padding-block: clamp(3.0938rem, calc(3.0938rem + 15.5 * (100vw - 24.375rem) / 1050), 4.0625rem) /* 49.5 -> 65 */
+      clamp(3.1875rem, calc(3.1875rem + 13 * (100vw - 24.375rem) / 1050), 4rem);                     /* 51 -> 64 */
+  }
+  .urgent__media { position: absolute; inset: 0; z-index: -1; }
+  .urgent__media :global(.urgent__img--d) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% center; }
+  .urgent__media :global(.urgent__img--m) { display: none; }
+
+  /* phones: Figma crop (-252.62, -184.9) 729.29 x 486.14 in a 390 x 277 strip, navy gradients over it */
+  @media (max-width: 47.99rem) {
+    .has-mobile .urgent__media :global(.urgent__img--d) { display: none; }
+    .urgent__crop { position: absolute; inset: 0 0 auto; aspect-ratio: 390 / 277; overflow: hidden; }
+    .urgent__crop::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, transparent 80.9%, var(--c-navy) 100%),
+        linear-gradient(90deg, color-mix(in srgb, var(--c-navy) 93%, transparent) 0%, color-mix(in srgb, var(--c-navy) 6%, transparent) 100%);
+    }
+    .urgent__media :global(.urgent__img--m) {
+      display: block;
+      position: absolute;
+      left: -64.77%;
+      top: 0;
+      width: 187%;
+      max-width: none;
+      height: auto;
+      transform: translateY(-38.03%);
+    }
+  }
+
+  .urgent__title {
+    max-width: 11rem;                                                                               /* "Urgent / Assistance" on phones */
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-h2);                                                                        /* 32 -> 48 */
+    line-height: clamp(2.0625rem, calc(2.0625rem + 29 * (100vw - 24.375rem) / 1050), 3.875rem);     /* 33 -> 62 */
+    color: var(--c-cream);
+  }
+  .urgent__title :global(em) { font-style: italic; }
+  .urgent__body {
+    max-width: 16.25rem;
+    margin-top: clamp(0.8125rem, calc(0.8125rem + 7 * (100vw - 24.375rem) / 1050), 1.25rem);        /* 13 -> 20 */
+    font-size: var(--fs-body);                                                                      /* 14 -> 16 */
+    line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);            /* 20 -> 24 */
+  }
+
+  .urgent__cards {
+    display: grid;
+    gap: clamp(0.75rem, calc(0.75rem + 6 * (100vw - 24.375rem) / 1050), 1.125rem);                   /* 12 -> 18 */
+    margin: clamp(1.5625rem, calc(1.5625rem + 8 * (100vw - 24.375rem) / 1050), 2.0625rem) 0 0;       /* 25 -> 33 */
+    padding: 0;
+    list-style: none;
+  }
+  .ucard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(1.8125rem, calc(1.8125rem + 10 * (100vw - 24.375rem) / 1050), 2.4375rem)         /* 29 -> 39 */
+      clamp(1.25rem, calc(1.25rem + 10 * (100vw - 24.375rem) / 1050), 1.875rem)
+      clamp(1.75rem, calc(1.75rem + 14 * (100vw - 24.375rem) / 1050), 2.625rem)                     /* 28 -> 42 */
+      clamp(2.0625rem, calc(2.0625rem + 3 * (100vw - 24.375rem) / 1050), 2.25rem);                  /* 33 -> 36 */
+    border: 1px solid var(--c-border-soft);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--c-white) 82%, transparent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    color: var(--c-black);
+  }
+  .ucard__icon {
+    display: flex;
+    align-items: center;
+    height: clamp(2.125rem, calc(2.125rem + 5 * (100vw - 24.375rem) / 1050), 2.4375rem);            /* 34 -> 39 */
+  }
+  .ucard__icon :global(svg) { width: auto; height: 100%; }
+  .ucard__icon--phone :global(svg) {
+    width: clamp(2rem, calc(2rem + 4 * (100vw - 24.375rem) / 1050), 2.25rem);                       /* 32 -> 36 */
+    height: auto;
+    margin-left: clamp(0.3125rem, calc(0.3125rem + 1 * (100vw - 24.375rem) / 1050), 0.375rem);      /* 5 -> 6 */
+  }
+  .ucard__icon--email :global(svg) { width: clamp(2.4063rem, calc(2.4063rem + 6.5 * (100vw - 24.375rem) / 1050), 2.8125rem); height: auto; } /* 38.5 -> 45 */
+  .ucard__icon--whatsapp :global(svg) { width: clamp(2.5rem, calc(2.5rem + 8 * (100vw - 24.375rem) / 1050), 3rem); height: auto; }
+  .ucard__title {
+    margin-top: 1.75rem;                                                                            /* 28 */
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                  /* 16 -> 18 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 3 * (100vw - 24.375rem) / 1050), 1.5rem);        /* 21 -> 24 */
+    font-weight: var(--fw-semibold);
+  }
+  .ucard__body {
+    max-width: 17.5rem;                                                                             /* wraps as the 390 frame (Figma box 300) */
+    margin: 0.5625rem 0 clamp(1.375rem, calc(1.4375rem + -1 * (100vw - 24.375rem) / 1050), 1.4375rem); /* 9 ; 23 -> 22 */
+    font-size: var(--fs-body);                                                                      /* 14 -> 16 */
+    line-height: clamp(1.1875rem, calc(1.1875rem + 3 * (100vw - 24.375rem) / 1050), 1.375rem);      /* 19 -> 22 */
+  }
+  .ucard__body :global(a) { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .ucard__body :global(a[href^='tel:']) { white-space: nowrap; }
+  .ucard__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8125rem;                                                                                 /* 13 */
+    margin-top: auto;
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                  /* 16 -> 18 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 3 * (100vw - 24.375rem) / 1050), 1.5rem);        /* 21 -> 24 */
+    font-weight: var(--fw-medium);
+    color: var(--c-burgundy);
+    text-decoration: none;
+  }
+  .ucard__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .ucard__link :global(.ucard__chev) {
+    flex: none;
+    width: 6px;
+    height: 10px;
+    translate: 0 clamp(0rem, calc(3 * (100vw - 24.375rem) / 1050), 0.1875rem);                   /* sits 3px low on desktop */
+    transition: transform var(--dur) var(--ease);
+  }
+  .ucard__link:hover :global(.ucard__chev) { transform: translateX(3px); }
+
+  @media (min-width: 48rem) {
+    .urgent__title, .urgent__body { max-width: 53.75rem; }                                          /* 860 */
+    .urgent__cards { grid-template-columns: repeat(2, minmax(0, 26.3125rem)); }                     /* 421 */
+    .ucard__body { max-width: none; }
+  }
+  @media (min-width: 64rem) {
+    .ucard { border-radius: var(--r-7); box-shadow: var(--sh-card); color: var(--c-navy); }
+  }
+</style>

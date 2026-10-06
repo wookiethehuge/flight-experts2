@@ -1,0 +1,35 @@
+---
+/** Renders a page's layout blocks in order. Each block component receives { block, settings }. */
+import type { PageBlock, SiteSettings } from '../../lib/types';
+import HomeHero from './HomeHero.astro';
+import Benefits from './Benefits.astro';
+import HowItWorks from './HowItWorks.astro';
+import Reviews from './Reviews.astro';
+import Faq from './Faq.astro';
+import ContactOptions from './ContactOptions.astro';
+import ContactHero from './ContactHero.astro';
+import ContactDetails from './ContactDetails.astro';
+import ContactForm from './ContactForm.astro';
+import Confirmation from './Confirmation.astro';
+import UrgentAssistance from './UrgentAssistance.astro';
+import NextSteps from './NextSteps.astro';
+import AboutHero from './AboutHero.astro';
+import Technology from './Technology.astro';
+import Expertise from './Expertise.astro';
+import Stats from './Stats.astro';
+import CtaBanner from './CtaBanner.astro';
+import RichText from './RichText.astro';
+
+interface Props { blocks: PageBlock[]; settings: SiteSettings; page: string }
+const { blocks, settings, page } = Astro.props;
+const map: Record<string, any> = {
+  homeHero: HomeHero, benefits: Benefits, howItWorks: HowItWorks, reviews: Reviews, faq: Faq,
+  contactOptions: ContactOptions, contactHero: ContactHero, contactDetails: ContactDetails, contactForm: ContactForm,
+  confirmation: Confirmation, urgentAssistance: UrgentAssistance, nextSteps: NextSteps, aboutHero: AboutHero, technology: Technology,
+  expertise: Expertise, stats: Stats, ctaBanner: CtaBanner, richText: RichText,
+};
+---
+{blocks.map((block, i) => {
+  const C = map[block.blockType];
+  return C ? <C block={block} settings={settings} page={page} index={i} /> : null;
+})}

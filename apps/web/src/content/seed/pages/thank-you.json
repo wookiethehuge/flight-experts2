@@ -1,0 +1,41 @@
+{
+  "title": "Thank You",
+  "slug": "thank-you",
+  "headerTheme": "light",
+  "showBreadcrumbs": false,
+  "seo": {
+    "title": "Request Confirmed | Flight Experts",
+    "description": "Your itinerary details are now with the Flight Experts team. A travel consultant will contact you directly with tailored flight and hotel options.",
+    "noindex": true
+  },
+  "layout": [
+    {
+      "blockType": "confirmation",
+      "heading": "Request Confirmed",
+      "subheading": "Your itinerary details are now with the Flight Experts team.",
+      "body": "A travel consultant will review your exact requirements and contact you directly with tailored flight and hotel options.",
+      "button": { "label": "Return to Homepage", "href": "/" }
+    },
+    {
+      "blockType": "urgentAssistance",
+      "heading": "*Urgent* Assistance",
+      "body": "For immediate departures or urgent logistical changes, please contact our 24/7 global support desk directly:",
+      "image": { "file": "urgent-assistance.webp", "alt": "An empty airport departure lounge at dusk with a red suitcase" },
+      "mobileImage": { "file": "lounge-suitcase.webp", "alt": "An empty airport departure lounge at dusk with a red suitcase" },
+      "cards": [
+        { "icon": "phone", "title": "Direct Line", "body": "Speak with your expert directly on [(888) 855-2389](tel:+18888552389), or request a callback at a time that suits you.", "linkLabel": "Request a callback", "linkUrl": "tel:+18888552389" },
+        { "icon": "email", "title": "Email", "body": "Send an email to [experts@flight-experts.com](mailto:experts@flight-experts.com) and we'll reply with options.", "linkLabel": "Send an email", "linkUrl": "mailto:experts@flight-experts.com" }
+      ]
+    },
+    {
+      "blockType": "nextSteps",
+      "heading": "What Happens *Next*",
+      "steps": [
+        { "title": "Initial Review", "text": "A dedicated travel consultant is currently reviewing the itinerary details you just submitted." },
+        { "title": "A Brief Conversation", "text": "Expect a call from your consultant shortly. We prefer to speak with every client directly to understand your exact preferences, travel style, and specific needs before we begin searching." },
+        { "title": "Sourcing Your Flights", "text": "Based on our conversation, your consultant will check our private industry networks to find the most efficient routing and unlisted premium fares for your trip." },
+        { "title": "Finalizing Your Itinerary", "text": "We will present your tailored flight options. Once you select your preferred flights, you can check out securely. You only pay when the details are perfect and your tickets are ready to be issued." }
+      ]
+    }
+  ]
+}

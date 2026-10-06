@@ -1,0 +1,12 @@
+{
+  "title": "Blog",
+  "slug": "blog",
+  "heading": "Blog",
+  "headerTheme": "light",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "Business Class Travel Blog | Flight Experts",
+    "description": "Business and first class travel tips, airline news and insider advice from the Flight Experts team."
+  },
+  "layout": []
+}

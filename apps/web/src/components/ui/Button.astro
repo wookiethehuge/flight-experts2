@@ -1,0 +1,81 @@
+---
+/**
+ * Shared button / link-button.
+ *
+ * Renders an <a> when `href` is given, otherwise a <button>. Values from the artboards:
+ *   primary : burgundy fill, cream 16px/600 text, 50px tall, radius 7px   ("Request a Custom Quote", "Submit now" ...)
+ *   outline : transparent, 1px navy border, navy 16px/600 text, 52px tall  ("Speak with an Expert", "Call (888) ...")
+ *   on-dark : transparent, 1px sky border, cream text, 52px tall (outline for navy/burgundy backgrounds; no frame
+ *             shows it exactly, it follows the sky-bordered pills used on navy)
+ * Width: fills its container up to `width` (a CSS length, e.g. "379px" or "23.6875rem"); default auto (padding 24px).
+ * `block` makes it 100% wide. Any other attribute (aria-*, data-*, target, rel, id, form, disabled ...) is passed through.
+ *
+ * `openBooking`: opens the booking modal (sets data-open-booking; the chrome script dispatches the
+ * `open-booking` document event on click). With no href it becomes a <button type="button">.
+ *
+ * Example:
+ *   <Button href="/contact/" variant="primary" width="379px">Request a Custom Quote</Button>
+ *   <Button href={settings.phone.href} variant="outline" width="379px">Speak with an Expert</Button>
+ *   <Button openBooking>Get My Flight Options</Button>
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Variant = 'primary' | 'outline' | 'on-dark';
+interface Props extends Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'type'> {
+  href?: string;
+  variant?: Variant;
+  type?: 'button' | 'submit' | 'reset';
+  /** max width of the button (CSS length). The button never exceeds its container. */
+  width?: string;
+  /** stretch to the container width */
+  block?: boolean;
+  /** open the booking modal on click */
+  openBooking?: boolean;
+  class?: string;
+}
+const { href, variant = 'primary', type = 'button', width, block = false, openBooking = false, class: cls, ...rest } = Astro.props;
+const classes = ['btn', `btn--${variant}`, block && 'btn--block', width && 'btn--sized', cls];
+const style = width ? `--btn-w: ${width}` : undefined;
+const bookingAttr = openBooking ? { 'data-open-booking': '' } : {};
+---
+{href ? (
+  <a href={href} class:list={classes} style={style} {...bookingAttr} {...rest}><slot /></a>
+) : (
+  <button type={openBooking ? 'button' : type} class:list={classes} style={style} {...bookingAttr} {...rest}><slot /></button>
+)}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 50px;
+    max-width: 100%;
+    padding: 0 1.5rem;
+    border: 0;
+    border-radius: var(--r-7);
+    font-family: var(--ff-sans);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-semibold);
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  }
+  .btn--sized { width: min(var(--btn-w), 100%); }
+  .btn--block { display: flex; width: 100%; }
+
+  .btn--primary { background: var(--c-burgundy); color: var(--c-cream); }
+  .btn--primary:hover { background: var(--c-burgundy-hover); }
+
+  .btn--outline { min-height: 52px; background: transparent; color: var(--c-navy); border: 1px solid var(--c-navy); }
+  .btn--outline:hover { background: var(--c-navy); color: var(--c-cream); }
+  .btn--outline:focus-visible { outline-color: var(--c-navy); }
+
+  .btn--on-dark { min-height: 52px; background: transparent; color: var(--c-cream); border: 1px solid var(--c-sky); }
+  .btn--on-dark:hover { background: var(--c-sky-8); }
+
+  .btn:disabled, .btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
+</style>

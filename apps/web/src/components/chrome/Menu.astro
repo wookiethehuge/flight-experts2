@@ -1,0 +1,139 @@
+---
+/**
+ * Hamburger menu (Figma "Hamburger menu" frames).
+ *   < 48rem : navy panel from the top (390 x 632 at the design width), light logo + close X, items left-aligned
+ *   >= 48rem: navy panel 600px wide on the right, phone pill + close X, items right-aligned (Main menuOpen state)
+ * Both sit over a navy scrim. Behaviour (open/close, focus, Esc, scroll lock) lives in Header.astro's script.
+ * Items: navigation.menu. Contacts: settings.menuContacts.
+ */
+import Icon from '../ui/Icon.astro';
+import PhonePill from './PhonePill.astro';
+import type { Navigation, SiteSettings } from '../../lib/types';
+
+interface Props { settings: SiteSettings; navigation: Navigation }
+const { settings, navigation } = Astro.props;
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+const isBooking = (href: string) => href === '#get-flight-options';
+---
+<div id="site-menu" class="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="menu__scrim" data-menu-close aria-hidden="true"></div>
+  <div class="menu__panel">
+    <div class="menu__top">
+      <a class="menu__logo" href="/" aria-label="Flight Experts home">
+        <svg viewBox="0 0 312 60" aria-hidden="true" focusable="false"><use href="#fe-logo" /></svg>
+      </a>
+      <PhonePill class="menu__pill" phone={settings.phone} label={settings.headerPhoneLabel} variant="outline" />
+      <button type="button" class="menu__close" data-menu-close aria-label="Close menu">
+        <Icon name="close" width={19} height={20} class="menu__x menu__x--sm" />
+        <Icon name="close-lg" width={26} height={26} class="menu__x menu__x--lg" />
+      </button>
+    </div>
+    <nav class="menu__nav" aria-label="Main menu">
+      <ul role="list">
+        {navigation.menu.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              data-open-booking={isBooking(item.href) ? '' : undefined}
+              aria-current={item.href.replace(/\/?$/, '/') === current ? 'page' : undefined}
+            >{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <ul class="menu__contacts" role="list">
+      {settings.menuContacts.map((c) => (
+        <li>
+          <span class="menu__clabel">{c.label}</span>
+          <a class="menu__cvalue" href={c.href}>{c.value}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .menu { position: fixed; inset: 0; z-index: 60; }
+  .menu[hidden] { display: none; }
+  .menu__scrim {
+    position: absolute; inset: 0;
+    background: var(--c-menu-scrim);
+    opacity: 0;
+    transition: opacity calc(var(--dur) * 1.5) var(--ease);
+  }
+  .menu__panel {
+    position: absolute; inset: 0 0 auto 0;
+    max-height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--c-navy);
+    color: var(--c-cream);
+    /* mobile: 390 x 632 */
+    min-height: min(39.5rem, 100dvh);
+    padding: 0 calc(var(--gutter) + 0.625rem) 4rem;
+    transform: translateY(-100%);
+    transition: transform calc(var(--dur) * 1.5) var(--ease);
+  }
+  .menu[data-open] .menu__scrim { opacity: 1; }
+  .menu[data-open] .menu__panel { transform: none; }
+
+  .menu__top { position: relative; height: 5.75rem; }
+  .menu__logo { position: absolute; left: -0.625rem; top: 26px; display: block; width: 159px; color: var(--c-sky); }
+  .menu__logo svg { width: 100%; height: auto; aspect-ratio: 312 / 60; fill: currentColor; }
+  .menu__top :global(.menu__pill) { display: none; }
+  .menu__close {
+    position: absolute; right: calc(13.5px - var(--gutter) - 0.625rem); top: 19.4px;
+    display: grid; place-items: center;
+    width: 44px; height: 44px; padding: 0; border: 0; background: transparent;
+    color: var(--c-sky);
+  }
+  .menu__close :global(.menu__x--lg) { display: none; }
+
+  .menu__nav ul { display: grid; margin-top: calc(108px - 92px - 9.35px); }
+  .menu__nav a {
+    display: block;
+    padding-block: 9.35px;           /* 24.3 line + 18.7 = 43 step */
+    font-size: var(--fs-18);
+    line-height: 24.3px;
+    color: var(--c-sky);
+    text-decoration: none;
+  }
+  .menu__nav a:hover, .menu__nav a[aria-current='page'] { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+
+  .menu__contacts { display: grid; gap: 29.45px; margin-top: 39.85px; }
+  .menu__contacts li { display: grid; gap: 5.7px; justify-items: start; }
+  .menu__clabel { font-size: var(--fs-18); line-height: 24.3px; }
+  .menu__cvalue {
+    padding-block: 11px; margin-block: -11px;       /* 44px hit area without moving the layout */
+    font-size: var(--fs-16); font-weight: var(--fw-semibold); line-height: 21.6px;
+    color: var(--c-cream); text-decoration: none;
+  }
+  .menu__cvalue:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------------- >= 768: right-hand panel (Main menuOpen: 600 wide, items right-aligned at 70) */
+  @media (min-width: 48rem) {
+    .menu__panel {
+      inset: 0 0 0 auto;
+      width: min(37.5rem, 100%);
+      min-height: 100dvh;
+      max-height: none;
+      padding: 0 4.375rem 4rem 2rem;
+      text-align: right;
+      transform: translateX(100%);
+    }
+    .menu__top { height: 7.25rem; display: flex; justify-content: flex-end; align-items: flex-start; gap: 12px; padding-top: 38px; }
+    .menu__logo { display: none; }
+    .menu__top :global(.menu__pill) { display: flex; }
+    .menu__close { position: static; margin: 6px -10px 0 0; color: var(--c-cream); }
+    .menu__close :global(.menu__x--sm) { display: none; }
+    .menu__close :global(.menu__x--lg) { display: block; }
+
+    .menu__nav ul { justify-items: end; margin-top: calc(185px - 116px - 20.5px); }
+    .menu__nav a { padding-block: 20.5px; font-size: 1.375rem; line-height: 29px; }  /* 22 / 29, 70 step */
+
+    .menu__contacts { gap: 40px; margin-top: 84.5px; }
+    .menu__contacts li { gap: 10px; justify-items: end; }
+    .menu__clabel { font-size: 1.375rem; line-height: 29px; }
+    .menu__cvalue { line-height: 21px; }
+  }
+</style>

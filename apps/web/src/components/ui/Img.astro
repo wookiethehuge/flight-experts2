@@ -1,0 +1,56 @@
+---
+/**
+ * Responsive image for CMS or seed media. Seed assets are optimised by astro:assets (AVIF + WebP, srcset);
+ * CMS images are fetched and optimised at build time too (PAYLOAD_URL host is allowed in astro.config).
+ * SVGs are passed through untouched.
+ */
+import { Picture } from 'astro:assets';
+import type { Media } from '../../lib/types';
+import { seedAsset } from '../../lib/cms';
+
+interface Props {
+  media: Media | null | undefined;
+  /** CSS sizes attribute, e.g. "(min-width: 64rem) 310px, 45vw" */
+  sizes: string;
+  /** candidate widths in px */
+  widths?: number[];
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  alt?: string;
+  class?: string;
+  style?: string;
+  decorative?: boolean;
+}
+const { media, sizes, widths = [320, 480, 640, 800, 1080, 1440, 1920], loading = 'lazy', fetchpriority, class: cls, style, decorative = false } = Astro.props;
+if (!media) return null;
+const alt = decorative ? '' : (Astro.props.alt ?? media.alt ?? '');
+const rawLocal: any = seedAsset(media.url);
+// Astro 5 imports .svg as a component function carrying its metadata (src/width/height): use that metadata
+const local: any = typeof rawLocal === 'function' ? { src: rawLocal.src, width: rawLocal.width, height: rawLocal.height, format: 'svg' } : rawLocal;
+const isSvg = (media.mimeType ?? media.url).includes('svg');
+const src: any = local ?? media.url;
+const intrinsic = (typeof local === 'object' ? local.width : media.width) ?? 1600;
+const w = widths.filter((x) => x <= intrinsic);
+if (!w.length || w[w.length - 1] < intrinsic) w.push(intrinsic);
+---
+{isSvg ? (
+  <img src={typeof src === 'object' ? src.src : src} alt={alt} width={media.width ?? (typeof local === 'object' ? local.width : undefined)} height={media.height ?? (typeof local === 'object' ? local.height : undefined)} loading={loading} decoding="async" class={cls} style={style} />
+) : (
+  <Picture
+    src={src}
+    alt={alt}
+    widths={w}
+    sizes={sizes}
+    formats={['avif', 'webp']}
+    fallbackFormat="webp"
+    loading={loading}
+    decoding={loading === 'eager' ? 'sync' : 'async'}
+    fetchpriority={fetchpriority}
+    width={typeof local === 'object' ? undefined : media.width}
+    height={typeof local === 'object' ? undefined : media.height}
+    inferSize={typeof local !== 'object' && !media.width}
+    class={cls}
+    style={style}
+    pictureAttributes={{ style: 'display: contents' }}
+  />
+)}

@@ -1,0 +1,80 @@
+---
+/**
+ * Light-blue "CALL US" pill used at the bottom of the quote form (artboards Main / Mobile / HomeContact / MobileContact).
+ * 320x61 at 390, 380x61 at 1440 (width comes from the parent; values between are fluid): navy avatar circle 53x50,
+ * title 16px/600, subtitle 14px, 1px navy divider and the phone glyph on the right. Content from site settings.
+ * Below ~300px wide (very small phones) the avatar is dropped so the number never collides with the divider.
+ */
+import Icon from '../ui/Icon.astro';
+import type { SiteSettings } from '../../lib/types';
+interface Props { settings: SiteSettings; class?: string }
+const { settings, class: cls } = Astro.props;
+---
+<a href={settings.phone.href} class:list={['cp', cls]}>
+  <span class="cp__avatar" aria-hidden="true"></span>
+  <span class="cp__text">
+    <span class="cp__title">{settings.callPill.title}</span>
+    <span class="cp__sub">{settings.callPill.subtitle}</span>
+  </span>
+  <span class="cp__div" aria-hidden="true"></span>
+  <Icon name="phone" class="cp__icon" />
+</a>
+
+<style>
+  .cp {
+    /* offsets scale with the pill's own width (320 at 390 -> 380 at 1440, from the Mobile and Main artboards), so
+       a narrower pill (e.g. the 400px hero form column at 1024) keeps the number clear of the divider.
+       Unregistered custom properties resolve where they are used, so cqw refers to this pill (the container). */
+    --cp-k: clamp(0px, (100cqw - 320px) / 60, 1px);                          /* 0 at 320 wide -> 1px at 380 wide */
+    --cp-text: calc(71px + 10.1 * var(--cp-k));                             /* 71 -> 81.1 */
+    --cp-div: calc(48px + 29.1 * var(--cp-k));                              /* 48 -> 77.1 from right */
+    --cp-icon: calc(15.5px + 16.4 * var(--cp-k));                           /* 15.5 -> 31.9 from right */
+    --cp-iw: calc(21px + 3 * var(--cp-k));                                  /* 21 -> 24 */
+    --cp-ih: calc(20px + 2.5 * var(--cp-k));                                /* 20 -> 22.5 */
+    --cp-sub: calc(31px - 1 * var(--cp-k));                                 /* 31 -> 30 */
+    container-type: inline-size;
+    position: relative;
+    display: block;
+    height: 61px;
+    border-radius: var(--r-pill);
+    background: var(--c-sky);
+    color: var(--c-navy);
+    text-decoration: none;
+    transition: background-color var(--dur) var(--ease);
+  }
+  .cp:hover { background: var(--c-cream); }
+  .cp__avatar {
+    position: absolute;
+    left: 8.5px;
+    top: 5px;
+    width: 53px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--c-navy);
+  }
+  .cp__text { position: absolute; inset: 0 auto 0 var(--cp-text); }
+  .cp__title, .cp__sub { position: absolute; left: 0; white-space: nowrap; line-height: 1.35; }
+  .cp__title { top: 10px; font-size: var(--fs-16); font-weight: var(--fw-semibold); }
+  .cp__sub { top: var(--cp-sub); font-size: var(--fs-14); }
+  .cp__div {
+    position: absolute;
+    right: var(--cp-div);
+    top: 12.5px;
+    width: 1px;
+    height: 40px;
+    background: var(--c-navy);
+  }
+  .cp :global(.cp__icon) {
+    position: absolute;
+    right: var(--cp-icon);
+    top: calc(32.5px - var(--cp-ih) / 2);
+    width: var(--cp-iw);
+    height: var(--cp-ih);
+  }
+  @container (max-width: 300px) {
+    .cp__avatar { display: none; }
+    .cp__text { left: 1.25rem; }
+    .cp__title { font-size: var(--fs-14); }
+    .cp__sub { top: 30px; font-size: var(--fs-12); }
+  }
+</style>

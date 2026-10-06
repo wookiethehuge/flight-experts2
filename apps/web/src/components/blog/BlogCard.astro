@@ -1,0 +1,221 @@
+---
+/**
+ * Blog post card (BlogCollection / BlogCollectionMobile, "Read further..." on BlogArticle, Author pages).
+ *
+ * Design: 3:2 photo (radius 4 -> 8px, optional crop and navy shade from `post.art`), burgundy date
+ * ("20th December 2024"), semibold title, excerpt, underlined burgundy "Read more".
+ * Mobile card 168px wide, desktop 310px: type and spacing are fluid between the two designs (see `variant`).
+ *
+ * The whole card is clickable through ONE link: the title link, stretched over the card with a pseudo-element.
+ * "Read more" is a visual cue only (aria-hidden), so screen readers and keyboards meet a single link per card.
+ * The card fills its grid cell; the parent grid sets the column width.
+ *
+ * Props
+ *   post          Post to show (cardImage falls back to heroImage).
+ *   headingLevel  'h2' (default, index pages) or 'h3' (under a section h2 such as "Read further...").
+ *   sizes         CSS `sizes` for the CARD WIDTH (the component widens it itself when a crop zooms the photo).
+ *                 Default matches the blog grid: 2 cols mobile, 3 tablet, 4 desktop.
+ *   variant       'fluid' (default): mobile metrics at 390px growing to desktop metrics at 1440px.
+ *                 'compact': always the mobile (168px card) metrics, for narrow placements.
+ *   loading       image loading, default 'lazy'.
+ *   priority      true = fetchpriority="high" (the first cards of the blog grid are the mobile LCP element).
+ *
+ * Example:
+ *   <BlogCard post={post} headingLevel="h3" sizes="(min-width: 90rem) 310px, (min-width: 48rem) 22vw, 45vw" />
+ */
+import type { Post } from '../../lib/types';
+import Img from '../ui/Img.astro';
+import { formatDate } from '../../lib/cms';
+
+export interface Props {
+  post: Post;
+  headingLevel?: 'h2' | 'h3';
+  sizes?: string;
+  variant?: 'fluid' | 'compact';
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  /** position in its grid: adds the scroll reveal ([data-reveal], staggered by --i) */
+  reveal?: number;
+}
+
+const {
+  post,
+  headingLevel = 'h2',
+  sizes = '(min-width: 90rem) 310px, (min-width: 64rem) calc((100vw - 140px) / 4), (min-width: 48rem) calc((100vw - 80px) / 3), calc((100vw - 54px) / 2)',
+  variant = 'fluid',
+  loading = 'lazy',
+  priority = false,
+  reveal,
+} = Astro.props;
+
+const Heading = headingLevel;
+const href = `/blog/${post.slug}/`;
+const media = post.cardImage ?? post.heroImage;
+const crop = post.art?.cardCrop;
+const w = crop?.w && crop.w > 0 ? crop.w : 100;
+const zoom = 100 / w;
+// Widen each `sizes` length by the crop zoom so the browser picks a sharp enough source.
+const imgSizes = zoom === 1 ? sizes : sizes.split(',').map((part) => {
+  const m = part.trim().match(/^(\(.*\)\s+)?(.+)$/);
+  return m ? `${m[1] ?? ''}calc(${m[2]} * ${+zoom.toFixed(4)})` : part;
+}).join(', ');
+const cropStyle = crop ? `--crop-w: ${+(zoom * 100).toFixed(3)}%; --crop-x: ${-crop.x}%; --crop-y: ${-crop.y}%` : undefined;
+---
+<article class:list={['blog-card', `blog-card--${variant}`]} data-reveal={reveal !== undefined ? '' : undefined} style={reveal !== undefined ? `--i: ${reveal}` : undefined}>
+  <div class:list={['blog-card__media', crop && 'is-cropped', post.art?.cardShade && 'is-shaded']} style={cropStyle}>
+    <Img media={media} sizes={imgSizes} loading={loading} fetchpriority={priority ? 'high' : undefined} decorative class="blog-card__img" />
+  </div>
+  <p class="blog-card__date"><time datetime={post.publishedAt.slice(0, 10)}>{formatDate(post.publishedAt)}</time></p>
+  <Heading class="blog-card__title"><a href={href} class="blog-card__link">{post.title}</a></Heading>
+  <p class="blog-card__excerpt">{post.excerpt}</p>
+  <span class="blog-card__more" aria-hidden="true">Read more</span>
+</article>
+
+<style>
+  .blog-card {
+    /* mobile (168px card) -> desktop (310px card) */
+    --bc-radius: clamp(4px, calc(4px + 4 * (100vw - 24.375rem) / 1050), 8px);
+    --bc-date-fs: clamp(0.75rem, calc(0.75rem + 2 * (100vw - 24.375rem) / 1050), 0.875rem);        /* 12 -> 14 */
+    --bc-title-fs: clamp(1rem, calc(1rem + 8 * (100vw - 24.375rem) / 1050), 1.5rem);               /* 16 -> 24 */
+    --bc-text-fs: var(--fs-body);                                                                  /* 14 -> 16 */
+    --bc-gap-date: clamp(0.8675rem, calc(0.8675rem + 2.98 * (100vw - 24.375rem) / 1050), 1.0537rem); /* 13.9 -> 16.9 */
+    --bc-gap-title: clamp(0.31rem, calc(0.31rem + 8.44 * (100vw - 24.375rem) / 1050), 0.8375rem);  /* 5 -> 13.4 */
+    --bc-gap-text: 0.5rem;                                                                         /* 8 */
+    --bc-gap-more: clamp(0.3581rem, calc(0.3581rem + 8.27 * (100vw - 24.375rem) / 1050), 0.875rem); /* 5.7 -> 14 */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    color: var(--c-navy);
+  }
+  .blog-card--compact {
+    --bc-radius: 4px;
+    --bc-date-fs: var(--fs-12);
+    --bc-title-fs: var(--fs-16);
+    --bc-text-fs: var(--fs-14);
+    --bc-gap-date: 0.8675rem;
+    --bc-gap-title: 0.31rem;
+    --bc-gap-more: 0.3581rem;
+  }
+
+  .blog-card__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: var(--bc-radius);
+    background: var(--c-navy);
+  }
+  .blog-card__media :global(.blog-card__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur) var(--ease), scale 360ms var(--motion-ease-out);
+  }
+  /* design crop: the image is scaled so `w`% of it fills the card, then shifted to the crop's top-left corner */
+  .blog-card__media.is-cropped :global(.blog-card__img) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--crop-w);
+    max-width: none;
+    height: auto;
+    object-fit: fill;
+    transform: translate(var(--crop-x), var(--crop-y));
+  }
+  /* navy shade used on the silhouettes photo (values from BlogCollection) */
+  .blog-card__media.is-shaded::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom,
+        color-mix(in srgb, var(--c-navy) 2%, transparent) 0%,
+        color-mix(in srgb, var(--c-navy) 23%, transparent) 20%,
+        color-mix(in srgb, var(--c-navy) 41%, transparent) 40%,
+        color-mix(in srgb, var(--c-navy) 62%, transparent) 60%,
+        color-mix(in srgb, var(--c-navy) 80%, transparent) 80%,
+        var(--c-navy) 100%),
+      linear-gradient(to right,
+        color-mix(in srgb, var(--c-navy) 94%, transparent) 0%,
+        color-mix(in srgb, var(--c-navy) 72%, transparent) 10%,
+        color-mix(in srgb, var(--c-navy) 60%, transparent) 20%,
+        color-mix(in srgb, var(--c-navy) 30%, transparent) 28%,
+        color-mix(in srgb, var(--c-navy) 15%, transparent) 40%,
+        transparent 50%,
+        transparent 78%,
+        color-mix(in srgb, var(--c-navy) 45%, transparent) 85%,
+        color-mix(in srgb, var(--c-navy) 60%, transparent) 92%,
+        color-mix(in srgb, var(--c-navy) 82%, transparent) 96%,
+        var(--c-navy) 100%);
+  }
+
+  .blog-card__date {
+    margin-top: var(--bc-gap-date);
+    font-size: var(--bc-date-fs);
+    line-height: 1.25;
+    font-weight: var(--fw-regular);
+    color: var(--c-burgundy);
+  }
+  .blog-card__title {
+    margin-top: var(--bc-gap-title);
+    max-width: calc(100% - clamp(0px, calc(10px * (100vw - 24.375rem) / 1050), 10px)); /* 300 of 310px on desktop, full width on mobile */
+    font-family: var(--ff-sans);
+    font-size: var(--bc-title-fs);
+    line-height: 1.25;
+    font-weight: var(--fw-semibold);
+    color: var(--c-navy);
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+  .blog-card--compact .blog-card__title { max-width: none; }
+  .blog-card__link { color: inherit; text-decoration: none; }
+  /* stretched link: the whole card is the hit area */
+  .blog-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: var(--bc-radius);
+  }
+  .blog-card__link:focus-visible { outline: none; }
+  .blog-card__link:focus-visible::after { outline: 2px solid var(--c-navy); outline-offset: 4px; }
+
+  .blog-card__excerpt {
+    margin-top: var(--bc-gap-text);
+    font-size: var(--bc-text-fs);
+    line-height: 1.5;
+    font-weight: var(--fw-regular);
+    color: var(--c-navy);
+  }
+  .blog-card__more {
+    margin-top: var(--bc-gap-more);
+    font-size: var(--fs-16);
+    line-height: 1.25;
+    font-weight: var(--fw-medium);
+    color: var(--c-burgundy);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 1.5px;
+    transition: color var(--dur) var(--ease);
+  }
+
+  /* the mobile frame breaks titles evenly ("Lorem ipsum dolor / sit amet consectetur."), desktop fills the first line */
+  @media (min-width: 64rem) {
+    .blog-card--fluid .blog-card__title { text-wrap: wrap; }
+  }
+
+  /* image zoom on hover / keyboard focus (the media box clips it) */
+  .blog-card:has(:focus-visible) .blog-card__media :global(.blog-card__img) { scale: 1.04; }
+  @media (prefers-reduced-motion: reduce) {
+    .blog-card:has(:focus-visible) .blog-card__media :global(.blog-card__img) { scale: none; }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .blog-card:hover .blog-card__media :global(.blog-card__img) { scale: 1.04; }
+  }
+  @media (hover: hover) {
+    .blog-card:hover .blog-card__title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .blog-card:hover .blog-card__more { color: var(--c-burgundy-hover); text-decoration-thickness: 2px; }
+  }
+</style>

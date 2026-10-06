@@ -1,0 +1,128 @@
+---
+/**
+ * Technology block ("Our people, *powered by AI*"): eyebrow, H2, intro and icon cards on cream, placed after the
+ * About hero. No Figma frame: built from the site's visual language (navy on cream, IBM Plex Serif heading with a
+ * light italic phrase, General Sans body, sky icon discs, white cards with the soft card border used elsewhere).
+ *
+ * Block shape (TechnologyBlock in lib/types.ts): eyebrow?, heading (Inline), intro?, items[] { icon, title, text }.
+ * `icon` is an entry of components/ui/icons.ts ('ai-search' | 'ai-route' | 'ai-watch' | 'ai-expert').
+ *
+ * Layout: 1 column (< 48rem, left aligned like AboutMobile), 2 columns (48rem), 4 columns (>= 64rem, centred heading
+ * like the About frame). Bottom spacing matches the About hero's (61.4 -> 68) so the Expertise band below keeps its
+ * designed distance from the last cream content.
+ */
+import type { SiteSettings, TechnologyBlock } from '../../lib/types';
+import { inline } from '../../lib/inline';
+import Icon from '../ui/Icon.astro';
+
+interface Props { block: TechnologyBlock; settings: SiteSettings; page: string; index: number }
+const { block, index } = Astro.props;
+const hid = `tech-h-${index}`;
+const items = block.items ?? [];
+---
+<section class="tech container on-light" id="technology" aria-labelledby={hid}>
+  <div class="tech__head">
+    {block.eyebrow && <p class="tech__eyebrow">{block.eyebrow}</p>}
+    <h2 class="tech__title" id={hid} set:html={inline(block.heading)} />
+    {block.intro && <p class="tech__intro">{block.intro}</p>}
+  </div>
+  {items.length > 0 && (
+    <ul class="tech__grid" role="list">
+      {items.map((it, i) => (
+        <li class="tech__item lift" data-reveal style={`--i: ${i}`}>
+          <span class="tech__icon"><Icon name={it.icon} width={24} height={24} /></span>
+          <h3 class="tech__item-title">{it.title}</h3>
+          <p class="tech__text">{it.text}</p>
+        </li>
+      ))}
+    </ul>
+  )}
+</section>
+
+<style>
+  .tech {
+    padding-top: 0;
+    padding-bottom: clamp(3.8375rem, calc(3.8375rem + 6.6 * (100vw - 24.375rem) / 1050), 4.25rem);  /* 61.4 -> 68 (About hero) */
+    color: var(--c-navy);
+  }
+  .tech__head { max-width: 40rem; }
+  .tech__eyebrow {
+    font-size: var(--fs-12);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: var(--c-burgundy);
+  }
+  .tech__title {
+    margin-top: 0.625rem;
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-h2);                                                                      /* 32 -> 48 */
+    line-height: clamp(2.375rem, calc(2.375rem + 24 * (100vw - 24.375rem) / 1050), 3.875rem);    /* 38 -> 62 */
+    color: var(--c-navy-ink);
+    text-wrap: balance;
+  }
+  .tech__title :global(em) { font-style: italic; font-weight: var(--fw-light); }
+  .tech__intro {
+    margin-top: clamp(0.875rem, calc(0.875rem + 6 * (100vw - 24.375rem) / 1050), 1.25rem);       /* 14 -> 20 */
+    font-size: var(--fs-body);                                                                    /* 14 -> 16 */
+    line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);         /* 20 -> 24 */
+  }
+
+  .tech__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    margin: clamp(1.75rem, calc(1.75rem + 20 * (100vw - 24.375rem) / 1050), 3rem) 0 0;            /* 28 -> 48 */
+    padding: 0;
+    list-style: none;
+  }
+  .tech__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: start;
+    align-content: start;
+    padding: 1.25rem 1.25rem 1.375rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: var(--r-7);
+    background: var(--c-white);
+  }
+  .tech__icon {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--c-sky);
+    color: var(--c-navy);
+  }
+  .tech__item-title {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-semibold);
+    font-size: clamp(1.125rem, calc(1.125rem + 4 * (100vw - 24.375rem) / 1050), 1.375rem);      /* 18 -> 22 */
+    line-height: 1.25;
+    color: var(--c-navy-ink);
+  }
+  .tech__text {
+    margin-top: 0.375rem;
+    font-size: var(--fs-body);                                                                    /* 14 -> 16 */
+    line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);         /* 20 -> 24 */
+  }
+
+  @media (min-width: 48rem) {
+    .tech__head { margin-inline: auto; text-align: center; }
+    .tech__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+    .tech__item { grid-template-columns: minmax(0, 1fr); row-gap: 0; padding: 1.75rem 1.5rem 1.875rem; }
+    .tech__icon { grid-row: auto; width: 3rem; height: 3rem; margin-bottom: 1.125rem; }
+  }
+  @media (min-width: 64rem) {
+    .tech__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .tech__item { padding-inline: 1.375rem; }
+  }
+  @media (min-width: 80rem) {
+    .tech__item { padding: 2rem 1.75rem 2.125rem; }
+  }
+</style>

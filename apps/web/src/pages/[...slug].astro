@@ -1,0 +1,27 @@
+---
+/**
+ * Generic CMS page: every `pages` document except 'home' (rendered by index.astro) and 'blog' (blog/index.astro).
+ * Examples: /contact/, /about/, /thank-you/, /terms-and-conditions/, /privacy-policy/.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlockRenderer from '../components/blocks/BlockRenderer.astro';
+import Breadcrumbs from '../components/chrome/Breadcrumbs.astro';
+import PageHeading from '../components/ui/PageHeading.astro';
+import { getPages, getSettings } from '../lib/cms';
+import { heroPreloads } from '../lib/hero-image';
+
+export async function getStaticPaths() {
+  const pages = await getPages();
+  return pages.filter((p) => !['home', 'blog'].includes(p.slug)).map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+const { page } = Astro.props;
+const settings = await getSettings();
+const preload = await heroPreloads(page.layout[0]);
+const crumbs = [{ label: 'Home', href: '/' }, { label: page.title }];  // BreadcrumbList JSON-LD is emitted by <Breadcrumbs/>
+const sticky = page.slug === 'thank-you' ? { plane: false, chat: false } : page.layout.some((b) => b.blockType === 'richText') ? { plane: false, chat: true } : { plane: true, chat: true };
+---
+<BaseLayout title={page.title} seo={page.seo} headerTheme={page.headerTheme} noindex={page.slug === 'thank-you'} sticky={sticky} preload={preload}>
+  {page.showBreadcrumbs && <Breadcrumbs items={crumbs} currentWeight={page.slug === 'about' ? 600 : 500} desktopOnly={page.slug === 'about'} />}
+  {page.heading && <PageHeading text={page.heading} />}
+  <BlockRenderer blocks={page.layout} settings={settings} page={page.slug} />
+</BaseLayout>

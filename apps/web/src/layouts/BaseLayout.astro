@@ -1,0 +1,95 @@
+---
+/**
+ * Page shell: <head> (SEO, fonts, structured data), skip link, header, main, footer, sticky actions and the
+ * booking modal. Every page uses this layout.
+ */
+import '../styles/global.css';
+import Seo from '../components/chrome/Seo.astro';
+import Header from '../components/chrome/Header.astro';
+import Footer from '../components/chrome/Footer.astro';
+import StickyActions from '../components/chrome/StickyActions.astro';
+import BookingModal from '../components/form/BookingModal.astro';
+import { getNavigation, getSettings } from '../lib/cms';
+import type { Seo as SeoData } from '../lib/types';
+import type { ImagePreload } from '../lib/hero-image';
+
+interface Props {
+  title: string;                      // fallback <title> when seo.title is empty
+  description?: string;
+  seo?: SeoData;
+  headerTheme?: 'dark' | 'light';
+  /** JSON-LD objects added to the page besides Organization/WebSite */
+  jsonLd?: Record<string, any>[];
+  /** show the plane/chat sticky circles (mobile) and Get Flight Options badge behaviour */
+  sticky?: { plane?: boolean; chat?: boolean; phoneTab?: boolean };
+  noindex?: boolean;
+  ogType?: 'website' | 'article';
+  /** LCP image preloads (hero photos), emitted first in <head> */
+  preload?: ImagePreload[];
+}
+const { title, description, seo, headerTheme = 'light', jsonLd = [], sticky = { plane: true, chat: true, phoneTab: false }, noindex, ogType = 'website', preload = [] } = Astro.props;
+const settings = await getSettings();
+const navigation = await getNavigation();
+
+const org = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  '@id': new URL('/#organization', Astro.site).href,
+  name: 'Flight Experts',
+  legalName: 'Flight Experts LLC',
+  url: Astro.site?.href,
+  logo: new URL('/favicon.svg', Astro.site).href,
+  telephone: settings.phone.href.replace('tel:', ''),
+  email: settings.email,
+  address: { '@type': 'PostalAddress', streetAddress: '1150 Airport Rd, Unit 159', addressLocality: 'Destin', addressRegion: 'FL', postalCode: '32541', addressCountry: 'US' },
+  sameAs: Object.values(settings.socials ?? {}).filter((u) => u && u !== '#'),
+};
+const site = { '@context': 'https://schema.org', '@type': 'WebSite', '@id': new URL('/#website', Astro.site).href, url: Astro.site?.href, name: 'Flight Experts', publisher: { '@id': org['@id'] } };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- before first paint: enables the scroll-reveal start state; failsafe shows everything if the reveal script never ran -->
+    <script is:inline>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__reveal)document.documentElement.classList.remove('js')},4000);</script>
+    {preload.map((p) => <link rel="preload" as="image" type={p.type} imagesrcset={p.srcset} imagesizes={p.sizes} media={p.media} fetchpriority="high" />)}
+    <Seo title={title} description={description} seo={seo} noindex={noindex} type={ogType} />
+    <link rel="preload" href="/fonts/GeneralSans-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/GeneralSans-Semibold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/IBMPlexSerif-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0f1524" />
+    <script type="application/ld+json" set:html={JSON.stringify([org, site, ...jsonLd])} />
+    <slot name="head" />
+  </head>
+  <body class:list={[`header-${headerTheme}`]}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header theme={headerTheme} settings={settings} navigation={navigation} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer settings={settings} navigation={navigation} />
+    <StickyActions settings={settings} {...sticky} />
+    <BookingModal settings={settings} />
+    <script is:inline>
+      // Scroll reveals ([data-reveal], global.css): one IntersectionObserver, each element revealed once.
+      // Elements already on screen are shown at once without animation (never delays LCP).
+      (function () {
+        window.__reveal = 1;
+        var els = document.querySelectorAll('[data-reveal]');
+        if (!els.length) return;
+        if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible', 'is-instant'); }); return; }
+        var h = innerHeight;
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+        els.forEach(function (e) {
+          var r = e.getBoundingClientRect();
+          if (r.top < h && r.bottom > 0 && r.width) e.classList.add('is-visible', 'is-instant');
+          else io.observe(e);
+        });
+      })();
+    </script>
+  </body>
+</html>

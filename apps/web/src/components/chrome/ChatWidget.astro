@@ -1,0 +1,242 @@
+---
+/**
+ * Live chat entry point: the round chat button in the mobile sticky actions (StickyActions) plus its behaviour.
+ * Settings (Site Settings > Live chat, `settings.chat`):
+ *
+ *   provider 'jivo' + jivoWidgetId
+ *     Jivo's script (https://code.jivosite.com/widget/<id>) is loaded lazily: on the first tap of the chat button, or
+ *     once the page is idle on desktop (>= 64rem, where there is no chat button and Jivo's own launcher is the entry
+ *     point). The tap then calls jivo_api.open({ start: 'chat' }).
+ *     Jivo documents no way to hide its own launcher (widget API: open/close/chatMode..., no hide), so once Jivo has
+ *     loaded its launcher takes over and our button is hidden (html[data-jivo="ready"]): one chat button on screen,
+ *     never two. Before that, our button is labelled "Chat now" or "Leave a message" from the informational business
+ *     hours, and from jivo_api.chatMode() ('online' / 'offline') once loaded.
+ *     If the script cannot load (blocked, offline) within 8s, the built-in panel opens instead.
+ *   provider 'none' (seed / demo)
+ *     The button opens a small "Chat with us" panel: WhatsApp, call, and the quote form (booking modal), so the
+ *     button is never dead.
+ *
+ * Panel: non-modal dialog next to the circles; Esc, the close button, a click outside or scrolling the circles away
+ * (chat:close event) close it and return focus to the button.
+ */
+import Icon from '../ui/Icon.astro';
+import type { SiteSettings } from '../../lib/types';
+
+interface Props { settings: SiteSettings }
+const { settings } = Astro.props;
+const chat = settings.chat;
+const jivoId = chat?.provider === 'jivo' && chat.jivoWidgetId && /^[A-Za-z0-9_-]{4,40}$/.test(chat.jivoWidgetId) ? chat.jivoWidgetId : '';
+const hours = chat?.businessHours;
+const hoursJson = hours?.timezone && hours.open && hours.close && hours.days?.length ? JSON.stringify({ tz: hours.timezone, days: hours.days, open: hours.open, close: hours.close }) : undefined;
+const note = chat?.note || 'Message a flight expert on WhatsApp, call us 24/7, or send your route for tailored options.';
+---
+<div class="chat" data-chat data-jivo={jivoId || undefined} data-hours={hoursJson}>
+  <button type="button" class="sticky__btn chat__btn" data-chat-btn aria-label="Chat with us" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-panel">
+    <Icon name="chat" width={22} height={21.1} class="chat__icon" />
+  </button>
+  <div class="chat__panel on-light" id="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-panel-h" hidden data-chat-panel>
+    <div class="chat__head">
+      <h2 class="chat__h" id="chat-panel-h">Chat with us</h2>
+      <button type="button" class="chat__close" aria-label="Close" data-chat-close><Icon name="close" width={12} height={12.75} /></button>
+    </div>
+    <p class="chat__note">{note}</p>
+    <ul class="chat__list" role="list">
+      {settings.whatsappUrl && (
+        <li>
+          <a class="chat__opt" href={settings.whatsappUrl} target="_blank" rel="noopener">
+            <span class="chat__ic chat__ic--wa"><Icon name="whatsapp" width={18} height={18} /></span>
+            <span>WhatsApp<span class="sr-only"> (opens in a new tab)</span></span>
+          </a>
+        </li>
+      )}
+      <li>
+        <a class="chat__opt" href={settings.phone.href}>
+          <span class="chat__ic"><Icon name="phone" width={15} height={15} /></span>
+          <span>Call <span class="nowrap">{settings.phone.display}</span></span>
+        </a>
+      </li>
+      <li>
+        <button type="button" class="chat__opt" data-chat-quote>
+          <span class="chat__ic"><Icon name="plane-up" width={17} height={16.2} /></span>
+          <span>Get flight options</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<style>
+  .chat { position: relative; }
+  .chat__btn:hover { background: var(--c-burgundy-hover); }
+  .chat__btn[aria-busy='true'] { cursor: progress; }
+  .chat :global(.chat__icon) { margin-top: 2px; }
+  :global(html[data-jivo='ready']) .chat__btn { display: none; }
+
+  .chat__panel {
+    position: absolute;
+    right: calc(100% + 0.625rem);
+    bottom: 0;
+    z-index: 1;
+    width: min(17.5rem, calc(100vw - 51px - 1.875rem - 0.75rem));
+    padding: 1rem 1rem 0.75rem;
+    border: 1px solid var(--c-border-soft);
+    border-radius: 0.75rem;
+    background: var(--c-white);
+    box-shadow: var(--sh-float);
+    color: var(--c-navy);
+    transform-origin: 100% 100%;
+  }
+  .chat__panel[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .chat__panel:not([hidden]) { animation: chat-in 180ms var(--ease); }
+  }
+  @keyframes chat-in { from { opacity: 0; transform: scale(0.94); } }
+  .chat__head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .chat__h { font-family: var(--ff-serif); font-size: 1.25rem; font-weight: var(--fw-medium); line-height: 1.2; color: var(--c-navy-ink); }
+  .chat__close {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-right: -0.375rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--c-navy);
+  }
+  .chat__close::before { content: ''; position: absolute; inset: -8px; }                        /* 44px hit area */
+  .chat__close:hover { background: color-mix(in srgb, var(--c-sky) 50%, transparent); }
+  .chat__note { margin-top: 0.375rem; font-size: var(--fs-13); line-height: 1.4; }
+  .chat__list { display: grid; gap: 0.25rem; margin-top: 0.625rem; padding: 0; list-style: none; }
+  .chat__opt {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+    border: 0;
+    border-radius: var(--r-7);
+    background: transparent;
+    color: var(--c-navy);
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    text-align: left;
+    text-decoration: none;
+  }
+  .chat__opt:hover { background: color-mix(in srgb, var(--c-sky) 40%, transparent); }
+  .chat__ic {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    color: var(--c-sky);
+  }
+  .chat__ic--wa { background: var(--c-navy); }
+  .nowrap { white-space: nowrap; }
+</style>
+
+<script>
+  type Jivo = { open: (o?: { start?: string }) => void; close: () => void; chatMode: () => 'online' | 'offline' };
+  type Hours = { tz: string; days: string[]; open: string; close: string };
+  const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+  const root = document.querySelector<HTMLElement>('[data-chat]');
+  if (root) {
+    const btn = root.querySelector<HTMLButtonElement>('[data-chat-btn]')!;
+    const panel = root.querySelector<HTMLElement>('[data-chat-panel]')!;
+    const jivoId = root.dataset.jivo;
+    const w = window as unknown as { jivo_api?: Jivo; jivo_onLoadCallback?: () => void; requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void };
+
+    // ---- label: "Chat now" / "Leave a message" (business hours first, Jivo's chatMode() once loaded)
+    const setLabel = (online: boolean) => {
+      const label = online ? 'Chat now' : 'Leave a message';
+      btn.setAttribute('aria-label', label);
+      btn.title = label;
+    };
+    const inHours = (h: Hours): boolean | null => {
+      try {
+        const parts = new Intl.DateTimeFormat('en-US', { timeZone: h.tz, weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+        const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+        const day = get('weekday').slice(0, 3).toLowerCase();
+        const now = `${get('hour')}:${get('minute')}`;
+        return DAYS.includes(day) && h.days.includes(day) && now >= h.open && now <= h.close;
+      } catch { return null; }
+    };
+    if (jivoId && root.dataset.hours) {
+      const open = inHours(JSON.parse(root.dataset.hours) as Hours);
+      if (open !== null) setLabel(open);
+    }
+
+    // ---- built-in panel
+    const onOutside = (e: Event) => { if (!root.contains(e.target as Node)) closePanel(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { e.stopPropagation(); closePanel(true); } };
+    function openPanel() {
+      panel.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      panel.querySelector<HTMLElement>('.chat__opt')?.focus();
+      document.addEventListener('pointerdown', onOutside, true);
+      document.addEventListener('keydown', onKey);
+    }
+    function closePanel(refocus: boolean) {
+      if (panel.hidden) return;
+      panel.hidden = true;
+      btn.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('pointerdown', onOutside, true);
+      document.removeEventListener('keydown', onKey);
+      if (refocus) btn.focus();
+    }
+    panel.querySelector('[data-chat-close]')!.addEventListener('click', () => closePanel(true));
+    panel.querySelector('[data-chat-quote]')!.addEventListener('click', () => {
+      closePanel(false);
+      document.dispatchEvent(new CustomEvent('open-booking', { detail: { trigger: btn } }));
+    });
+    panel.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a.chat__opt')) closePanel(false); });
+    document.addEventListener('chat:close', () => closePanel(false));
+
+    // ---- Jivo (lazy)
+    let jivo: Promise<Jivo> | null = null;
+    const loadJivo = () =>
+      (jivo ??= new Promise<Jivo>((resolve, reject) => {
+        const prev = w.jivo_onLoadCallback;
+        const timer = setTimeout(() => reject(new Error('jivo timeout')), 8000);
+        w.jivo_onLoadCallback = () => {
+          prev?.();
+          clearTimeout(timer);
+          const api = w.jivo_api!;
+          try { setLabel(api.chatMode() === 'online'); } catch { /* older widget */ }
+          document.documentElement.dataset.jivo = 'ready';     // Jivo's launcher takes over (see header)
+          resolve(api);
+        };
+        const s = document.createElement('script');
+        s.src = `https://code.jivosite.com/widget/${jivoId}`;
+        s.async = true;
+        s.onerror = () => { clearTimeout(timer); reject(new Error('jivo blocked')); };
+        document.head.append(s);
+      }).catch((err) => { jivo = null; throw err; }));
+
+    btn.addEventListener('click', async () => {
+      if (!jivoId) { panel.hidden ? openPanel() : closePanel(true); return; }
+      if (btn.getAttribute('aria-busy') === 'true') return;
+      btn.setAttribute('aria-busy', 'true');
+      try {
+        (await loadJivo()).open({ start: 'chat' });
+      } catch {
+        openPanel();     // never a dead button
+      } finally {
+        btn.removeAttribute('aria-busy');
+      }
+    });
+
+    // desktop: no chat button there, so load Jivo (and its launcher) once the page is idle
+    if (jivoId && matchMedia('(min-width: 64rem)').matches) {
+      const idle = () => (w.requestIdleCallback ? w.requestIdleCallback(() => loadJivo().catch(() => {}), { timeout: 6000 }) : setTimeout(() => loadJivo().catch(() => {}), 3000));
+      if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+    }
+  }
+</script>

@@ -1,0 +1,17 @@
+{
+  "menu": [
+    { "label": "Get My Flight Options", "href": "#get-flight-options" },
+    { "label": "About Us", "href": "/about/" },
+    { "label": "Contact", "href": "/contact/" },
+    { "label": "Blog", "href": "/blog/" },
+    { "label": "FAQ", "href": "/#faq" }
+  ],
+  "footer": [
+    { "label": "Home", "href": "/" },
+    { "label": "About Us", "href": "/about/" },
+    { "label": "Terms and Conditions", "href": "/terms-and-conditions/" },
+    { "label": "Privacy Policy", "href": "/privacy-policy/" },
+    { "label": "Contact Us", "href": "/contact/" },
+    { "label": "Blog", "href": "/blog/" }
+  ]
+}

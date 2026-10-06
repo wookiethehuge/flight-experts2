@@ -1,0 +1,280 @@
+---
+/**
+ * Blog article. Design: BlogArticle (1440) and BlogArticleMobile (390).
+ * Desktop: article column (860px) + sticky CTA card (386px) that starts level with the hero image.
+ * Below 1024px the CTA card follows the article (BlogArticleMobile). "Read further..." lists the latest other posts:
+ * 4 on desktop, 3 on tablet, 2 on mobile.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/chrome/Breadcrumbs.astro';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import Button from '../../components/ui/Button.astro';
+import Img from '../../components/ui/Img.astro';
+import { getPage, getPosts, getSettings } from '../../lib/cms';
+import { richText, richTextPlain } from '../../lib/richtext';
+import { inline } from '../../lib/inline';
+import { bylineDate } from '../../lib/blog';
+import { getImage } from 'astro:assets';
+import { seedAsset } from '../../lib/cms';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const settings = await getSettings();
+const blog = await getPage('blog');
+const related = (await getPosts()).filter((p) => p.slug !== post.slug).slice(0, 4);
+const cta = settings.blogCta;
+const author = post.author;
+const authorHref = author?.slug ? `/author/${author.slug}/` : undefined;
+const abs = (href: string) => new URL(href, Astro.site).href;
+const url = abs(`/blog/${post.slug}/`);
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: blog.title, href: '/blog/' }, { label: post.title }];
+const description = post.seo?.description || post.excerpt || richTextPlain(post.content).slice(0, 155);
+
+// Structured data: the hero rendered as a 1200px JPEG for seed assets, the media URL otherwise.
+let imageUrl: string | undefined = post.heroImage?.url;
+const local = imageUrl ? seedAsset(imageUrl) : undefined;
+if (local && typeof local === 'object') imageUrl = (await getImage({ src: local, width: 1200, format: 'jpeg' })).src;
+imageUrl = imageUrl ? abs(imageUrl) : undefined;
+
+// BreadcrumbList JSON-LD is emitted by <Breadcrumbs />.
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    headline: post.title,
+    description,
+    image: imageUrl ? [imageUrl] : undefined,
+    datePublished: post.publishedAt,
+    dateModified: (post as any).updatedAt ?? post.publishedAt,
+    timeRequired: `PT${post.readTime}M`,
+    author: author ? { '@type': 'Person', name: author.name, jobTitle: author.role, url: authorHref ? abs(authorHref) : undefined } : undefined,
+    publisher: { '@id': abs('/#organization') },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    isPartOf: { '@id': abs('/blog/#blog') },
+  },
+];
+const seo = { ...post.seo, description, image: post.seo?.image ?? post.heroImage };
+const heroStyle = post.art?.heroPosition ? `object-position: ${post.art.heroPosition}` : undefined;
+---
+<BaseLayout title={post.title} seo={seo} headerTheme="light" jsonLd={jsonLd} sticky={{ plane: true, chat: true }} ogType="article">
+  <Fragment slot="head">
+    <meta property="article:published_time" content={post.publishedAt} />
+    {author && <meta property="article:author" content={authorHref ? abs(authorHref) : author.name} />}
+  </Fragment>
+  <Breadcrumbs items={crumbs} />
+  <div class="container post on-light">
+    <article class="post__article" aria-labelledby="post-title">
+      <header class="post__header">
+        <h1 id="post-title" class="post__title">{post.title}</h1>
+        <p class="post__byline">
+          {author && <>By {authorHref ? <a href={authorHref} rel="author">{author.name}</a> : author.name}{' '}<span aria-hidden="true">·</span>{' '}</>}
+          <time datetime={post.publishedAt.slice(0, 10)}>{bylineDate(post.publishedAt)}</time>{' '}
+          <span aria-hidden="true">·</span>{' '}<span class="post__read">{post.readTime} min read</span>
+        </p>
+      </header>
+      <div class="post__body">
+        <div class:list={['post__hero', post.art?.heroMirror && 'is-mirrored']}>
+          <Img media={post.heroImage} sizes="(min-width: 90rem) 860px, (min-width: 64rem) calc(100vw - 30vw - 194px), calc(100vw - 44px)" loading="eager" fetchpriority="high" class="post__hero-img" style={heroStyle} />
+        </div>
+        <div class="post__content" set:html={richText(post.content)} />
+      </div>
+    </article>
+
+    <aside class="post__cta" aria-labelledby="post-cta-title">
+      <div class="cta-card" data-badge-avoid>
+        <h2 id="post-cta-title" class="cta-card__title" set:html={inline(cta.heading)} />
+        <p class="cta-card__body">{cta.body}</p>
+        <div class="cta-card__actions">
+          <Button openBooking block aria-haspopup="dialog">{cta.primaryLabel}</Button>
+          <Button href={settings.phone.href} variant="outline" block class="cta-card__call">{cta.secondaryLabel}</Button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  {related.length > 0 && (
+    <section class="container further on-light" aria-labelledby="further-title">
+      <h2 id="further-title" class="further__title">Read further...</h2>
+      <ul class="further__grid" role="list">
+        {related.map((p, i) => (
+          <li><BlogCard post={p} headingLevel="h3" reveal={i} /></li>
+        ))}
+      </ul>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .post {
+    margin-top: clamp(3.1338rem, calc(3.1338rem + 54.5 * (100vw - 24.375rem) / 1050), 6.54rem);     /* breadcrumb -> H1 50.1 -> 104.6 */
+    --post-gap: clamp(1.8825rem, calc(1.8825rem + 8.52 * (100vw - 24.375rem) / 1050), 2.415rem);   /* byline -> hero 30 -> 38.6 */
+    /* mobile frame: 24px left edge (container 20 + 4) */
+    padding-inline-start: calc(var(--gutter) + clamp(0rem, calc(0.25rem - 4 * (100vw - 24.375rem) / 1050), 0.25rem));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* ---- header ---- */
+  .post__title {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-h1-page);                                                                  /* 32 -> 40 */
+    line-height: clamp(2.1875rem, calc(2.1875rem + 17 * (100vw - 24.375rem) / 1050), 3.25rem);     /* 35 -> 52 */
+    letter-spacing: -0.03em;
+    color: var(--c-navy);
+    text-wrap: pretty;
+  }
+  .post__byline {
+    margin-top: 0.6875rem;                                                                         /* 11 */
+    font-size: clamp(0.75rem, calc(0.75rem + 2 * (100vw - 24.375rem) / 1050), 0.875rem);          /* 12 -> 14 */
+    line-height: 1.25;
+    color: var(--c-burgundy);
+  }
+  .post__byline a { font-weight: var(--fw-medium); color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .post__byline a:hover { text-decoration-thickness: 2px; }
+  .post__read { font-style: italic; letter-spacing: -0.3px; }
+
+  /* ---- hero ---- */
+  .post__body { margin-top: var(--post-gap); }
+  .post__hero {
+    height: clamp(9.875rem, calc(9.875rem + 128 * (100vw - 24.375rem) / 1050), 17.875rem);        /* 158 -> 286 */
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--c-navy);
+  }
+  .post__hero :global(.post__hero-img) { width: 100%; height: 100%; object-fit: cover; }
+  .post__hero.is-mirrored :global(.post__hero-img) { transform: scaleX(-1); }
+
+  /* ---- rich text body ---- */
+  .post__content {
+    --rt-lh: clamp(1.3125rem, calc(1.3125rem + 10 * (100vw - 24.375rem) / 1050), 1.9375rem);       /* 21 -> 31 */
+    margin-top: clamp(1.625rem, calc(1.625rem + 1.57 * (100vw - 24.375rem) / 1050), 1.7231rem);    /* 26 -> 27.6 */
+    font-size: clamp(0.875rem, calc(0.875rem + 4 * (100vw - 24.375rem) / 1050), 1.125rem);        /* 14 -> 18 */
+    line-height: var(--rt-lh);
+    color: var(--c-navy);
+    overflow-wrap: break-word;
+  }
+  .post__content :global(h2),
+  .post__content :global(h3),
+  .post__content :global(h4) {
+    margin-top: clamp(2.125rem, calc(2.125rem + 28 * (100vw - 24.375rem) / 1050), 3.875rem);      /* 34 -> 62 */
+    margin-bottom: clamp(0.5rem, calc(0.5rem + 12 * (100vw - 24.375rem) / 1050), 1.25rem);        /* 8 -> 20 */
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-bold);
+    color: var(--c-navy);
+  }
+  .post__content :global(h2) {
+    font-size: clamp(1.125rem, calc(1.125rem + 14 * (100vw - 24.375rem) / 1050), 2rem);           /* 18 -> 32 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 21 * (100vw - 24.375rem) / 1050), 2.625rem);   /* 21 -> 42 */
+    letter-spacing: -0.007em;
+  }
+  .post__content :global(h3) { font-size: clamp(1rem, calc(1rem + 8 * (100vw - 24.375rem) / 1050), 1.5rem); line-height: 1.3; }
+  .post__content :global(h4) { font-size: var(--fs-body-lg); line-height: 1.3; }
+  .post__content > :global(:first-child) { margin-top: 0; }
+  /* paragraphs follow each other without a gap, as in the design; a list is followed by one blank line */
+  .post__content :global(:is(ul, ol, blockquote) + *) { margin-top: var(--rt-lh); }
+  .post__content :global(:is(ul, ol)) {
+    padding-left: clamp(1.3125rem, calc(1.3125rem + 6 * (100vw - 24.375rem) / 1050), 1.6875rem);  /* 21 -> 27 */
+    list-style: none;
+  }
+  .post__content :global(ul > li) { position: relative; }
+  .post__content :global(ul > li::before) {
+    content: '';
+    position: absolute;
+    --dot: clamp(0.25rem, calc(0.25rem + 1 * (100vw - 24.375rem) / 1050), 0.3125rem);             /* 4 -> 5 */
+    width: var(--dot);
+    height: var(--dot);
+    left: calc(-1 * clamp(0.8rem, calc(0.8rem + 3.5 * (100vw - 24.375rem) / 1050), 1.0156rem));  /* dot 12.8 -> 16.3 before text */
+    top: calc(var(--rt-lh) / 2 - var(--dot) / 2 + 0.1em);
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .post__content :global(ol) { list-style: decimal; }
+  .post__content :global(a) { color: var(--c-burgundy); text-decoration: underline; text-underline-offset: 2px; }
+  .post__content :global(a:hover) { text-decoration-thickness: 2px; }
+  .post__content :global(blockquote) { padding-left: 1rem; border-left: 3px solid var(--c-burgundy); font-style: italic; }
+  .post__content :global(strong) { font-weight: var(--fw-semibold); }
+
+  /* ---- CTA card ---- */
+  .post__cta { margin-top: 2.125rem; }                                                              /* 34 below the article (mobile) */
+  .cta-card {
+    padding:
+      clamp(1.9063rem, calc(1.9063rem + 10.5 * (100vw - 24.375rem) / 1050), 2.5625rem)             /* 30.5 -> 41 */
+      clamp(0.8125rem, calc(0.8125rem + 16 * (100vw - 24.375rem) / 1050), 1.8125rem)               /* 13 -> 29 */
+      clamp(2.875rem, calc(2.875rem + 11 * (100vw - 24.375rem) / 1050), 3.5625rem);                /* 46 -> 57 */
+    border-radius: 8px;
+    background: var(--c-sky-hero);
+    color: var(--c-navy);
+  }
+  .cta-card__title {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: clamp(1.75rem, calc(1.75rem + 4 * (100vw - 24.375rem) / 1050), 2rem);              /* 28 -> 32 */
+    line-height: clamp(2.25rem, calc(2.25rem + 6 * (100vw - 24.375rem) / 1050), 2.625rem);        /* 36 -> 42 */
+  }
+  .cta-card__title :global(strong) { font-weight: var(--fw-bold); }
+  .cta-card__body {
+    margin-top: 1.25rem;                                                                           /* 20 */
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                /* 16 -> 18 */
+    line-height: clamp(1.625rem, calc(1.625rem + 3 * (100vw - 24.375rem) / 1050), 1.8125rem);     /* 26 -> 29 */
+    font-weight: var(--fw-regular);
+  }
+  .cta-card__actions {
+    display: grid;
+    gap: 6px;
+    margin-top: clamp(1.5625rem, calc(1.5625rem + 17.4 * (100vw - 24.375rem) / 1050), 2.65rem);   /* 25 -> 42.4 */
+  }
+  .cta-card__actions :global(.cta-card__call) { border-radius: 8px; }
+
+  /* ---- read further ---- */
+  .further {
+    padding-inline-start: calc(var(--gutter) + clamp(0rem, calc(0.25rem - 4 * (100vw - 24.375rem) / 1050), 0.25rem));
+    margin-top: clamp(3.6375rem, calc(4.1125rem - 7.6 * (100vw - 24.375rem) / 1050), 4.1125rem);  /* 66 -> 58 */
+    padding-bottom: clamp(3rem, calc(3rem + 52 * (100vw - 24.375rem) / 1050), 6.25rem);
+  }
+  .further__title {
+    font-size: clamp(1.125rem, calc(1.125rem + 6 * (100vw - 24.375rem) / 1050), 1.5rem);          /* 18 -> 24 */
+    line-height: 1.25;
+    font-weight: var(--fw-semibold);
+  }
+  .further__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(0.625rem, calc(0.625rem + 10 * (100vw - 24.375rem) / 1050), 1.25rem);       /* 10 -> 20 */
+    row-gap: 2.5rem;
+    margin-top: clamp(0.7312rem, calc(0.7312rem + 16.5 * (100vw - 24.375rem) / 1050), 1.7625rem); /* 11.7 -> 28.2 */
+  }
+  .further__grid > li:nth-child(n + 3) { display: none; }
+
+  @media (min-width: 48rem) {
+    .cta-card { max-width: 30rem; }                                                               /* tablet: keep the mobile card proportions */
+    .further__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .further__grid > li:nth-child(3) { display: block; }
+  }
+
+  @media (min-width: 64rem) {
+    .post {
+      grid-template-columns: minmax(0, 1fr) clamp(18rem, 30vw, 24.125rem);                         /* aside 386 */
+      grid-template-rows: auto 1fr;
+      column-gap: 3.375rem;                                                                        /* 54 */
+      row-gap: var(--post-gap);
+    }
+    .post__article { grid-column: 1; grid-row: 1 / span 2; display: grid; grid-template-rows: subgrid; }
+    .post__body { margin-top: 0; }
+    .cta-card__body { font-weight: var(--fw-semibold); }                                          /* 600 in the desktop frame, 400 on mobile */
+    .cta-card { max-width: none; }
+    .post__cta { grid-column: 2; grid-row: 2; margin-top: 0; align-self: start; position: sticky; top: 1.5rem; }
+    .further__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .further__grid > li:nth-child(4) { display: block; }
+  }
+  @supports not (grid-template-rows: subgrid) {
+    @media (min-width: 64rem) { .post__body { margin-top: var(--post-gap); } }
+  }
+</style>

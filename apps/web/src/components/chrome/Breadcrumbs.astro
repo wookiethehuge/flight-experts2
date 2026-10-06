@@ -1,0 +1,72 @@
+---
+/**
+ * Breadcrumb trail (BlogCollection / BlogArticle / Author / TextPage / About + Mobile versions).
+ * 14px #888888, Figma chevron between items; the last item is the current page (aria-current="page").
+ * Place it first inside <main>, directly under the light header: its top padding puts the text where the frames
+ * have it (y 84.86 on mobile, 103.86 on desktop). It has no bottom spacing; the next block sets its own.
+ * Also emits BreadcrumbList structured data.
+ *
+ * currentWeight: the frames use 600 on About/BlogCollection and 500 on BlogArticle/Author/TextPage (default 500).
+ */
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  items: { label: string; href?: string }[];
+  currentWeight?: 500 | 600;
+  /** hide below 48rem (About mobile frame has no breadcrumb) */
+  desktopOnly?: boolean;
+  class?: string;
+}
+const { items, currentWeight = 500, desktopOnly = false, class: cls } = Astro.props;
+const site = Astro.site ?? new URL(Astro.url.origin);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((it, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: it.label,
+    ...(it.href || i === items.length - 1 ? { item: new URL(it.href ?? Astro.url.pathname, site).href } : {}),
+  })),
+};
+---
+<nav class:list={['crumbs', 'on-light', desktopOnly && 'crumbs--desktop-only', cls]} aria-label="Breadcrumb">
+  <ol role="list">
+    {items.map((it, i) => {
+      const last = i === items.length - 1;
+      return (
+        <li>
+          {i > 0 && <Icon name="crumb-chevron" width={6} height={8} class="crumbs__sep" />}
+          {last
+            ? <span aria-current="page" class:list={['crumbs__current', currentWeight === 600 && 'is-strong']}>{it.label}</span>
+            : it.href ? <a href={it.href}>{it.label}</a> : <span>{it.label}</span>}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />
+
+<style>
+  .crumbs {
+    max-width: var(--page-max);
+    margin-inline: auto;
+    /* text top: 84.86 (mobile) / 103.86 (desktop) minus the light header height (58 / 89) */
+    padding-top: clamp(0.92875rem, calc(1.67875rem - 12 * (100vw - 24.375rem) / 1050), 1.67875rem);
+    padding-inline: clamp(1.5rem, calc(1.5rem + 46 * (100vw - 24.375rem) / 1050), 4.375rem);      /* 24 -> 70 */
+    font-size: var(--fs-14);
+    line-height: 17.5px;
+    color: var(--c-grey-text);
+  }
+  .crumbs--desktop-only { display: none; }
+  @media (min-width: 48rem) { .crumbs--desktop-only { display: block; } }
+  /* one line: a long current title is truncated with an ellipsis (BlogArticleMobile keeps the trail on one line) */
+  ol { display: flex; align-items: baseline; white-space: nowrap; }
+  li { flex: none; }
+  li:last-child { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .crumbs :global(.crumbs__sep) { display: inline-block; vertical-align: 0.05em; margin-inline: 5px 6px; color: var(--c-grey); }
+  a { color: inherit; font-weight: var(--fw-light); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .crumbs__current { font-weight: var(--fw-medium); }
+  .crumbs__current.is-strong { font-weight: var(--fw-semibold); }
+</style>

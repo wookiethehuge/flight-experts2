@@ -1,0 +1,120 @@
+---
+/**
+ * ContactDetails block: the light-blue card of label / value rows (phone lines, email, availability ...).
+ *
+ * Block shape (ContactDetailsBlock in lib/types.ts):
+ *   items[]  { label: "Customer Support:", source?: 'custom' | 'salesPhone' | 'supportPhone' | 'email', value?, href? }
+ *            Phone and email rows take their values from Site Settings (salesPhone, supportPhone, salesEmail,
+ *            supportEmail); labels stay editable on the block. 'email' shows the email of the selected inquiry type.
+ * The same rows show at every width (the Contact frame's content; ContactMobile's single "Direct Line" row was dropped).
+ *
+ * On the Contact page the card is rendered by ContactForm (its `details` field) with `topic` support: the form's
+ * Sales / Support choice swaps the email row ([data-topic-email]) and highlights the matching phone row
+ * ([data-line].is-active). Used as a standalone block it renders in its own section with the Sales defaults.
+ * Values: Contact (1440: 420 wide card, 18px rows 51px apart, value 36px after the label) and ContactMobile
+ * (390: 344 wide card, 16px rows). The Contact frame's row layout (value right after its label) is used at every width
+ * so the longer desktop labels fit on one line at 390; below that a value wraps under its label.
+ */
+import type { ContactDetailItem, ContactDetailsBlock, SiteSettings } from '../../lib/types';
+
+interface Props { block: ContactDetailsBlock; settings: SiteSettings; page?: string; index?: number; embedded?: boolean; class?: string }
+const { block, settings, embedded = false, class: cls } = Astro.props;
+
+type Row = { label: string; value: string; href?: string; line?: 'sales' | 'support'; email?: boolean };
+const mail = (e?: string) => (e ? `mailto:${e}` : undefined);
+const resolve = (it: ContactDetailItem): Row | null => {
+  switch (it.source) {
+    case 'salesPhone':
+      return settings.salesPhone?.display ? { label: it.label, value: settings.salesPhone.display, href: settings.salesPhone.href, line: 'sales' } : null;
+    case 'supportPhone':
+      return settings.supportPhone?.display ? { label: it.label, value: settings.supportPhone.display, href: settings.supportPhone.href, line: 'support' } : null;
+    case 'email': {
+      const e = settings.salesEmail || settings.email;
+      return e ? { label: it.label, value: e, href: mail(e), email: true } : null;
+    }
+    default:
+      return it.value ? { label: it.label, value: it.value, href: it.href || undefined } : null;
+  }
+};
+const rows = (block.items ?? []).map(resolve).filter((r): r is Row => r !== null);
+const salesEmail = settings.salesEmail || settings.email;
+const supportEmail = settings.supportEmail || settings.email;
+// let long emails break after the @ in the narrow value column
+const emailHtml = (e: string) => e.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace('@', '@<wbr>');
+---
+{rows.length > 0 && (embedded ? (
+  <dl class:list={['details', cls]} data-details>
+    {rows.map((r) => (
+      <div class:list={['details__row', r.line === 'sales' && 'is-active']} data-line={r.line}>
+        <dt>{r.label}</dt>
+        {r.email ? (
+          <dd aria-live="polite"><a href={r.href} data-topic-email data-sales={salesEmail} data-support={supportEmail} set:html={emailHtml(r.value)} /></dd>
+        ) : (
+          <dd>{r.href ? <a href={r.href} class:list={[r.line && 'nowrap']}>{r.value}</a> : r.value}</dd>
+        )}
+      </div>
+    ))}
+  </dl>
+) : (
+  <section class="container details-section on-light" aria-label="Contact details">
+    <dl class:list={['details', cls]}>
+      {rows.map((r) => (
+        <div class="details__row">
+          <dt>{r.label}</dt>
+          <dd>{r.email && r.href ? <a href={r.href} set:html={emailHtml(r.value)} /> : r.href ? <a href={r.href} class:list={[r.line && 'nowrap']}>{r.value}</a> : r.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+))}
+
+<style>
+  .details-section { padding-block: var(--section-y); }
+  .details {
+    display: flex;
+    flex-direction: column;
+    row-gap: clamp(1rem, calc(1rem + 11 * (100vw - 24.375rem) / 1050), 1.6875rem);                /* 16 -> 27 */
+    margin: 0;
+    padding: clamp(1.1875rem, calc(1.1875rem + 10 * (100vw - 24.375rem) / 1050), 1.8125rem)       /* 19 -> 29 */
+      clamp(1.0625rem, calc(1.0625rem + 19 * (100vw - 24.375rem) / 1050), 2.25rem)                 /* 17 -> 36 */
+      clamp(1.625rem, calc(1.625rem + 19 * (100vw - 24.375rem) / 1050), 2.8125rem);                /* 26 -> 45 */
+    border-radius: var(--r-7);
+    background: color-mix(in srgb, var(--c-sky) 47%, transparent);
+    color: var(--c-navy);
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                 /* 16 -> 18 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 3 * (100vw - 24.375rem) / 1050), 1.5rem);       /* 21 -> 24 */
+  }
+  /* each row: value after the label (Contact: 36px at 1440), wrapping under it only when the card is too narrow */
+  .details__row {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: clamp(1rem, calc(1rem + 20 * (100vw - 24.375rem) / 1050), 2.25rem);               /* 16 -> 36 */
+  }
+  .details dt { position: relative; flex: none; font-weight: var(--fw-regular); }
+  .details dd { margin: 0; font-weight: var(--fw-semibold); overflow-wrap: break-word; min-width: 0; }
+  .details a { color: inherit; text-decoration: none; }
+  .details a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .details a:focus-visible { outline-color: var(--c-navy); }
+  .nowrap { white-space: nowrap; }
+
+  /* selected inquiry line: a small burgundy marker in the card's left padding */
+  .details__row[data-line] dt::before {
+    content: '';
+    position: absolute;
+    left: -0.6875rem;                                    /* 11px into the 17 -> 36px left padding */
+    top: calc(50% - 3px);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+  .details__row.is-active dt::before { opacity: 1; transform: none; }
+  .details [data-topic-email] { transition: opacity var(--dur) var(--ease); }
+
+  @media (min-width: 80rem) {
+    .details__row[data-line] dt::before { left: -1.125rem; }
+  }
+</style>

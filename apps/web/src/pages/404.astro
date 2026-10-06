@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from '../components/ui/PageHeading.astro';
+---
+<BaseLayout title="Page not found" noindex sticky={{ plane: true, chat: true }}>
+  <PageHeading text="Page *not found*" />
+  <div class="container nf"><p>The page you were looking for has moved or no longer exists.</p><p><a href="/">Back to the homepage</a></p></div>
+</BaseLayout>
+<style>.nf { padding-block: 1.5rem 6rem; display: grid; gap: 0.75rem; font-size: var(--fs-body-lg); } .nf a { color: var(--c-burgundy); font-weight: 500; }</style>

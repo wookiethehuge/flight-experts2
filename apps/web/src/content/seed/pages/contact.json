@@ -1,0 +1,103 @@
+{
+  "title": "Contact",
+  "slug": "contact",
+  "headerTheme": "dark",
+  "showBreadcrumbs": false,
+  "seo": {
+    "title": "Contact Flight Experts | Access Unlisted Premium Fares",
+    "description": "Submit your travel requirements to a dedicated premium travel consultant and receive a tailored itinerary: flights, hotels and private arrangements. Available 24/7 on (888) 855-2389."
+  },
+  "layout": [
+    {
+      "blockType": "contactHero",
+      "heading": "*Contact* Flight Experts",
+      "subheading": "Access Unlisted Premium Fares",
+      "body": "Bypass the retail travel market. Submit your travel requirements to a dedicated premium travel consultant and receive a tailored itinerary for your next international journey, complete with flight reservations, hotel accommodations, and private arrangements.",
+      "image": {
+        "file": "contact-hero.webp",
+        "alt": "A traveller walking through an airport with a carry-on case"
+      },
+      "mobileImage": {
+        "file": "airport-silhouettes.webp",
+        "alt": "A traveller walking through an airport terminal"
+      }
+    },
+    {
+      "blockType": "contactForm",
+      "details": [
+        {
+          "label": "Customer Support:",
+          "source": "supportPhone"
+        },
+        {
+          "label": "Sales Line:",
+          "source": "salesPhone"
+        },
+        {
+          "label": "Email:",
+          "source": "email"
+        },
+        {
+          "label": "Availability:",
+          "source": "custom",
+          "value": "24/7 Global Support"
+        }
+      ],
+      "submitLabel": "Submit now",
+      "note": "A dedicated consultant will review your requirements and contact you directly with tailored flight and hotel options."
+    },
+    {
+      "blockType": "faq",
+      "heading": "*Frequently* asked questions",
+      "items": [
+        {
+          "question": "Lorem ipsum dolor sit amet consectetur.",
+          "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt."
+        },
+        {
+          "question": "Lorem ipsum dolor sit amet consectetur.",
+          "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt."
+        },
+        {
+          "question": "Lorem ipsum dolor sit amet consectetur.",
+          "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt."
+        },
+        {
+          "question": "Lorem ipsum dolor sit amet consectetur.",
+          "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt."
+        },
+        {
+          "question": "Lorem ipsum dolor sit amet consectetur.",
+          "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt."
+        }
+      ]
+    },
+    {
+      "blockType": "contactOptions",
+      "heading": "Contact *us*",
+      "cards": [
+        {
+          "icon": "phone",
+          "title": "Phone or callback",
+          "body": "Speak with your expert directly on [(888) 855-2389](tel:+18888552389), or request a callback at a time that suits you.",
+          "linkLabel": "Request a callback",
+          "linkUrl": "tel:+18888552389"
+        },
+        {
+          "icon": "email",
+          "title": "Email",
+          "body": "Send your route and dates to [experts@flight-experts.com](mailto:experts@flight-experts.com) and we’ll reply with options.",
+          "linkLabel": "Send an email",
+          "linkUrl": "mailto:experts@flight-experts.com"
+        },
+        {
+          "icon": "whatsapp",
+          "title": "WhatsApp",
+          "body": "Message your route and dates and your expert replies with options. The easiest way to go back and forth.",
+          "linkLabel": "Open WhatsApp",
+          "linkUrl": "https://wa.me/18888552389"
+        }
+      ]
+    }
+  ]
+}

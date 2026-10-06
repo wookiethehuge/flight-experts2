@@ -1,0 +1,248 @@
+---
+/**
+ * Reviews band (navy): heading, Trustpilot rating row, horizontally scrollable testimonial cards and the airline
+ * logo strip. Main 1895-2830 / Mobile 2017-2794.
+ * The carousel is a native scroll-snap list (touch, trackpad, keyboard: it is focusable, arrow keys scroll). The
+ * previous/next buttons are an enhancement (they scroll by one card) and stay hidden until the script runs.
+ * Mobile shows the airline strip as two rows cut from the same image (Mobile artboard).
+ * Cards: pinned testimonials, or the newest approved 5-star reviews (incl. synced Trustpilot ones), see lib/cms.ts.
+ * No "Read on Trustpilot" link per card: the design has none (the Trustpilot logo above links to the profile).
+ */
+import type { Media, ReviewsBlock, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+import Img from '../ui/Img.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props { block: ReviewsBlock; settings: SiteSettings; page: string; index: number }
+const { block, settings, index } = Astro.props;
+const reviews = (block.testimonials ?? []).filter(Boolean);   // resolved in lib/cms.ts (pinned, or newest approved 5-star)
+/** Cards are sized for ~400 characters (the design's reviews); longer synced reviews are cut at a word with an ellipsis. */
+const BODY_MAX = 400;
+const excerpt = (s?: string | null) => {
+  const t = (s ?? '').trim();
+  if (t.length <= BODY_MAX) return t;
+  const cut = t.slice(0, BODY_MAX + 1);
+  return cut.slice(0, Math.max(cut.lastIndexOf(' '), BODY_MAX * 0.8)).replace(/[\s.,;:!?…-]+$/, '') + '…';
+};
+const hid = `reviews-h-${index}`;
+const trackId = `reviews-track-${index}`;
+const stars = { url: '/seed/trustpilot-stars.webp', alt: 'Rated 5 out of 5 stars on Trustpilot' } as Media;
+const tp = { url: '/seed/trustpilot-logo.webp', alt: 'Trustpilot' } as Media;
+const tpUrl = settings.trustpilot?.url;
+---
+<section class="rv" aria-labelledby={hid}>
+  <div class="container rv__head">
+    <h2 class="rv__h" id={hid} set:html={inline(block.heading)} />
+    <div class="rv__rating">
+      {tpUrl ? (
+        <a class="rv__tp" href={tpUrl} target="_blank" rel="noopener"><Img media={tp} alt="Trustpilot (opens in a new tab)" sizes="(min-width: 48rem) 162px, 98px" widths={[98, 162, 196, 324]} /></a>
+      ) : (
+        <span class="rv__tp"><Img media={tp} sizes="(min-width: 48rem) 162px, 98px" widths={[98, 162, 196, 324]} /></span>
+      )}
+      <Img media={stars} class="rv__stars" sizes="(min-width: 48rem) 163px, 105px" widths={[105, 163, 210, 326]} />
+      <p class="rv__label">{block.ratingLabel}</p>
+    </div>
+  </div>
+
+  <div class="rv__carousel" data-reviews>
+    <ul class="rv__track" id={trackId} role="list" tabindex="0" aria-label="Customer reviews (scrollable)">
+      {reviews.map((r, i) => (
+        <li class="rv__card" data-reveal style={`--i: ${i}`}>
+          <p class="rv__name">{r.name}</p>
+          <Img media={{ ...stars, alt: `Rated ${r.rating} out of 5 stars` }} class="rv__cstars" sizes="98px" widths={[98, 196]} />
+          <h3 class="rv__title">{r.title}</h3>
+          {r.body && <p class="rv__body">{excerpt(r.body)}</p>}
+        </li>
+      ))}
+    </ul>
+    <div class="rv__fade" aria-hidden="true"></div>
+    <button type="button" class="rv__nav rv__nav--prev" aria-label="Previous review" aria-controls={trackId} data-dir="-1" hidden>
+      <Icon name="chevron-down" class="rv__navic" />
+    </button>
+    <button type="button" class="rv__nav rv__nav--next" aria-label="Next review" aria-controls={trackId} data-dir="1" hidden>
+      <Icon name="chevron-down" class="rv__navic" />
+    </button>
+  </div>
+
+  {block.airlines && (
+    <div class="container rv__air">
+      <Img media={block.airlines} class="rv__air-d" sizes="(min-width: 80rem) 1226px, calc(100vw - 6rem)" widths={[640, 960, 1226, 1600, 2452]} />
+      <div class="rv__air-m">
+        <div class="rv__air-row rv__air-row--1"><Img media={block.airlines} sizes="136vw" widths={[529, 800, 1058]} /></div>
+        <div class="rv__air-row rv__air-row--2" aria-hidden="true"><Img media={block.airlines} decorative sizes="136vw" widths={[529, 800, 1058]} /></div>
+      </div>
+    </div>
+  )}
+</section>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-reviews]')) {
+    const track = root.querySelector<HTMLElement>('.rv__track');
+    if (!track) continue;
+    for (const btn of root.querySelectorAll<HTMLButtonElement>('.rv__nav')) {
+      btn.hidden = false;
+      btn.addEventListener('click', () => {
+        const card = track.querySelector<HTMLElement>('.rv__card');
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        const step = card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+        track.scrollBy({ left: step * Number(btn.dataset.dir), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+    }
+  }
+</script>
+
+<style>
+  .rv {
+    --f: calc((100vw - 24.375rem) / 1050);
+    --inset: calc(max(0px, (100vw - var(--page-max)) / 2) + clamp(1.5625rem, calc(1.5625rem + 95 * var(--f)), 7.5rem));   /* first card x 25 -> 120 */
+    background: var(--c-navy);
+    color: var(--c-sky);
+    padding-block: clamp(3.375rem, calc(3.375rem + 26 * var(--f)), 5rem) clamp(1.75rem, calc(1.75rem + 75 * var(--f)), 6.4375rem);  /* 54 -> 80 / 28 -> 103 */
+    overflow: hidden;
+  }
+  .rv :global(picture > source) { display: none; }                           /* keep <source> out of flex gaps */
+  .rv__head { padding-inline-start: calc(var(--gutter) + 0.3125rem); }        /* heading x 25 on mobile */
+  .rv__h {
+    max-width: 19.25rem;                                                        /* 308 */
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-h2);                                                    /* 32 -> 48 */
+    line-height: clamp(2.0625rem, calc(2.0625rem + 29.4 * var(--f)), 3.9rem);   /* 33 -> 62.4 */
+    color: var(--c-sky);
+  }
+  .rv__h :global(strong) { display: block; font-weight: var(--fw-bold); }
+  .rv__h :global(em) { font-style: italic; }
+  .rv__rating {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.3125rem;                                                      /* logo -> stars 5 */
+    margin: 1.75rem 0 0 0.3125rem;                                              /* 28; x 30 */
+  }
+  .rv__tp { display: flex; }
+  .rv__rating :global(img) { display: block; height: auto; }
+  .rv__tp :global(img) { width: 6.125rem; }                                    /* 98 */
+  .rv__rating :global(.rv__stars) { width: 6.5625rem; margin-top: 0.25rem; }   /* 105 */
+  .rv__label {
+    flex-basis: 100%;
+    margin-top: 0.6875rem;                                                      /* 11 */
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    color: var(--c-cream);
+    white-space: pre;
+  }
+
+  /* ---------- carousel ---------- */
+  .rv__carousel { position: relative; margin-top: 2.3125rem; }                 /* 37 */
+  .rv__track {
+    display: flex;
+    gap: clamp(1rem, calc(1rem + 3 * var(--f)), 1.1875rem);                     /* 16 -> 19 */
+    margin: 0;
+    padding: 0 var(--gutter) 0 var(--inset);
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--inset) var(--gutter);
+    scrollbar-width: none;
+  }
+  .rv__track::-webkit-scrollbar { display: none; }
+  .rv__track:focus-visible { outline-offset: -3px; }
+  .rv__card {
+    flex: 0 0 clamp(14.875rem, calc(14.875rem + 77 * var(--f)), 19.6875rem);    /* 238 -> 315 */
+    min-height: clamp(23rem, calc(23.5625rem - 9 * var(--f)), 23.5625rem);      /* 377 -> 368 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6875rem;                                                             /* 11 */
+    padding: 1rem 1.125rem;                                                     /* 16 18 */
+    border-radius: var(--r-7);
+    background: var(--c-sky-8);
+    scroll-snap-align: start;
+  }
+  .rv__name, .rv__title {
+    font-size: clamp(1rem, calc(1rem + 4 * var(--f)), 1.25rem);                 /* 16 -> 20 */
+    line-height: clamp(1.375rem, calc(1.375rem + 5 * var(--f)), 1.6875rem);     /* 22 -> 27 */
+    font-weight: var(--fw-semibold);
+    font-family: var(--ff-sans);
+  }
+  .rv__title { max-width: 15.3125rem; }                                        /* 245 */
+  .rv__card :global(.rv__cstars) { display: block; width: 6.125rem; height: auto; }   /* 98 */
+  .rv__body {
+    font-size: clamp(0.875rem, calc(0.875rem + 2 * var(--f)), 1rem);             /* 14 -> 16 */
+    line-height: clamp(1.125rem, calc(1.125rem + 2.3 * var(--f)), 1.2688rem);    /* 18 -> 20.3 */
+  }
+  .rv__fade {
+    position: absolute;
+    top: -1.25rem;
+    bottom: -3.0625rem;
+    right: 0;
+    width: clamp(4rem, calc(4rem + 104 * var(--f)), 10.5rem);                  /* 64 -> 168 */
+    background: linear-gradient(270deg, var(--c-navy) 0%, rgba(15, 21, 36, 0) 100%);
+    pointer-events: none;
+  }
+  .rv__nav {
+    position: absolute;
+    top: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-top: -1.375rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--c-cream);
+  }
+  .rv__nav[hidden] { display: none; }
+  .rv__nav :global(.rv__navic) { width: 1.125rem; height: auto; }             /* chevron 18 wide in a 36 box */
+  .rv__nav--prev { display: none; left: calc(max(0px, (100vw - var(--page-max)) / 2) + 3.625rem - 0.25rem); }   /* x 58 */
+  .rv__nav--prev :global(.rv__navic) { transform: rotate(90deg); }
+  .rv__nav--next { right: calc(max(0px, (100vw - var(--page-max)) / 2) - 0.0625rem - 0.25rem); }            /* mobile x 355 */
+  .rv__nav--next :global(.rv__navic) { transform: rotate(-90deg); }
+  .rv__nav:hover { background: rgba(199, 232, 255, 0.12); }
+
+  /* ---------- airlines ---------- */
+  .rv__air { margin-top: 1.4375rem; }                                          /* 23 */
+  .rv__air :global(img) { display: block; height: auto; }
+  .rv__air :global(.rv__air-d) { display: none; }
+  .rv__air-m {
+    --aw: min(135.64vw, 45rem);                                                 /* 529 at 390 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--aw) * 0.017);                                               /* 9; rows at x 28 / 100 */
+  }
+  .rv__air-row { overflow: hidden; height: calc(var(--aw) * 0.06238); }        /* 33 */
+  .rv__air-row :global(img) { width: var(--aw); max-width: none; }
+  .rv__air-row--1 { width: calc(var(--aw) * 0.637); }                          /* 337: ANA ... Lufthansa */
+  .rv__air-row--2 { width: calc(var(--aw) * 0.3592); }                         /* 190: Qatar, Singapore, Turkish */
+  .rv__air-row--2 :global(img) { margin-left: calc(var(--aw) * -0.6522); }     /* -345 */
+
+  @media (min-width: 48rem) {
+    .rv__head { padding-inline-start: var(--gutter); text-align: center; }
+    .rv__h { max-width: 71.0625rem; margin-inline: auto; }                        /* 1137 */
+    .rv__h :global(strong) { display: inline; }
+    .rv__rating {
+      justify-content: center;
+      column-gap: 4.75rem;                                                       /* 76 */
+      margin: 2.1625rem 0 0;                                                     /* 34.6 */
+      padding-left: 2.75rem;                                                     /* row sits 22px right of centre */
+    }
+    .rv__tp :global(img) { width: 10.125rem; }                                  /* 162 */
+    .rv__rating :global(.rv__stars) { width: 10.1875rem; margin-top: 0; }        /* 163 */
+    .rv__label { flex-basis: auto; margin-top: 0; font-size: 1.375rem; }         /* 22 */
+    .rv__carousel { margin-top: 4.5625rem; }                                     /* 73 */
+    .rv__nav { color: var(--c-sky); }
+    .rv__nav--prev { display: flex; }
+    .rv__nav--next { right: calc(max(0px, (100vw - var(--page-max)) / 2) + 3.6875rem - 0.25rem); }  /* x 1345 */
+    .rv__air { margin-top: 6.125rem; }                                           /* 98 */
+    .rv__air :global(.rv__air-d) { display: block; width: 100%; max-width: 76.625rem; margin-inline: auto; }   /* 1226 */
+    .rv__air-m { display: none; }
+  }
+  @media (max-width: 47.99rem) {
+    .rv__nav--prev[hidden], .rv__nav--prev { display: none; }
+  }
+</style>

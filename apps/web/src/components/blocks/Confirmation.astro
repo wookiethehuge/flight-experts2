@@ -1,0 +1,73 @@
+---
+/**
+ * Confirmation block: the thank-you hero ("Request Confirmed") shown after an enquiry is sent.
+ *
+ * Block shape (ConfirmationBlock in lib/types.ts):
+ *   heading     Inline  "Request Confirmed" (page H1, IBM Plex Serif medium)
+ *   subheading  string  bold line under the heading
+ *   body        string  short paragraph
+ *   button      Link    { label: "Return to Homepage", href: "/" } (burgundy primary button)
+ *
+ * Values: ThankYou (1440: centred, H1 80/104, button 379 x 50) and ThankYouMobile (390: left aligned, H1 40/36 on two
+ * lines, full-width button).
+ */
+import type { ConfirmationBlock, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+import Button from '../ui/Button.astro';
+
+interface Props { block: ConfirmationBlock; settings: SiteSettings; page: string; index: number }
+const { block } = Astro.props;
+---
+<section class="confirm container on-light" aria-labelledby={`confirm-h-${Astro.props.index}`}>
+  <h1 id={`confirm-h-${Astro.props.index}`} class="confirm__title" set:html={inline(block.heading)} />
+  {block.subheading && <p class="confirm__sub">{block.subheading}</p>}
+  {block.body && <p class="confirm__body">{block.body}</p>}
+  {block.button?.href && <Button href={block.button.href} variant="primary" width="23.6875rem" class="confirm__btn">{block.button.label}</Button>}
+</section>
+
+<style>
+  .confirm {
+    /* H1 top 82 (390) -> 183 (1440) from the top of the page, below the in-flow light header (58 -> 89 tall) */
+    padding-top: clamp(1.5rem, calc(1.5rem + 70 * (100vw - 24.375rem) / 1050), 5.875rem);         /* 24 -> 94 */
+    padding-bottom: clamp(3.5rem, calc(3.5rem + 14 * (100vw - 24.375rem) / 1050), 4.375rem);      /* 56 -> 70 */
+    color: var(--c-navy);
+  }
+  .confirm__title {
+    max-width: 20rem;                                                                             /* two lines on phones, as designed */
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-medium);
+    font-size: var(--fs-display);                                                                 /* 40 -> 80 */
+    line-height: clamp(2.25rem, calc(2.25rem + 68 * (100vw - 24.375rem) / 1050), 6.5rem);         /* 36 -> 104 */
+    letter-spacing: clamp(-0.1531rem, calc(-0.0594rem + -1.5 * (100vw - 24.375rem) / 1050), -0.0594rem); /* -0.95 -> -2.45px */
+    color: var(--c-navy);
+  }
+  .confirm__sub, .confirm__body { max-width: 20.375rem; }                                         /* wraps as the 390 frame */
+  .confirm__sub {
+    margin-top: clamp(2rem, calc(2rem + 5 * (100vw - 24.375rem) / 1050), 2.3125rem);              /* 32 -> 37 */
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                /* 16 -> 18 */
+    line-height: clamp(1.4375rem, calc(1.4375rem + 1 * (100vw - 24.375rem) / 1050), 1.5rem);      /* 23 -> 24 */
+    font-weight: var(--fw-semibold);
+  }
+  .confirm__body {
+    margin-top: clamp(0.6875rem, calc(0.6875rem + 3 * (100vw - 24.375rem) / 1050), 0.875rem);     /* 11 -> 14 */
+    font-size: var(--fs-body);                                                                    /* 14 -> 16 */
+    line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);          /* 20 -> 24 */
+  }
+  .confirm :global(.confirm__btn) {
+    display: flex;
+    width: 100%;
+    margin-top: clamp(1.8125rem, calc(1.8125rem + 15 * (100vw - 24.375rem) / 1050), 2.75rem);     /* 29 -> 44 */
+  }
+
+  @media (min-width: 48rem) {
+    .confirm { text-align: center; }
+    .confirm__title {
+      max-width: none;
+      /* the Figma title box sits 14px left of the frame centre */
+      translate: clamp(-0.875rem, calc(-14 * (100vw - 24.375rem) / 1050), 0rem) 0;
+    }
+    .confirm__sub { max-width: none; }
+    .confirm__body { max-width: 33.125rem; margin-inline: auto; }                                  /* 530 */
+    .confirm :global(.confirm__btn) { width: var(--btn-w); margin-inline: auto; }
+  }
+</style>

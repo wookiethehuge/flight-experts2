@@ -1,0 +1,239 @@
+---
+/**
+ * Site footer (Main / About ... desktop, Mobile / AboutMobile ... mobile).
+ * Burgundy arc with the footer plane breaking over its top edge, logo, (mobile + tablet) vision line, Useful links,
+ * Support, We accept + payment methods + socials, copyright, disclaimers (home page only, as in the frames), and the
+ * giant decorative wordmark.
+ *
+ * Vertical geometry: the footer box starts 150px (desktop) / 78px (mobile) above the top of the arc. That is the
+ * smallest gap between the last content and the arc across the frames; pages add any extra space themselves.
+ * The plane image spills up to ~70px above the footer box through its transparent top (no content is covered).
+ *
+ * Socials: an icon is rendered only when its URL is set in Site Settings (seed URLs are empty, so none show).
+ */
+import wordmarkRaw from '../../assets/seed/footer-wordmark.svg?raw';
+import Img from '../ui/Img.astro';
+import Icon from '../ui/Icon.astro';
+import type { Navigation, SiteSettings } from '../../lib/types';
+
+interface Props { settings: SiteSettings; navigation: Navigation }
+const { settings, navigation } = Astro.props;
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
+const wordmarkPaths = [...wordmarkRaw.matchAll(/<path d="([^"]+)"/g)].map((m) => m[1]);
+const plane = { url: '/seed/footer-plane.webp', alt: '' };
+const socials = [
+  { key: 'facebook', label: 'Facebook', icon: 'facebook' },
+  { key: 'linkedin', label: 'LinkedIn', icon: 'linkedin' },
+  { key: 'instagram', label: 'Instagram', icon: 'instagram' },
+].map((s) => ({ ...s, url: (settings.socials as Record<string, string | undefined>)?.[s.key]?.trim() }))
+ .filter((s) => s.url && s.url !== '#');
+const tel = settings.phone.href;
+const mail = `mailto:${settings.email}`;
+---
+<footer class="sf">
+  <div class="sf__art" aria-hidden="true"><div class="sf__arc"></div><div class="sf__fill"></div></div>
+  <div class="sf__frame">
+    <div class="sf__plane" aria-hidden="true">
+      <Img media={plane} decorative sizes="(min-width: 90rem) 1684px, 120vw" widths={[480, 640, 960, 1280, 1684, 2172]} />
+    </div>
+
+    <div class="sf__inner">
+      <svg class="sf__logo" viewBox="0 0 312 60" role="img" aria-label="Flight Experts"><use href="#fe-logo" /></svg>
+      {settings.footerVision && <p class="sf__vision">{settings.footerVision}</p>}
+
+      <div class="sf__cols">
+        <nav class="sf__col sf__col--links" aria-labelledby="sf-links" data-reveal="subtle" style="--i: 0">
+          <h2 id="sf-links" class="sf__h">Useful links</h2>
+          <ul role="list" class="sf__list">
+            {navigation.footer.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </nav>
+
+        <section class="sf__col sf__col--support" aria-labelledby="sf-support" data-reveal="subtle" style="--i: 1">
+          <h2 id="sf-support" class="sf__h">Support</h2>
+          <ul role="list" class="sf__list sf__contact">
+            <li><span class="sf__ico"><Icon name="phone-small" class="i-phone" /></span><a href={tel}>{settings.phoneFull}</a></li>
+            <li><span class="sf__ico"><Icon name="email-small" class="i-email" /></span><a href={mail}>{settings.email}</a></li>
+            <li><span class="sf__ico"><Icon name="location" class="i-loc" /></span><address>{settings.address}</address></li>
+          </ul>
+        </section>
+
+        <section class="sf__col sf__col--accept" aria-labelledby="sf-accept" data-reveal="subtle" style="--i: 2">
+          <h2 id="sf-accept" class="sf__h">We accept</h2>
+          <div class="sf__accept">
+            <div class="sf__pay"><Img media={settings.paymentMethods} sizes="(min-width: 64rem) 200px, 120px" widths={[188, 200, 300, 400]} /></div>
+            {socials.length > 0 && (
+              <ul role="list" class="sf__social">
+                {socials.map((s) => (
+                  <li><a href={s.url} target="_blank" rel="noopener me" aria-label={`Flight Experts on ${s.label}`}><Icon name={s.icon} class={`i-${s.key}`} /></a></li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <p class="sf__copy">{settings.copyright}</p>
+      {isHome && settings.disclaimers?.length > 0 && (
+        <div class="sf__legal">
+          {settings.disclaimers.map((d) => <p>{d}</p>)}
+        </div>
+      )}
+    </div>
+
+    <svg class="sf__wordmark" viewBox="0 0 1540 218" aria-hidden="true" focusable="false">{wordmarkPaths.map((d) => <path d={d} />)}</svg>
+  </div>
+</footer>
+
+<style>
+  .sf {
+    /* distance from the top of the footer box to the top of the arc (E) */
+    --zone: clamp(4.875rem, calc(4.875rem + 72 * (100vw - 24.375rem) / 1050), 9.375rem);           /* 78 -> 150 */
+    --arc-w: clamp(32.4375rem, calc(32.4375rem + 1355 * (100vw - 24.375rem) / 1050), 117.125rem);  /* 519 -> 1874 */
+    --arc-h: clamp(18.375rem, calc(18.375rem + 766 * (100vw - 24.375rem) / 1050), 66.25rem);       /* 294 -> 1060 */
+    --pad-x: clamp(2rem, calc(2rem + 39 * (100vw - 24.375rem) / 1050), 4.4375rem);                 /* 32 -> 71 */
+    position: relative;
+    padding-top: var(--zone);
+    overflow-x: clip;
+    color: var(--c-cream);
+  }
+
+  /* ---- burgundy arc + fill */
+  .sf__art { position: absolute; inset: var(--zone) 0 0 0; overflow: hidden; }
+  .sf__arc {
+    position: absolute; top: 0; left: 50%;
+    width: var(--arc-w); height: var(--arc-h);
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: var(--c-burgundy);
+  }
+  /* a real element (not ::after) so contrast checkers see the burgundy behind the footer text */
+  .sf__fill { position: absolute; inset: calc(var(--arc-h) / 2) 0 0 0; background: var(--c-burgundy); }
+
+  .sf__frame { position: relative; max-width: var(--page-max); margin-inline: auto; }
+
+  .sf__plane {
+    position: absolute;
+    z-index: 1;
+    top: clamp(-13.6981rem, calc(-4.1875rem - 152.17 * (100vw - 24.375rem) / 1050), -4.1875rem);  /* -67 -> -219.17 */
+    left: clamp(-15.9375rem, calc(-5.6875rem - 164 * (100vw - 24.375rem) / 1050), -5.6875rem);    /* -91 -> -255 */
+    width: clamp(29.5625rem, calc(29.5625rem + 1211 * (100vw - 24.375rem) / 1050), 105.25rem);    /* 473 -> 1684 */
+    pointer-events: none;
+  }
+  /* soft shadow under the plane so it sits less flat on the arc (client feedback; filter only, no new image) */
+  .sf__plane :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 clamp(0.5rem, calc(0.5rem + 10 * (100vw - 24.375rem) / 1050), 1.125rem) clamp(0.5625rem, calc(0.5625rem + 9 * (100vw - 24.375rem) / 1050), 1.125rem) color-mix(in srgb, var(--c-navy) 28%, transparent));  /* 0 8 9 -> 0 18 18 */
+  }
+
+  .sf__inner {
+    position: relative;
+    z-index: 2;
+    padding: clamp(5.9375rem, calc(5.9375rem + 190 * (100vw - 24.375rem) / 1050), 17.8125rem) var(--pad-x) 0; /* logo at E+95 -> E+285 */
+  }
+  .sf__inner a { color: inherit; text-decoration: none; }
+  .sf__inner a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .sf__logo {
+    display: block;
+    width: clamp(9.5625rem, calc(9.5625rem + 149 * (100vw - 24.375rem) / 1050), 18.875rem);        /* 153 -> 302 */
+    height: auto;
+    aspect-ratio: 312 / 60;
+    margin-left: -0.4375rem;
+    fill: var(--c-sky);
+  }
+  .sf__vision {
+    max-width: 20.125rem;              /* 322 */
+    margin: 6.5px 0 0 -3px;
+    font-family: var(--ff-serif);
+    font-size: var(--fs-16);
+    line-height: 19px;
+    color: var(--c-sky);
+  }
+
+  .sf__cols { display: grid; gap: 28.5px; margin-top: 33.5px; }
+  .sf__h {
+    font-size: clamp(1rem, calc(1rem + 6 * (100vw - 24.375rem) / 1050), 1.375rem);                /* 16 -> 22 */
+    font-weight: var(--fw-semibold);
+    line-height: 1.35;
+    color: var(--c-cream);
+  }
+  .sf__list {
+    display: grid;
+    gap: clamp(0.4437rem, calc(0.4437rem + 7.3 * (100vw - 24.375rem) / 1050), 0.9rem);             /* 7.1 -> 14.4 */
+    margin-top: clamp(0.5875rem, calc(0.5875rem + 4.9 * (100vw - 24.375rem) / 1050), 0.894rem);    /* 9.4 -> 14.3 */
+    font-size: clamp(0.875rem, calc(0.875rem + 2 * (100vw - 24.375rem) / 1050), 1rem);            /* 14 -> 16 */
+    line-height: 1.35;
+  }
+  .sf__col--links .sf__list { color: var(--c-white); }
+  .sf__list a { display: inline-block; }
+
+  .sf__contact {
+    gap: clamp(0.5062rem, calc(0.5062rem + 12.3 * (100vw - 24.375rem) / 1050), 1.275rem);         /* 8.1 -> 20.4 */
+    margin-top: clamp(0.3875rem, calc(0.3875rem + 7.8 * (100vw - 24.375rem) / 1050), 0.875rem);   /* 6.2 -> 14 */
+  }
+  .sf__contact li { display: flex; align-items: flex-start; gap: clamp(0.4375rem, calc(0.4375rem + 6 * (100vw - 24.375rem) / 1050), 0.8125rem); }
+  .sf__contact address { font-style: normal; }
+  .sf__ico {
+    flex: none;
+    display: grid; place-items: center;
+    width: clamp(0.7813rem, calc(0.7813rem + 9.5 * (100vw - 24.375rem) / 1050), 1.375rem);          /* 12.5 -> 22 */
+    height: 1.35em;                  /* one text line: icons centre on the first line when the address wraps */
+    color: var(--c-cream);
+  }
+  .sf__ico :global(.i-phone) { width: clamp(0.6563rem, calc(0.6563rem + 5.25 * (100vw - 24.375rem) / 1050), 0.9844rem); height: auto; }
+  .sf__ico :global(.i-email) { width: clamp(0.6563rem, calc(0.6563rem + 7.5 * (100vw - 24.375rem) / 1050), 1.125rem); height: auto; }
+  .sf__ico :global(.i-loc) { width: clamp(0.5875rem, calc(0.5875rem + 5.6 * (100vw - 24.375rem) / 1050), 0.9375rem); height: auto; }
+
+  .sf__accept {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: clamp(0.4625rem, calc(0.4625rem + 6.9 * (100vw - 24.375rem) / 1050), 0.894rem);   /* 7.4 -> 14.3 */
+  }
+  .sf__pay { flex: none; width: clamp(5.875rem, calc(5.875rem + 106 * (100vw - 24.375rem) / 1050), 12.5rem); }
+  .sf__pay :global(img) { display: block; width: 100%; height: auto; }
+  .sf__social { display: flex; align-items: center; gap: 1.4rem; margin: 3px 0.375rem 0 0; }
+  .sf__social a { display: grid; place-items: center; min-width: 44px; min-height: 44px; margin: -11px; }
+  .sf__social :global(svg) { height: clamp(1.3125rem, calc(1.3125rem + 14 * (100vw - 24.375rem) / 1050), 2.1875rem); width: auto; } /* 21 -> 35 */
+
+  .sf__copy {
+    margin-top: 26.6px;
+    font-size: clamp(0.8125rem, calc(0.8125rem + 5 * (100vw - 24.375rem) / 1050), 1.125rem);       /* 13 -> 18 */
+    line-height: 1.35;
+    color: var(--c-sky);
+  }
+  .sf__legal { display: grid; gap: 14px; margin-top: 22px; font-size: var(--fs-12); line-height: 1.35; color: var(--c-sky); }
+
+  .sf__wordmark {
+    display: block;
+    width: 107.2%;
+    max-width: none;
+    height: auto;
+    margin: clamp(0.23rem, calc(1.428rem - 19.15 * (100vw - 24.375rem) / 1050), 1.428rem) 0 0 -3.6%; /* 22.85 -> 3.7 */
+    fill: var(--c-burgundy-deep);
+  }
+  .sf__inner:has(.sf__legal) + .sf__wordmark { margin-top: 0; }
+
+  /* ---- tablet: links | support, payments row below */
+  @media (min-width: 48rem) {
+    .sf__cols { grid-template-columns: 1fr 1fr; row-gap: 2.5rem; }
+    .sf__col--accept { grid-column: 1 / -1; }
+    .sf__accept { justify-content: flex-start; gap: 3rem; }
+  }
+
+  /* ---- desktop (Main / About at 1440) */
+  @media (min-width: 64rem) {
+    .sf__vision { display: none; }
+    .sf__cols { grid-template-columns: 1fr 1fr 12.5rem; margin-top: 82px; }
+    .sf__col--accept { grid-column: auto; }
+    .sf__col--links .sf__list { color: var(--c-cream); }
+    .sf__accept { flex-direction: column; gap: 39px; }
+    .sf__social { align-self: stretch; justify-content: space-between; margin: 0; }
+    .sf__copy { margin-top: 56.4px; line-height: 24.3px; }
+    .sf__legal { margin-top: 32.7px; }
+  }
+</style>

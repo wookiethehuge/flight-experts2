@@ -1,0 +1,17 @@
+{
+  "name": "flight-experts",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:cms": "pnpm --filter cms dev",
+    "build:web": "pnpm --filter web build",
+    "build:cms": "pnpm --filter cms build",
+    "seed": "pnpm --filter cms seed",
+    "typecheck": "pnpm --filter cms typecheck && pnpm --filter web check"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

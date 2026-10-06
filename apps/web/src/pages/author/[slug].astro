@@ -1,0 +1,251 @@
+---
+/**
+ * Author profile: /author/<slug>/
+ * Artboards: Author (1440: 280px profile column + 970px main column) and AuthorMobile (390: single column).
+ *
+ * DOM order = the mobile reading order (profile, intro with the H1, "Area Of Expertise", articles), so reading and
+ * focus order follow what is on screen. From 64rem the blocks sit in a 2-column grid: profile over expertise on the
+ * left, intro over articles on the right. The intro's bottom padding reproduces the frame's gap between the bio and
+ * "Articles by ..." (83.7px) while the shared grid row keeps the articles below the profile when the bio is short.
+ *
+ * Articles: the author's posts (newest first). The frames show 3 (desktop, 3 columns) and 4 (mobile, 2 columns):
+ * up to 4 are rendered and the 4th is hidden in the 3-column layout.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/chrome/Breadcrumbs.astro';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import Img from '../../components/ui/Img.astro';
+import Icon from '../../components/ui/Icon.astro';
+import { getAuthors, getPosts, seedAsset } from '../../lib/cms';
+import type { Author } from '../../lib/types';
+import { getImage } from 'astro:assets';
+
+export async function getStaticPaths() {
+  const authors = await getAuthors();
+  return authors.map((author) => ({ params: { slug: author.slug }, props: { author } }));
+}
+
+interface Props { author: Author }
+const { author } = Astro.props;
+const posts = (await getPosts()).filter((p) => p.author?.slug === author.slug).slice(0, 4);
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Author' }];
+const socials = [
+  { key: 'linkedin', url: author.linkedin, label: `${author.name} on LinkedIn`, icon: 'linkedin-square', w: 37.4, h: 37.7 },
+  { key: 'x', url: author.x, label: `${author.name} on X`, icon: 'x', w: 38, h: 38 },
+].filter((s) => s.url);
+const external = (u?: string) => !!u && /^https?:/i.test(u);
+
+// structured data: Person (links to the Organization defined in BaseLayout)
+const pageUrl = new URL(`/author/${author.slug}/`, Astro.site).href;
+const local = seedAsset(author.photo?.url ?? '');
+const photoUrl = author.photo
+  ? new URL(local && typeof local === 'object' ? (await getImage({ src: local, width: 600, format: 'jpeg' })).src : author.photo.url, Astro.site).href
+  : undefined;
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${pageUrl}#person`,
+  name: author.name,
+  jobTitle: author.role,
+  url: pageUrl,
+  image: photoUrl,
+  description: author.bioIntro,
+  knowsAbout: author.expertise?.map((e) => e.label),
+  worksFor: { '@id': new URL('/#organization', Astro.site).href },
+  sameAs: [author.linkedin, author.x].filter(external),
+};
+const seo = { ...(author.seo ?? {}), image: author.seo?.image ?? author.photo };
+---
+<BaseLayout title={`${author.name}, ${author.role}`} description={author.bioIntro} seo={seo} headerTheme="light" jsonLd={[person]} sticky={{ plane: false, chat: true }}>
+  <Breadcrumbs items={crumbs} />
+  <div class="author on-light">
+    <div class="author__profile">
+      <div class="author__photo">
+        <Img media={author.photo} sizes="(min-width: 64rem) 280px, (min-width: 48rem) 22.5rem, calc(100vw - 48px)" widths={[344, 560, 688, 1052]} loading="eager" fetchpriority="high" class="author__img" />
+      </div>
+      <p class="author__name">{author.name}</p>
+      <p class="author__role">{author.role}</p>
+      {socials.length > 0 && (
+        <ul class="author__social" role="list">
+          {socials.map((s) => (
+            <li>
+              <a href={s.url} aria-label={s.label} {...(external(s.url) ? { rel: 'noopener me', target: '_blank' } : {})}>
+                <Icon name={s.icon} width={s.w} height={s.h} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    <div class="author__intro">
+      <h1 class="author__title"><em>About</em> <span>{author.name}</span></h1>
+      {author.bioIntro && <p class="author__bio">{author.bioIntro}</p>}
+      {author.quote && <blockquote class="author__quote"><p>{author.quote}</p></blockquote>}
+      {author.bioMore && <p class="author__bio">{author.bioMore}</p>}
+    </div>
+
+    {(author.expertise?.length ?? 0) > 0 && (
+      <section class="author__expertise" aria-labelledby="author-expertise">
+        <h2 id="author-expertise">Area Of Expertise</h2>
+        <ul role="list">{author.expertise.map((e) => <li>{e.label}</li>)}</ul>
+      </section>
+    )}
+
+    {posts.length > 0 && (
+      <section class="author__articles" aria-labelledby="author-articles">
+        <h2 id="author-articles">Articles by {author.name}</h2>
+        <div class="author__grid">
+          {posts.map((post, i) => (
+            <BlogCard post={post} headingLevel="h3" reveal={i % 4} sizes="(min-width: 64rem) 310px, (min-width: 48rem) calc((100vw - 120px) / 2), calc((100vw - 58px) / 2)" />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .author {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-top: clamp(1.0375rem, calc(1.0375rem + 83 * (100vw - 24.375rem) / 1050), 6.225rem);        /* 16.6 -> 99.6 below the crumbs */
+    padding-left: clamp(1.5rem, calc(1.5rem + 46 * (100vw - 24.375rem) / 1050), 4.375rem);             /* 24 -> 70 */
+    padding-right: clamp(1.25rem, calc(1.25rem + 50 * (100vw - 24.375rem) / 1050), 4.375rem);          /* 20 -> 70 (390 frame: 24 left, 20 right) */
+    padding-bottom: clamp(0rem, calc(0.4475rem + -7.16 * (100vw - 24.375rem) / 1050), 0.4475rem);     /* 7.2 -> 0 (+ the footer's own offset) */
+    color: var(--c-navy);
+  }
+
+  /* ---- profile ---- */
+  .author__profile { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .author__photo {
+    position: relative;
+    width: 100%;
+    max-width: 22.5rem;
+    aspect-ratio: 346 / 283.5;
+    overflow: hidden;
+    border-radius: var(--r-7);
+    background: var(--c-navy);
+  }
+  .author__photo :global(.author__img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 2.3%; }
+  .author__name,
+  .author__role {
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                 /* 16 -> 18 */
+    line-height: clamp(1.25rem, calc(1.25rem + 2 * (100vw - 24.375rem) / 1050), 1.375rem);         /* 20 -> 22 */
+  }
+  .author__name { margin-top: clamp(1.3325rem, calc(1.3325rem + 5.77 * (100vw - 24.375rem) / 1050), 1.6931rem); font-weight: var(--fw-semibold); } /* 21.3 -> 27.07 */
+  .author__role { margin-top: clamp(0.375rem, calc(0.5rem + -2 * (100vw - 24.375rem) / 1050), 0.5rem); }  /* 8 -> 6 */
+  .author__social {
+    display: flex;
+    align-items: center;
+    gap: 0.8125rem;                      /* 13.6 between the icons */
+    margin: clamp(1.3875rem, calc(1.3875rem + 0.8 * (100vw - 24.375rem) / 1050), 1.4375rem) 0 0;  /* 22.2 -> 23 */
+    padding: 0;
+    list-style: none;
+  }
+  .author__social a {
+    position: relative;
+    display: block;
+    color: var(--c-navy);
+    border-radius: 6px;
+    transition: color var(--dur) var(--ease);
+  }
+  .author__social a::before { content: ''; position: absolute; inset: -4px; }   /* 44px+ hit area */
+  .author__social a:hover { color: var(--c-burgundy); }
+  .author__social :global(svg) { display: block; }
+
+  /* ---- intro ---- */
+  .author__intro { margin-top: 2.0625rem; }  /* 33 */
+  .author__title {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: clamp(2rem, calc(2rem + 8 * (100vw - 24.375rem) / 1050), 2.5rem);                   /* 32 -> 40 */
+    line-height: clamp(2.5rem, calc(2.5rem + 12 * (100vw - 24.375rem) / 1050), 3.25rem);           /* 40 -> 52 */
+    letter-spacing: -0.01em;
+  }
+  .author__title em { font-style: italic; font-weight: var(--fw-light); }
+  .author__title span { margin-left: -2.5px; font-weight: var(--fw-medium); letter-spacing: -0.035em; }
+  .author__bio {
+    font-size: var(--fs-body);                                                                     /* 14 -> 16 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 3 * (100vw - 24.375rem) / 1050), 1.5rem);      /* 21 -> 24 */
+  }
+  .author__title + .author__bio { margin-top: clamp(1.0694rem, calc(1.0694rem + 10.73 * (100vw - 24.375rem) / 1050), 1.74rem); } /* 17.1 -> 27.84 */
+  .author__quote + .author__bio { margin-top: clamp(1.365rem, calc(2.0069rem + -10.27 * (100vw - 24.375rem) / 1050), 2.0069rem); } /* 32.1 -> 21.84 */
+  .author__quote {
+    margin: clamp(1.3875rem, calc(1.9375rem + -8.8 * (100vw - 24.375rem) / 1050), 1.9375rem) 2px 0 -3px;  /* 31 -> 22.2; box 21..368 in the 390 frame */
+    padding: 0.615rem 1.25rem 0.635rem;                                                           /* 9.84 20 10.16 */
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--c-sky) 63%, transparent);
+    font-size: var(--fs-16);
+    line-height: 1.5rem;
+  }
+
+  /* ---- expertise ---- */
+  .author__expertise {
+    margin-top: 1.9938rem;                                                                         /* 31.9 */
+    padding: clamp(1.5525rem, calc(1.5525rem + 5.16 * (100vw - 24.375rem) / 1050), 1.875rem)      /* 24.84 -> 30 */
+      1rem
+      clamp(1.0563rem, calc(1.0563rem + 6.1 * (100vw - 24.375rem) / 1050), 1.4375rem)             /* 16.9 -> 23 */
+      clamp(1.625rem, calc(1.625rem + 10 * (100vw - 24.375rem) / 1050), 2.25rem);                  /* 26 -> 36 */
+    border-radius: var(--r-7);
+    background: color-mix(in srgb, var(--c-sky) 47%, transparent);
+  }
+  .author__expertise h2 {
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                 /* 16 -> 18 */
+    line-height: clamp(1.25rem, calc(1.25rem + 2 * (100vw - 24.375rem) / 1050), 1.375rem);         /* 20 -> 22 */
+    font-weight: var(--fw-semibold);
+  }
+  .author__expertise ul {
+    margin: 1.2044rem 0 0;  /* 19.3 (17 from 64rem) */
+    padding: 0;
+    list-style: none;
+    font-size: clamp(0.875rem, calc(0.875rem + 4 * (100vw - 24.375rem) / 1050), 1.125rem);         /* 14 -> 18 */
+    line-height: clamp(1.6875rem, calc(1.6875rem + 11 * (100vw - 24.375rem) / 1050), 2.375rem);    /* 27 -> 38 */
+  }
+
+  /* ---- articles ---- */
+  .author__articles { margin-top: 3.6875rem; }  /* 59 */
+  .author__articles h2 {
+    font-size: clamp(1.125rem, calc(1.125rem + 4 * (100vw - 24.375rem) / 1050), 1.375rem);         /* 18 -> 22 */
+    line-height: clamp(1.375rem, calc(1.375rem + 6 * (100vw - 24.375rem) / 1050), 1.75rem);        /* 22 -> 28 */
+    font-weight: var(--fw-semibold);
+  }
+  .author__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 0.625rem;                                                                         /* 36 / 10 */
+    margin-top: clamp(1.4375rem, calc(1.4375rem + 25.5 * (100vw - 24.375rem) / 1050), 3.0313rem); /* 23 -> 48.5 */
+  }
+
+  @media (min-width: 48rem) {
+    .author__grid { column-gap: 1.25rem; }
+  }
+
+  @media (min-width: 64rem) {
+    .author {
+      display: grid;
+      grid-template-columns: 17.5rem minmax(0, 1fr);    /* 280 | 970 at 1440 */
+      grid-template-rows: auto 1fr;
+      column-gap: 3.125rem;                              /* 50 */
+      row-gap: 1.1563rem;                                /* 18.5: profile end -> "Articles by" */
+      align-items: start;
+    }
+    .author__profile { grid-column: 1; grid-row: 1; padding-top: 0.25rem; }  /* photo 4px below the H1 box */
+    .author__photo { max-width: none; aspect-ratio: 280 / 283; }
+    .author__photo :global(.author__img) { object-position: 50% 0%; }
+    .author__intro { grid-column: 2; grid-row: 1; margin-top: 0; padding-bottom: 4.0725rem; }   /* 65.16 */
+    .author__title { letter-spacing: -0.02em; }
+    .author__title span { margin-left: -2px; }
+    .author__bio { max-width: 58.25rem; }              /* 932: wraps as the 1440 frame */
+    .author__quote { max-width: 47.5625rem; margin-inline: 0; }  /* 761 */
+    .author__expertise { grid-column: 1; grid-row: 2; margin-top: 1.9063rem; }  /* 49 below the profile */
+    .author__expertise ul { margin-top: 1.0625rem; }  /* 17 */
+    .author__articles { grid-column: 2; grid-row: 2; margin-top: 0; }
+    .author__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .author__grid > :global(:nth-child(n + 4)) { display: none; }
+  }
+</style>

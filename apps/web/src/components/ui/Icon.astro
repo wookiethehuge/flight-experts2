@@ -1,0 +1,16 @@
+---
+/** Inline SVG icon in currentColor. Size with width/height props or CSS. Decorative unless `label` is given. */
+import { icons } from './icons';
+interface Props { name: string; width?: number | string; height?: number | string; label?: string; class?: string; style?: string }
+const { name, width, height, label, class: cls, style } = Astro.props;
+const icon = icons[name];
+if (!icon) throw new Error(`Unknown icon: ${name}`);
+const [, , vw, vh] = icon.vb.split(/\s+/).map(Number);
+const w = width ?? (height ? undefined : vw);
+const h = height ?? (width ? undefined : vh);
+---
+<svg viewBox={icon.vb} width={w} height={h} class={cls} style={style} role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'} focusable="false" fill={icon.stroke ? 'none' : 'currentColor'}>
+  {icon.paths.map((p) => icon.stroke
+    ? <path d={p.d} stroke="currentColor" stroke-width={icon.stroke} stroke-linecap="round" stroke-linejoin="round" />
+    : <path d={p.d} fill-rule={p.rule as any} clip-rule={p.rule as any} />)}
+</svg>

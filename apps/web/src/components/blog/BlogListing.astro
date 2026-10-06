@@ -1,0 +1,86 @@
+---
+/**
+ * Blog index page body + shell, shared by /blog/ (page 1) and /blog/page/[n]/.
+ * Design: BlogCollection (1440) and BlogCollectionMobile (390). Grid: 2 columns (mobile), 3 (tablet), 4 (desktop).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../chrome/Breadcrumbs.astro';
+import PageHeading from '../ui/PageHeading.astro';
+import BlogCard from './BlogCard.astro';
+import Pagination from './Pagination.astro';
+import { getPage } from '../../lib/cms';
+import { pageCount, pageHref, pageSlice } from '../../lib/blog';
+import type { Post } from '../../lib/types';
+
+interface Props { posts: Post[]; page: number }
+const { posts, page: current } = Astro.props;
+const doc = await getPage('blog');
+const total = pageCount(posts);
+const list = pageSlice(posts, current);
+const heading = doc.heading || doc.title;
+
+const crumbs = current > 1
+  ? [{ label: 'Home', href: '/' }, { label: doc.title, href: '/blog/' }, { label: `Page ${current}` }]
+  : [{ label: 'Home', href: '/' }, { label: doc.title }];
+const seo = current > 1
+  ? { ...doc.seo, title: `${doc.seo?.title || `${doc.title} | Flight Experts`}`.replace(/( \| Flight Experts)?$/, ` (page ${current})$1`), canonical: undefined }
+  : doc.seo;
+const abs = (href: string) => new URL(href, Astro.site).href;
+// BreadcrumbList JSON-LD is emitted by <Breadcrumbs />.
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    '@id': abs('/blog/#blog'),
+    name: 'Flight Experts Blog',
+    url: abs('/blog/'),
+    publisher: { '@id': abs('/#organization') },
+    blogPost: list.map((p) => ({ '@type': 'BlogPosting', headline: p.title, url: abs(`/blog/${p.slug}/`), datePublished: p.publishedAt })),
+  },
+];
+---
+<BaseLayout title={doc.title} seo={seo} headerTheme={doc.headerTheme} jsonLd={jsonLd}>
+  <Fragment slot="head">
+    {current > 1 && <link rel="prev" href={abs(pageHref(current - 1))} />}
+    {current < total && <link rel="next" href={abs(pageHref(current + 1))} />}
+  </Fragment>
+  {doc.showBreadcrumbs && <Breadcrumbs items={crumbs} currentWeight={600} />}
+  <PageHeading text={heading} class="blog-heading" />
+  <div class="container blog-index on-light">
+    {list.length ? (
+      <ul class="blog-grid" role="list">
+        {list.map((post, i) => (
+          <li><BlogCard post={post} headingLevel="h2" loading={i < 4 ? 'eager' : 'lazy'} priority={i < 2} reveal={i % 4} /></li>
+        ))}
+      </ul>
+    ) : (
+      <p class="blog-empty">New articles are on their way. Check back soon.</p>
+    )}
+    {total > 1 && <div class="blog-pages"><Pagination current={current} total={total} /></div>}
+  </div>
+</BaseLayout>
+
+<style>
+  /* breadcrumb -> H1: 40.8 -> 104.6 (BlogCollection); mobile H1 edge 24px like the breadcrumb */
+  :global(.blog-heading .page-heading) { letter-spacing: -0.02em; }
+  .blog-index {
+    /* mobile frame: 24px left edge (container 20 + 4), 20px right edge; desktop: 70 / 70 */
+    padding-inline-start: calc(var(--gutter) + clamp(0rem, calc(0.25rem - 4 * (100vw - 24.375rem) / 1050), 0.25rem));
+    margin-top: clamp(1.1875rem, calc(1.875rem - 11 * (100vw - 24.375rem) / 1050), 1.875rem);          /* 30 -> 19 */
+    padding-bottom: clamp(3rem, calc(3rem + 52 * (100vw - 24.375rem) / 1050), 6.25rem);
+  }
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(0.625rem, calc(0.625rem + 10 * (100vw - 24.375rem) / 1050), 1.25rem);           /* 10 -> 20 */
+    row-gap: clamp(2.125rem, calc(2.125rem + 34 * (100vw - 24.375rem) / 1050), 4.25rem);             /* 34 -> 68 */
+  }
+  .blog-pages { margin-top: clamp(2.9375rem, calc(2.9375rem + 34 * (100vw - 24.375rem) / 1050), 5.0625rem); } /* 47 -> 81 */
+  .blog-empty { font-size: var(--fs-body-lg); }
+  @media (min-width: 48rem) {
+    .blog-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .blog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+</style>

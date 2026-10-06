@@ -1,0 +1,291 @@
+---
+/**
+ * Home hero: full-bleed photo under the (absolutely positioned) dark header, H1, subheading, Trustpilot rating,
+ * accreditation logos, the "01 02 03" steps line and the quote form (QuoteForm, variant hero).
+ *
+ * Layouts (Main 1440 / Mobile 390):
+ *   < 48rem  : Mobile artboard. Portrait crop (mobileImage) sits under a navy gradient; H1, then the 360px form
+ *              (x 15), then the compact rating row ("5 star rating"). Subheading, logos and steps are not shown.
+ *   48-64rem : no design; stacked like mobile but with the desktop photo across the top, subheading, desktop rating
+ *              row, logos, steps line and a 474px form.
+ *   >= 64rem : Main artboard layout (form column 400 -> 474 wide up to 1440). Text column left (H1 y 273), form column right (form x 896 y 193, 474 wide;
+ *              the steps are a vertical 01/02/03 list right-aligned above it, ending 13px above the form),
+ *              photo covers the 841px hero with the bottom navy gradient.
+ * The photo is the LCP element: art-directed <picture> (portrait crop < 48rem), eager, fetchpriority high.
+ */
+import type { HomeHeroBlock, Media, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+import { HERO_IMAGES, heroVariants } from '../../lib/hero-image';
+import Img from '../ui/Img.astro';
+import QuoteForm from '../form/QuoteForm.astro';
+
+interface Props { block: HomeHeroBlock; settings: SiteSettings; page: string; index: number }
+const { block, settings } = Astro.props;
+
+const cfg = HERO_IMAGES.homeHero;
+const desk = block.image ? await heroVariants(block.image, cfg.desk) : null;
+const mob = block.mobileImage ? await heroVariants(block.mobileImage, cfg.mob) : null;
+// < 48rem the portrait crop is drawn 160.77% of the viewport wide (Mobile: 627px at 390)
+const mobSizes = cfg.mobSizes;
+const stars = { url: '/seed/trustpilot-stars.webp', alt: 'Rated five stars' } as Media;
+const tp = { url: '/seed/trustpilot-logo.webp', alt: 'Trustpilot' } as Media;
+const accreditations = settings.accreditations ?? [];
+const steps = block.steps ?? [];
+---
+<section class="hero" aria-labelledby="hero-h1">
+  {(desk || mob) && (
+    <picture class:list={['hero__bg', { 'hero__bg--art': !!mob }]}>
+      {desk && mob && <source media="(min-width: 48rem)" type="image/avif" srcset={desk.avif} sizes="100vw" width={desk.width} height={desk.height} />}
+      {desk && mob && <source media="(min-width: 48rem)" type="image/webp" srcset={desk.webp} sizes="100vw" width={desk.width} height={desk.height} />}
+      {(mob ?? desk) && <source type="image/avif" srcset={(mob ?? desk)!.avif} sizes={mob ? mobSizes : '100vw'} />}
+      <img
+        src={(mob ?? desk)!.src}
+        srcset={(mob ?? desk)!.webp}
+        sizes={mob ? mobSizes : '100vw'}
+        width={(mob ?? desk)!.width}
+        height={(mob ?? desk)!.height}
+        alt={(block.image ?? block.mobileImage)?.alt ?? ''}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
+  )}
+  <div class="hero__shade" aria-hidden="true"></div>
+
+  <svg class="hero__filters" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- Main: logos flattened on white, then dark pixels -> light blue, light pixels -> transparent -->
+      <filter id="fe-mono-light" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#ffffff" result="bg" />
+        <feComposite in="SourceGraphic" in2="bg" operator="over" result="flat" />
+        <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.780  0 0 0 0 0.910  0 0 0 0 1  -0.8333 -0.8333 -0.8333 0 2.5" />
+      </filter>
+      <filter id="fe-mono-seal" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+        <feFlood flood-color="#ffffff" result="bg" />
+        <feComposite in="SourceGraphic" in2="bg" operator="over" result="flat" />
+        <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.780  0 0 0 0 0.910  0 0 0 0 1  -1.3333 -1.3333 -1.3333 0 4" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="container hero__inner">
+    <div class="hero__text">
+      <h1 class="hero__h1" id="hero-h1" set:html={inline(block.heading)} />
+      {block.subheading && <p class="hero__sub">{block.subheading}</p>}
+      <div class="hero__rating hero__rating--d">
+        <Img media={stars} sizes="152px" widths={[152, 304]} class="hero__stars" />
+        <span class="hero__rt">{block.ratingText}</span>
+        <Img media={tp} sizes="142px" widths={[142, 284]} class="hero__tp" />
+      </div>
+      {accreditations.length > 0 && (
+        <ul class="hero__accr" role="list" aria-label="Accreditations">
+          {accreditations.map((a) => (
+            <li>
+              {a.url ? (
+                <a href={a.url} rel="noopener" target="_blank">
+                  <Img media={a.logo} alt={a.logo.alt || a.name} sizes="86px" widths={[96, 172]} class:list={['hero__logo', /fdacs|seal/i.test(a.name) && 'hero__logo--seal']} />
+                </a>
+              ) : (
+                <Img media={a.logo} alt={a.logo.alt || a.name} sizes="86px" widths={[96, 172]} class:list={['hero__logo', /fdacs|seal/i.test(a.name) && 'hero__logo--seal']} />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    <div class="hero__formcol">
+      {steps.length > 0 && (
+        <ol class="hero__steps" role="list" aria-label="How it works">
+          {steps.map((s, i) => <li><b>{String(i + 1).padStart(2, '0')}</b> {s.label}</li>)}
+        </ol>
+      )}
+      <div class="hero__form" id="quote">
+        <QuoteForm id="hero-form" variant="hero" settings={settings} />
+      </div>
+      <div class="hero__rating hero__rating--m">
+        <Img media={stars} sizes="109px" widths={[109, 218]} class="hero__stars" />
+        <span class="hero__rt">{block.mobileRatingText || block.ratingText}</span>
+        <Img media={tp} sizes="102px" widths={[102, 204]} class="hero__tp" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    --f: calc((100vw - 24.375rem) / 1050);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--c-navy);
+    color: var(--c-cream);
+  }
+  .hero :global(picture > source) { display: none; }                         /* keep <source> out of flex gaps */
+  /* ---------- photo + shade ---------- */
+  .hero__bg { display: contents; }
+  .hero__bg img {
+    position: absolute;
+    z-index: -2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-width: none;
+  }
+  /* Mobile artboard: 627x892 portrait at (-57, -538) on a 390 frame, i.e. only its lower 354px show */
+  .hero__bg--art img {
+    left: -14.615%;
+    width: 160.77%;
+    margin-top: -137.95%;
+  }
+  .hero__shade {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 21, 36, 0.67) -2.3vw, rgba(15, 21, 36, 0.69) 20.5vw, var(--c-navy) 51.5vw);
+  }
+  .hero__filters { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  /* ---------- layout ---------- */
+  .hero__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding-top: 5.125rem;                                   /* H1 at y 82 (header overlays the top 70px) */
+    padding-bottom: 3.375rem;                                /* 54 */
+  }
+  .hero__h1 {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-medium);
+    font-size: clamp(2.5938rem, calc(2.5938rem + 38.5 * var(--f)), 5rem);          /* 41.5 -> 80 */
+    line-height: clamp(2.25rem, calc(2.25rem + 36.65 * var(--f)), 4.5406rem);       /* 36 -> 72.65 */
+    color: var(--c-sky-hero);
+    letter-spacing: 0;
+  }
+  .hero__h1 :global(em) {
+    font-weight: var(--fw-light);
+    font-style: italic;
+    font-size: clamp(2.5rem, calc(2.5rem + 40 * var(--f)), 5rem);                   /* 40 -> 80 */
+  }
+  .hero__sub, .hero__accr, .hero__steps, .hero__rating--d { display: none; }
+  .hero__sub {
+    margin-top: 2.3rem;                                       /* 36.7 */
+    font-size: var(--fs-lead);                                /* 24 at desktop */
+    font-weight: var(--fw-medium);
+    line-height: 1.35;
+  }
+  .hero__formcol { margin-top: 2.4375rem; }                  /* form y 193 (H1 ends 154) */
+  .hero__form {
+    width: auto;
+    max-width: 29.625rem;                                     /* 474 */
+    margin-inline: -0.3125rem;                                /* mobile form x 15 inside the 20px gutter */
+    min-height: 1px;
+  }
+
+  /* rating rows */
+  .hero__rating { align-items: center; }
+  .hero__rating--m { display: flex; }
+  .hero__rating :global(img) { display: block; height: auto; }
+  .hero__rating--m {
+    justify-content: center;
+    gap: 0.9375rem 0.75rem;
+    margin-top: 1.0625rem;                                    /* 17 */
+    font-size: var(--fs-12);
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
+  }
+  .hero__rating--m :global(.hero__stars) { width: 6.8125rem; }   /* 109 */
+  .hero__rating--m :global(.hero__tp) { width: 6.375rem; }       /* 102 */
+  .hero__rating--m .hero__rt { margin-left: 0.1875rem; }
+  .hero__rating--d { flex-wrap: wrap; gap: 0.75rem; }
+  .hero__rating--d :global(.hero__stars) { width: 9.5rem; }       /* 152 */
+  .hero__rating--d :global(.hero__tp) { width: 8.875rem; margin-left: -0.1875rem; }  /* 142 at x 400 */
+  .hero__rating--d .hero__rt { font-size: var(--fs-18); font-weight: var(--fw-medium); white-space: nowrap; }
+
+  .hero__accr {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin: 1.9375rem 0 0;                                    /* 31 */
+    padding: 0;
+    list-style: none;
+  }
+  .hero__accr li { display: flex; }
+  .hero__accr a { display: flex; }
+  .hero__accr :global(.hero__logo) { display: block; height: 3.375rem; width: auto; filter: url(#fe-mono-light); }  /* 54 */
+  .hero__accr :global(.hero__logo--seal) { filter: url(#fe-mono-seal); }
+
+  .hero__steps {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0 0.4375rem;
+    margin: 0 0 0.8125rem;                                    /* form 13 below the line */
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-12);
+    font-weight: var(--fw-light);
+    letter-spacing: 0.24px;
+    line-height: 1.35;
+    color: var(--c-cream);
+    white-space: nowrap;
+  }
+  .hero__steps b { font-weight: var(--fw-semibold); letter-spacing: 0.32px; }
+
+  @media (min-width: 30rem) {
+    .hero__form { margin-inline: 0; }
+  }
+
+  /* ---------- tablet: desktop photo across the top, stacked content ---------- */
+  @media (min-width: 48rem) {
+    .hero__bg--art img { left: 0; width: 100%; margin-top: 0; }
+    .hero__shade {
+      background:
+        linear-gradient(0deg, var(--c-navy) 0%, rgba(15, 21, 36, 0) 40.07%) top / 100% 58.4vw no-repeat,
+        linear-gradient(var(--c-navy), var(--c-navy)) 0 58.4vw / 100% 100% no-repeat;
+    }
+    .hero__inner { padding-top: 10.25rem; padding-bottom: 4rem; }
+    .hero__sub { display: block; }
+    .hero__rating--d { display: flex; margin-top: 1.5625rem; }   /* 25 */
+    .hero__rating--m { display: none; }
+    .hero__accr { display: flex; }
+    .hero__steps { display: flex; justify-content: flex-start; }
+    .hero__formcol { margin-top: 3rem; }
+  }
+
+  /* ---------- desktop: Main artboard (side-by-side from 1024; the form column narrows 474 -> 400 below 1440) ---------- */
+  @media (min-width: 64rem) {
+    .hero { min-height: 52.5625rem; }                         /* 841 */
+    .hero__bg img { height: 100%; object-fit: cover; object-position: 50% 50%; }
+    .hero__shade {
+      top: auto;
+      height: 21.0625rem;                                     /* 337: gradient from y 504 */
+      background: linear-gradient(0deg, var(--c-navy) 0%, rgba(15, 21, 36, 0) 100%);
+    }
+    .hero__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) clamp(25rem, calc(25rem + 74 * (100vw - 64rem) / 416), 29.625rem);  /* form 474 at x 896 */
+      column-gap: 2rem;
+      align-items: start;
+      padding-top: 10.25rem;                                  /* steps y 164 */
+      padding-bottom: 7.8125rem;                              /* 125 below the form (716 -> 841) */
+    }
+    .hero__text { padding-top: 6.8125rem; padding-left: 1px; } /* H1 y 273, x 71 */
+    .hero__h1 { max-width: 44.25rem; }                        /* 708 */
+    /* steps: a vertical 01 / 02 / 03 list (client feedback), right-aligned above the form and growing upwards from
+       13px above it, so the form keeps its designed y 193 (164 + one 16.2px line + 13) */
+    .hero__formcol { position: relative; margin-top: 1.825rem; }
+    .hero__steps {
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 0.8125rem);
+      display: grid;
+      justify-items: start;
+      row-gap: 0.125rem;
+      margin: 0;
+    }
+    .hero__steps b { display: inline-block; min-width: 1.25rem; }
+    .hero__rating--d :global(.hero__stars) { margin-left: -1px; }
+  }
+</style>

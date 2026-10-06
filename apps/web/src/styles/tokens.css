@@ -1,0 +1,100 @@
+/*
+ * Flight Experts design tokens. Values are read from the Figma frames (Homepage Desktop 1440, Homepage mobile 390, and
+ * the page frames). Every component references these; do not hard-code colours or font stacks elsewhere.
+ *
+ * Fluid values: the designs exist at 390px (mobile) and 1440px (desktop). A fluid token hits the mobile value at a
+ * 390px viewport, the desktop value at 1440px, and interpolates linearly between (clamped outside that range):
+ *   clamp(MIN, calc(MIN + (MAXpx - MINpx) * (100vw - 24.375rem) / 1050), MAX)
+ * Generate them with: node scripts/fluid.mjs <mobilePx> <desktopPx>
+ */
+:root {
+  /* ---- colour ---- */
+  --c-navy: #0f1524;
+  --c-navy-ink: #101523;          /* serif headings on light backgrounds */
+  --c-cream: #f7f6f2;
+  --c-sky: #c7e8ff;               /* light blue: accents, borders on navy, pills */
+  --c-sky-hero: #cee8fd;          /* hero H1 */
+  --c-burgundy: #800732;
+  --c-burgundy-hover: #6a0529;
+  --c-burgundy-deep: #76072f;     /* footer wordmark */
+  --c-white: #ffffff;
+  --c-black: #000000;
+  --c-grey: #888888;              /* Figma grey (icons, decorative rules, placeholders) */
+  --c-grey-text: #6e6e6e;         /* Figma uses #888888 for breadcrumb text (3.3:1 on cream); darkened to pass WCAG AA 4.5:1 */
+  --c-navy-55: rgba(15, 21, 36, 0.55);
+  --c-navy-60: rgba(15, 21, 36, 0.6);        /* Figma 55% struck-through prices (3.97:1 on cream) raised to pass AA 4.5:1 */
+  --c-white-55: rgba(255, 255, 255, 0.55);   /* placeholders on navy */
+  --c-sky-8: rgba(199, 232, 255, 0.08);      /* review cards on navy */
+  --c-sky-59: rgba(199, 232, 255, 0.59);     /* FAQ band */
+  --c-border-soft: rgba(0, 0, 0, 0.14);      /* white cards */
+  --c-overlay: rgba(0, 0, 0, 0.5);           /* booking modal scrim */
+  --c-menu-scrim: rgba(15, 21, 36, 0.72);
+
+  /* ---- type families ---- */
+  --ff-sans: 'General Sans', 'General Sans Fallback', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --ff-serif: 'IBM Plex Serif', 'IBM Plex Serif Fallback', Georgia, 'Times New Roman', serif;
+
+  /* ---- type scale (mobile -> desktop) ---- */
+  --fs-12: 0.75rem;
+  --fs-13: 0.8125rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-body: clamp(0.875rem, calc(0.875rem + 2 * (100vw - 24.375rem) / 1050), 1rem);          /* 14 -> 16 */
+  --fs-body-lg: clamp(0.875rem, calc(0.875rem + 4 * (100vw - 24.375rem) / 1050), 1.125rem);   /* 14 -> 18 */
+  --fs-lead: clamp(1rem, calc(1rem + 8 * (100vw - 24.375rem) / 1050), 1.5rem);                /* 16 -> 24 */
+  --fs-h2: clamp(2rem, calc(2rem + 16 * (100vw - 24.375rem) / 1050), 3rem);                   /* 32 -> 48 */
+  --fs-h1-page: clamp(2rem, calc(2rem + 8 * (100vw - 24.375rem) / 1050), 2.5rem);             /* 32 -> 40 */
+  --fs-display: clamp(2.5rem, calc(2.5rem + 40 * (100vw - 24.375rem) / 1050), 5rem);          /* 40 -> 80 */
+
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ---- spacing / layout ---- */
+  --page-max: 90rem;                                                                          /* 1440 */
+  --gutter: clamp(1.25rem, calc(1.25rem + 50 * (100vw - 24.375rem) / 1050), 4.375rem);        /* 20 -> 70 */
+  --section-y: clamp(3.25rem, calc(3.25rem + 48 * (100vw - 24.375rem) / 1050), 6.25rem);      /* 52 -> 100 */
+  --space-4: 0.25rem;
+  --space-8: 0.5rem;
+  --space-12: 0.75rem;
+  --space-16: 1rem;
+  --space-24: 1.5rem;
+  --space-32: 2rem;
+  --space-48: 3rem;
+  --space-64: 4rem;
+
+  /* ---- radii ---- */
+  --r-3: 3px;
+  --r-7: 7px;             /* buttons, inputs, cards */
+  --r-card-photo: clamp(11.4px, calc(11.4px + 8.6 * (100vw - 24.375rem) / 1050), 20px); /* how-it-works cards */
+  --r-15: 15px;           /* quote form panel */
+  --r-pill: 128px;
+
+  /* ---- shadows ---- */
+  --sh-card: 0 3px 30.3px -18px rgba(0, 0, 0, 0.22);
+  --sh-float: 0 6px 18px rgba(15, 21, 36, 0.28);
+  --sh-tab: 0 2px 8px rgba(0, 0, 0, 0.18);
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur: 180ms;
+  /* scroll reveals (global.css [data-reveal]) and hover lift (.lift); not in Figma, see research notes section 3 */
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-reveal: 520ms;
+  --motion-stagger: 70ms;          /* per item, capped at index 5 */
+  --motion-distance: 16px;         /* 20px from 48rem */
+  --sh-lift: 0 14px 28px -16px rgba(15, 21, 36, 0.35);
+
+  /* ---- breakpoints (reference only; use in media queries) ----
+     sm 30rem (480) | md 48rem (768) | lg 64rem (1024) | xl 80rem (1280) | design 90rem (1440) */
+}
+
+@media (min-width: 48rem) {
+  :root { --motion-distance: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur: 0ms; }
+}

@@ -1,0 +1,121 @@
+{
+  "title": "About Us",
+  "slug": "about",
+  "headerTheme": "light",
+  "showBreadcrumbs": true,
+  "seo": {
+    "title": "About Flight Experts | The Unfair Advantage in Premium Travel",
+    "description": "Dedicated flight experts find unlisted premium fares, engineer complex multi-carrier itineraries and manage every disruption, so you just pack your bags and go."
+  },
+  "layout": [
+    {
+      "blockType": "aboutHero",
+      "heading": "The *Unfair Advantage*\nin Premium Travel.",
+      "body": "You know where you need to be. Let a specialist figure out **the smartest way to get you there**. Public booking sites only show you what the airlines want you to see. A dedicated flight expert looks behind the curtain. From finding unlisted premium fares to managing tight international connections, having a professional build your itinerary means you just pack your bags and go. Backed by our own AI search technology."
+    },
+    {
+      "blockType": "technology",
+      "eyebrow": "Expertise, amplified",
+      "heading": "Our people, *powered by AI*",
+      "intro": "Every request is handled by a dedicated flight expert, supported by search and monitoring technology we built in-house. The AI does the legwork at speed; your expert makes the calls.",
+      "items": [
+        {
+          "icon": "ai-search",
+          "title": "Wider fare search",
+          "text": "Our in-house AI scans thousands of fare and routing combinations across airlines and alliances in seconds, including nearby airports and alternative connections most booking sites never show."
+        },
+        {
+          "icon": "ai-route",
+          "title": "Smarter multi-city routing",
+          "text": "Complex itineraries are optimised for price, total travel time and cabin quality, so every leg of a multi-stop trip can stay in business or first."
+        },
+        {
+          "icon": "ai-watch",
+          "title": "Fare watch",
+          "text": "Prices and award availability are monitored after you enquire, and your expert is alerted when a better option appears."
+        },
+        {
+          "icon": "ai-expert",
+          "title": "Faster options, human judgement",
+          "text": "AI does the heavy lifting in minutes; your dedicated expert checks every option, applies insider fares and sends only what is worth your time."
+        }
+      ]
+    },
+    {
+      "blockType": "expertise",
+      "heading": "The Scope of Our *Expertise*",
+      "image": {
+        "file": "cabin-champagne.webp",
+        "alt": "A traveller relaxing with champagne in a private premium cabin"
+      },
+      "items": [
+        {
+          "title": "Unlisted Premium Airfares",
+          "text": "Securing private-market pricing for Business and First Class cabins across major global carriers."
+        },
+        {
+          "title": "Complex & Multi-Carrier Routing",
+          "text": "Engineering seamless global itineraries that standard algorithms fail to compute."
+        },
+        {
+          "title": "Proactive Disruption Management",
+          "text": "Continuous 24/7 monitoring to handle delays, reroutes, and cancellations before they impact the schedule."
+        },
+        {
+          "title": "Immediate Travel Execution",
+          "text": "Rapid deployment and ticketing for high-priority, last-minute international departures."
+        },
+        {
+          "title": "Mixed-Cabin Optimization",
+          "text": "Strategically combining cabin classes across different legs of a journey to maximize value without sacrificing comfort."
+        },
+        {
+          "title": "End-to-End Logistics",
+          "text": "Securing premium hotel accommodations and private chauffeur transfers to ensure the entire journey is smooth and controlled."
+        }
+      ]
+    },
+    {
+      "blockType": "stats",
+      "items": [
+        {
+          "icon": {
+            "file": "stat-manual.svg",
+            "alt": ""
+          },
+          "label": "100% Manual Qualification",
+          "text": "Every request is personally reviewed by experts."
+        },
+        {
+          "icon": {
+            "file": "stat-retention.svg",
+            "alt": ""
+          },
+          "label": "90% Client Retention",
+          "text": "Clients stay for consistency, savings, and service."
+        },
+        {
+          "icon": {
+            "file": "stat-rating.svg",
+            "alt": ""
+          },
+          "label": "4.9/5.0 Global Rating",
+          "text": "Built on proven expertise and flawless execution."
+        }
+      ]
+    },
+    {
+      "blockType": "ctaBanner",
+      "heading": "Command your itinerary.",
+      "body": "Submit your travel requirements to a dedicated flight\nprofessional and experience the difference of handled, tailored travel.",
+      "primary": {
+        "label": "Request a Custom Quote",
+        "href": "/contact/"
+      },
+      "secondary": {
+        "label": "Speak with an Expert",
+        "href": "tel:+18888552389"
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+---
+/**
+ * NextSteps block: "What Happens *Next*" with a numbered vertical stepper (navy circles joined by a dashed line).
+ *
+ * Block shape (NextStepsBlock in lib/types.ts):
+ *   heading  Inline  "What Happens *Next*" (*italic*)
+ *   steps[]  { title: string, text: string }   numbered automatically (ordered list)
+ *
+ * Values: ThankYou (1440: circles 51, titles 24/29 at x 180, 49px between steps, 2px 5/5 dashed line) and
+ * ThankYouMobile (390: circles 35 at x 32, titles 18/23 at x 95, 1px dashed line). Light-blue band.
+ */
+import type { NextStepsBlock, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+
+interface Props { block: NextStepsBlock; settings: SiteSettings; page: string; index: number }
+const { block } = Astro.props;
+const hid = `next-h-${Astro.props.index}`;
+---
+<section class="next on-light" aria-labelledby={hid}>
+  <div class="container">
+    <h2 id={hid} class="next__title" set:html={inline(block.heading)} />
+    <ol class="next__steps" role="list">
+      {block.steps.map((s, i) => (
+        <li class="next__step" data-reveal style={`--i: ${i}`}>
+          <span class="next__num" aria-hidden="true">{i + 1}</span>
+          <div>
+            <h3 class="next__step-title">{s.title}</h3>
+            <p class="next__text">{s.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .next {
+    --circle: clamp(2.1875rem, calc(2.1875rem + 16 * (100vw - 24.375rem) / 1050), 3.1875rem);      /* 35 -> 51 */
+    --step-gap: clamp(1.4375rem, calc(1.4375rem + 26 * (100vw - 24.375rem) / 1050), 3.0625rem);    /* 23 -> 49 (390 frame: 18/26/29) */
+    --line: 1px;
+    background: color-mix(in srgb, var(--c-sky) 59%, var(--c-cream));
+    color: var(--c-navy);
+    padding-block: clamp(3.5625rem, calc(3.5625rem + 40 * (100vw - 24.375rem) / 1050), 6.0625rem)  /* 57 -> 97 */
+      clamp(0.4375rem, calc(0.4375rem + 55 * (100vw - 24.375rem) / 1050), 3.875rem);               /* 7 -> 62: footer box starts here */
+  }
+  /* last block on the page: the band continues behind the footer plane and around the top of the burgundy arc */
+  .next:last-child { position: relative; }
+  .next:last-child::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    height: calc(9.375rem + 37vw);
+    background: inherit;
+    pointer-events: none;
+  }
+  .next__title {
+    max-width: 14.5rem;                                                                            /* "What Happens / Next" on phones */
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-h2);                                                                       /* 32 -> 48 */
+    line-height: clamp(2.0625rem, calc(2.0625rem + 29 * (100vw - 24.375rem) / 1050), 3.875rem);    /* 33 -> 62 */
+    color: var(--c-navy-ink);
+  }
+  .next__title :global(em) { font-style: italic; }
+  .next__steps {
+    display: grid;
+    row-gap: var(--step-gap);
+    margin: clamp(3.0625rem, calc(3.1875rem + -2 * (100vw - 24.375rem) / 1050), 3.1875rem) 0 0;    /* 51 -> 49 */
+    padding: 0 0 0 clamp(0rem, calc(0.75rem + -12 * (100vw - 24.375rem) / 1050), 0.75rem);        /* circles at x 32 -> 70 */
+    list-style: none;
+  }
+  .next__step {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--circle) minmax(0, 1fr);
+    column-gap: clamp(1.75rem, calc(1.75rem + 31 * (100vw - 24.375rem) / 1050), 3.6875rem);        /* 28 -> 59 */
+    align-items: start;
+  }
+  /* dashed connector: from this circle's centre to the next one's (the circles paint over it) */
+  .next__step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--circle) / 2 - var(--line) / 2);
+    top: calc(var(--circle) / 2);
+    width: var(--line);
+    height: calc(100% + var(--step-gap));
+    background: repeating-linear-gradient(to bottom, var(--c-black) 0 5px, transparent 5px 10px);
+  }
+  .next__num {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--circle);
+    height: var(--circle);
+    border-radius: 50%;
+    background: var(--c-navy);
+    color: var(--c-white);
+    font-size: clamp(1.375rem, calc(1.375rem + 10 * (100vw - 24.375rem) / 1050), 2rem);            /* 22 -> 32 */
+    font-weight: var(--fw-light);
+    line-height: 1;
+  }
+  .next__step-title {
+    padding-top: clamp(0.0625rem, calc(0.4375rem + -6 * (100vw - 24.375rem) / 1050), 0.4375rem);   /* 7 -> 1 */
+    font-size: clamp(1.125rem, calc(1.125rem + 6 * (100vw - 24.375rem) / 1050), 1.5rem);           /* 18 -> 24 */
+    line-height: clamp(1.4375rem, calc(1.4375rem + 6 * (100vw - 24.375rem) / 1050), 1.8125rem);    /* 23 -> 29 */
+    font-weight: var(--fw-semibold);
+  }
+  .next__text {
+    max-width: 16.75rem;                                                                           /* wraps as the 390 frame (Figma box 280) */
+    margin-top: clamp(0.4375rem, calc(0.5313rem + -1.5 * (100vw - 24.375rem) / 1050), 0.5313rem); /* 8.5 -> 7 */
+    font-size: var(--fs-body);                                                                     /* 14 -> 16 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 3 * (100vw - 24.375rem) / 1050), 1.5rem);       /* 21 -> 24 */
+  }
+
+  @media (min-width: 48rem) {
+    .next { --line: 2px; }
+    .next__title { max-width: none; }
+    .next__text { max-width: 53.75rem; }                                                           /* 860 */
+  }
+</style>

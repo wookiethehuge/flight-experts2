@@ -1,0 +1,212 @@
+---
+/**
+ * Site header.
+ *   dark : over a dark hero (home, contact). Positioned over the top of the page, transparent; light logo, outline
+ *          phone pill, sky hamburger. (Main / Mobile / Contact artboards)
+ *   light: in flow on cream pages; navy logo, navy-tinted accreditation logos (>= 80rem), filled phone pill,
+ *          navy hamburger. (About / BlogCollection ... artboards)
+ * Phone pill from 48rem; below that only logo + hamburger (Mobile artboards).
+ * Also defines the shared logo <symbol id="fe-logo"> (used by the menu and footer) and the SVG filters that tint
+ * the accreditation logos navy, and holds the menu + "open-booking" script.
+ */
+import logoRaw from '../../assets/seed/logo-light.svg?raw';
+import Img from '../ui/Img.astro';
+import Icon from '../ui/Icon.astro';
+import PhonePill from './PhonePill.astro';
+import Menu from './Menu.astro';
+import type { Navigation, SiteSettings } from '../../lib/types';
+
+interface Props { theme: 'dark' | 'light'; settings: SiteSettings; navigation: Navigation }
+const { theme = 'light', settings, navigation } = Astro.props;
+const logoPaths = [...logoRaw.matchAll(/<path d="([^"]+)"/g)].map((m) => m[1]);
+const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
+---
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="fe-logo" viewBox="0 0 312 60">{logoPaths.map((d) => <path d={d} />)}</symbol>
+    <filter id="mono-navy" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+      <feFlood flood-color="#ffffff" result="bg" /><feComposite in="SourceGraphic" in2="bg" operator="over" result="flat" />
+      <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.059  0 0 0 0 0.082  0 0 0 0 0.141  -0.8333 -0.8333 -0.8333 0 2.5" />
+    </filter>
+    <filter id="mono-navy-seal" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
+      <feFlood flood-color="#ffffff" result="bg" /><feComposite in="SourceGraphic" in2="bg" operator="over" result="flat" />
+      <feColorMatrix in="flat" type="matrix" values="0 0 0 0 0.059  0 0 0 0 0.082  0 0 0 0 0.141  -1.3333 -1.3333 -1.3333 0 4" />
+    </filter>
+  </defs>
+</svg>
+
+<header class:list={['site-header', `site-header--${theme}`]}>
+  <div class="site-header__bar">
+    <a class="site-header__logo" href="/" aria-label="Flight Experts home">
+      <svg viewBox="0 0 312 60" aria-hidden="true" focusable="false"><use href="#fe-logo" /></svg>
+    </a>
+
+    {theme === 'light' && settings.accreditations?.length > 0 && (
+      <ul class="site-header__accreds" role="list" aria-label="Accreditations">
+        {settings.accreditations.map((a) => (
+          <li class:list={[isSeal(a.name, a.logo?.alt) && 'seal']}>
+            {a.url
+              ? <a href={a.url} target="_blank" rel="noopener"><Img media={a.logo} sizes="85px" widths={[64, 108, 170]} /></a>
+              : <Img media={a.logo} sizes="85px" widths={[64, 108, 170]} />}
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <div class="site-header__actions">
+      <PhonePill class="site-header__pill" phone={settings.phone} label={settings.headerPhoneLabel} variant={theme === 'dark' ? 'outline' : 'filled'} />
+      <button type="button" class="site-header__burger" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu" data-menu-open>
+        <Icon name="hamburger" width={39} height={33} />
+      </button>
+    </div>
+  </div>
+</header>
+<Menu settings={settings} navigation={navigation} />
+
+<style>
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  .site-header { position: relative; z-index: 30; }
+  .site-header--dark { position: absolute; inset: 0 0 auto 0; color: var(--c-sky); }
+  .site-header--light { color: var(--c-navy); }
+
+  .site-header__bar {
+    --logo-top: clamp(1.625rem, calc(1.625rem + 19 * (100vw - 24.375rem) / 1050), 2.8125rem);    /* 26 -> 45 */
+    --burger-top: clamp(1.5625rem, calc(1.5625rem + 22 * (100vw - 24.375rem) / 1050), 2.9375rem); /* 25 -> 47 */
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-left: clamp(1.25rem, calc(1.25rem + 44 * (100vw - 24.375rem) / 1050), 4rem);          /* 20 -> 64 */
+    padding-right: clamp(0.8125rem, calc(0.8125rem + 48 * (100vw - 24.375rem) / 1050), 3.8125rem); /* 13 -> 61 */
+  }
+  .site-header--light .site-header__bar {
+    --logo-top: clamp(1.625rem, calc(1.625rem + 3 * (100vw - 24.375rem) / 1050), 1.8125rem);      /* 26 -> 29 */
+    --burger-top: clamp(1.5625rem, calc(1.5625rem + 23 * (100vw - 24.375rem) / 1050), 3rem);     /* 25 -> 48 */
+    /* in flow: bottom of the tallest item (logo 30.6 -> 60 below its top; hamburger 33) */
+    min-height: max(calc(var(--burger-top) + 33px), calc(var(--logo-top) + clamp(1.9125rem, calc(1.9125rem + 29.4 * (100vw - 24.375rem) / 1050), 3.75rem)));
+  }
+
+  .site-header__logo {
+    display: block;
+    flex: none;
+    width: clamp(9.9375rem, calc(9.9375rem + 153 * (100vw - 24.375rem) / 1050), 19.5rem);         /* 159 -> 312 */
+    margin-top: var(--logo-top);
+    color: inherit;
+  }
+  .site-header__logo svg { display: block; width: 100%; height: auto; aspect-ratio: 312 / 60; fill: currentColor; }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;          /* the 52px pill centres on the 33px hamburger row */
+    gap: 1rem;
+    height: 33px;
+    margin: var(--burger-top) 0 0 auto;
+  }
+  .site-header__actions :global(.site-header__pill) { display: none; }
+  .site-header__burger {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: -5.5px -2.5px;        /* 44px target around the 39 x 33 Figma box */
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+  .site-header--light :where(a, button):focus-visible { outline-color: var(--c-navy); }
+
+  .site-header__accreds { display: none; }
+
+  @media (min-width: 48rem) {
+    .site-header__actions :global(.site-header__pill) { display: flex; }
+  }
+  @media (min-width: 80rem) {
+    .site-header__accreds {
+      position: absolute;
+      top: 35px;
+      left: calc(50% - 8.125rem);   /* 590 at 1440 */
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 54px;
+    }
+    .site-header__accreds li, .site-header__accreds a { display: block; }
+    .site-header__accreds :global(img) { width: auto; height: 54px; filter: url(#mono-navy); }
+    .site-header__accreds .seal :global(img) { filter: url(#mono-navy-seal); }
+  }
+</style>
+
+<script>
+  const menu = document.getElementById('site-menu');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const root = document.documentElement;
+  let lastFocus: HTMLElement | null = null;
+  let hideTimer = 0;
+
+  const focusables = () =>
+    Array.from(menu?.querySelectorAll<HTMLElement>('.menu__panel a[href], .menu__panel button') ?? []).filter((el) => el.offsetParent !== null);
+  const duration = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 280);
+
+  function openMenu() {
+    if (!menu || !openBtn) return;
+    clearTimeout(hideTimer);
+    lastFocus = openBtn;
+    const sbw = window.innerWidth - root.clientWidth;
+    root.style.overflow = 'hidden';
+    if (sbw > 0) root.style.paddingRight = `${sbw}px`;
+    menu.hidden = false;
+    openBtn.setAttribute('aria-expanded', 'true');
+    requestAnimationFrame(() => {
+      menu.setAttribute('data-open', '');
+      const nav = menu.querySelector<HTMLElement>('.menu__nav a');
+      (nav ?? focusables()[0])?.focus({ preventScroll: true });
+    });
+    document.addEventListener('keydown', onKey);
+  }
+
+  function closeMenu(restoreFocus = true) {
+    if (!menu || menu.hidden) return;
+    menu.removeAttribute('data-open');
+    openBtn?.setAttribute('aria-expanded', 'false');
+    document.removeEventListener('keydown', onKey);
+    hideTimer = window.setTimeout(() => {
+      menu.hidden = true;
+      root.style.overflow = '';
+      root.style.paddingRight = '';
+    }, duration());
+    if (restoreFocus) lastFocus?.focus({ preventScroll: true });
+  }
+
+  function onKey(e: KeyboardEvent) {
+    if (e.key === 'Escape') { e.preventDefault(); closeMenu(); return; }
+    if (e.key !== 'Tab') return;
+    const f = focusables();
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    else if (!menu?.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+  }
+
+  openBtn?.addEventListener('click', () => (menu?.hidden ? openMenu() : closeMenu()));
+  menu?.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.closest('[data-menu-close]')) { closeMenu(); return; }
+    // in-page links (e.g. /#faq on the home page) navigate without a reload: close the menu first
+    const a = t.closest<HTMLAnchorElement>('a[href]');
+    if (a && !a.matches('[data-open-booking], [href="#get-flight-options"]')) closeMenu(false);
+  });
+
+  // "Get My Flight Options" anywhere on the site opens the booking modal (BookingModal listens for `open-booking`).
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-open-booking], a[href="#get-flight-options"]');
+    if (!trigger || e.defaultPrevented) return;
+    e.preventDefault();
+    const fromMenu = !!menu && menu.contains(trigger);
+    if (fromMenu) closeMenu(false);
+    document.dispatchEvent(new CustomEvent('open-booking', { detail: { trigger: fromMenu ? openBtn : trigger } }));
+  });
+</script>

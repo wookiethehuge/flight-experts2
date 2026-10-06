@@ -1,0 +1,28 @@
+---
+/** Home page: renders the 'home' page document. FAQPage structured data is built from the page's FAQ block. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlockRenderer from '../components/blocks/BlockRenderer.astro';
+import { getPage, getSettings } from '../lib/cms';
+import { plain } from '../lib/inline';
+import type { FaqBlock } from '../lib/types';
+import { heroPreloads } from '../lib/hero-image';
+const page = await getPage('home');
+const settings = await getSettings();
+const preload = await heroPreloads(page.layout[0]);
+
+const faq = page.layout.find((b): b is FaqBlock => b.blockType === 'faq');
+const jsonLd = faq && faq.items?.length
+  ? [{
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.items.map((q) => ({
+        '@type': 'Question',
+        name: q.question,
+        acceptedAnswer: { '@type': 'Answer', text: plain(q.answer) },
+      })),
+    }]
+  : [];
+---
+<BaseLayout title="Flight Experts" seo={page.seo} headerTheme="dark" jsonLd={jsonLd} sticky={{ plane: true, chat: true, phoneTab: true }} preload={preload}>
+  <BlockRenderer blocks={page.layout} settings={settings} page="home" />
+</BaseLayout>

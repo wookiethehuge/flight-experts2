@@ -1,0 +1,52 @@
+---
+/**
+ * About page intro: H1 + intro paragraph on cream.
+ * Artboards: About (desktop: centred, H1 IBM Plex Serif 500 80/88, -0.03em, italic phrase 300; body 16/24 centred)
+ * and AboutMobile (left aligned, H1 40/36, body 14/20).
+ * The heading's newline is the designed desktop break ("The *Unfair Advantage*\nin Premium Travel."); below 48rem the
+ * break is dropped and the words wrap naturally, which gives the mobile frame's three lines.
+ */
+import type { AboutHeroBlock, SiteSettings } from '../../lib/types';
+import { inline } from '../../lib/inline';
+
+interface Props { block: AboutHeroBlock; settings: SiteSettings; page: string; index: number }
+const { block } = Astro.props;
+// keep a real space next to each break so the words stay separated when the <br> is hidden on small screens
+const heading = inline(block.heading).replace(/<br>/g, ' <br>');
+---
+<section class="about-hero container">
+  <h1 class="about-hero__title" set:html={heading} />
+  {block.body && <p class="about-hero__body" set:html={inline(block.body)} />}
+</section>
+
+<style>
+  .about-hero {
+    /* 390: H1 top 82 (below the header); 1440: breadcrumbs, then H1 top 191 */
+    padding-top: clamp(1.5rem, calc(1.5rem + 46 * (100vw - 24.375rem) / 1050), 4.375rem);
+    padding-bottom: clamp(3.8375rem, calc(3.8375rem + 6.6 * (100vw - 24.375rem) / 1050), 4.25rem); /* 61.4 -> 68 */
+  }
+  .about-hero__title {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-medium);
+    font-size: var(--fs-display);                                                               /* 40 -> 80 */
+    line-height: clamp(2.25rem, calc(2.25rem + 52 * (100vw - 24.375rem) / 1050), 5.5rem);      /* 36 -> 88 */
+    letter-spacing: -0.03em;
+    color: var(--c-navy);
+  }
+  .about-hero__title :global(em) { font-style: italic; font-weight: var(--fw-light); }
+  .about-hero__title :global(br) { display: none; }
+
+  .about-hero__body {
+    margin-top: clamp(1.5375rem, calc(1.5375rem + 17.24 * (100vw - 24.375rem) / 1050), 2.615rem); /* 24.6 -> 41.84 */
+    font-size: var(--fs-body);                                                                  /* 14 -> 16 */
+    line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);       /* 20 -> 24 */
+    color: var(--c-navy);
+  }
+  .about-hero__body :global(strong) { font-weight: var(--fw-semibold); }
+
+  @media (min-width: 48rem) {
+    .about-hero { text-align: center; }
+    .about-hero__title :global(br) { display: inline; }
+    .about-hero__body { max-width: 61.25rem; margin-inline: auto; text-wrap: pretty; }  /* 980: wraps as the 1440 frame */
+  }
+</style>

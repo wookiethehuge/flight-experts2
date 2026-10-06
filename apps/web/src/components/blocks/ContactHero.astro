@@ -1,0 +1,111 @@
+---
+/**
+ * ContactHero block: dark photo hero at the top of the Contact page (the dark header overlays it).
+ *
+ * Block shape (ContactHeroBlock in lib/types.ts):
+ *   heading      Inline  "*Contact* Flight Experts"  (*italic* part = Plex Serif light italic, rest = medium)
+ *   subheading   string  "Access Unlisted Premium Fares"
+ *   body         string  intro paragraph
+ *   image        Media   desktop/tablet (>= 768px) photo, 1440x622 crop with its navy vignette baked in
+ *   mobileImage? Media   portrait photo for phones (< 768px); a navy gradient is laid over it in CSS
+ *
+ * The photo is the LCP element: one art-directed <picture> (mobile / desktop sources), eager + high priority.
+ * Values: Contact (1440) and ContactMobile (390) artboards.
+ */
+import type { ContactHeroBlock, SiteSettings } from '../../lib/types';
+import { HERO_IMAGES, MOBILE_MQ, heroVariants } from '../../lib/hero-image';
+import { inline } from '../../lib/inline';
+
+interface Props { block: ContactHeroBlock; settings: SiteSettings; page: string; index: number }
+const { block } = Astro.props;
+
+const cfg = HERO_IMAGES.contactHero;
+const desk = block.image ? await heroVariants(block.image, cfg.desk) : null;
+const mob = block.mobileImage ? await heroVariants(block.mobileImage, cfg.mob) : null;
+const MOBILE = MOBILE_MQ;
+---
+<section class="contact-hero" aria-labelledby={`contact-hero-h-${Astro.props.index}`}>
+  {desk && (
+    <div class:list={['contact-hero__media', mob && 'has-mobile']}>
+      <picture>
+        {mob && <source media={MOBILE} type="image/avif" srcset={mob.avif} sizes={cfg.mobSizes} width={mob.width} height={mob.height} />}
+        {mob && <source media={MOBILE} type="image/webp" srcset={mob.webp} sizes={cfg.mobSizes} width={mob.width} height={mob.height} />}
+        <source type="image/avif" srcset={desk.avif} sizes="100vw" />
+        <img class="contact-hero__img" src={desk.src} srcset={desk.webp} sizes="100vw" width={desk.width} height={desk.height}
+          alt={block.image.alt ?? ''} loading="eager" fetchpriority="high" decoding="async" />
+      </picture>
+    </div>
+  )}
+  <div class="container contact-hero__inner">
+    <h1 id={`contact-hero-h-${Astro.props.index}`} class="contact-hero__title" set:html={inline(block.heading)} />
+    {block.subheading && <p class="contact-hero__sub">{block.subheading}</p>}
+    {block.body && <p class="contact-hero__body">{block.body}</p>}
+  </div>
+</section>
+
+<style>
+  .contact-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--c-navy);
+    color: var(--c-cream);
+    /* h1 top 82 -> 183 (the dark header sits over this padding); body bottom -> section end 76 -> 160 */
+    padding-block: clamp(5.125rem, calc(5.125rem + 101 * (100vw - 24.375rem) / 1050), 11.4375rem)
+      clamp(4.75rem, calc(4.75rem + 84 * (100vw - 24.375rem) / 1050), 10rem);
+  }
+  .contact-hero__media { position: absolute; inset: 0; z-index: -1; }
+  .contact-hero__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+
+  /* phones: portrait photo, Figma crop (-7.28, -263.79) 501.61 x 714 in a 390 frame, under a navy gradient */
+  @media (max-width: 47.99rem) {
+    .has-mobile .contact-hero__img {
+      inset: 0 auto auto -1.867%;
+      width: 128.62%;
+      max-width: none;
+      height: auto;
+      transform: translateY(-36.95%);
+    }
+    .has-mobile::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--c-navy) 46.7%, transparent) 0%, var(--c-navy) 95%);
+    }
+  }
+
+  .contact-hero__title {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-medium);
+    font-size: var(--fs-display);                                                                  /* 40 -> 80 */
+    line-height: clamp(2.25rem, calc(2.25rem + 68 * (100vw - 24.375rem) / 1050), 6.5rem);          /* 36 -> 104 */
+    letter-spacing: clamp(-0.1437rem, calc(-2.3 * (100vw - 24.375rem) / 1050), 0rem);              /* 0 -> -2.3px */
+    color: var(--c-sky-hero);
+  }
+  .contact-hero__title :global(em) { font-weight: var(--fw-light); font-style: italic; }
+  .contact-hero__sub {
+    margin-top: clamp(1.75rem, calc(2.125rem + -6 * (100vw - 24.375rem) / 1050), 2.125rem);       /* 34 -> 28 */
+    padding-inline-start: 4px;
+    font-size: clamp(1.125rem, calc(1.125rem + 6 * (100vw - 24.375rem) / 1050), 1.5rem);           /* 18 -> 24 */
+    line-height: clamp(1.5rem, calc(1.5rem + 6 * (100vw - 24.375rem) / 1050), 1.875rem);           /* 24 -> 30 */
+    font-weight: var(--fw-medium);
+  }
+  .contact-hero__body {
+    max-width: 53.75rem;                                                                          /* 860 */
+    margin-top: clamp(0.9375rem, calc(0.9375rem + 21 * (100vw - 24.375rem) / 1050), 2.25rem);     /* 15 -> 36 */
+    padding-inline-start: 4px;
+    font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                 /* 16 -> 18 */
+    line-height: clamp(1.3125rem, calc(1.3125rem + 6 * (100vw - 24.375rem) / 1050), 1.6875rem);    /* 21 -> 27 */
+  }
+
+  @media (min-width: 48rem) {
+    .contact-hero__inner { text-align: center; }
+    .contact-hero__title {
+      color: var(--c-sky);
+      /* the Figma title box sits 14px left of the frame centre */
+      translate: clamp(-0.875rem, calc(-14 * (100vw - 24.375rem) / 1050), 0rem) 0;
+    }
+    .contact-hero__sub, .contact-hero__body { padding-inline-start: 0; }
+    .contact-hero__body { margin-inline: auto; }
+  }
+</style>

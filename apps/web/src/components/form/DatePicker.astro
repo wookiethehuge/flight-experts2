@@ -1,0 +1,193 @@
+---
+/**
+ * Date picker dialog (Figma component "Dates pop up", 394x695, light blue, radius 7): weekday header, a vertical
+ * scrolling list of months (built by datepicker.ts on first open), a Departure / Return summary and
+ * "Select these dates". Today is burgundy, selected days are navy circles and a round-trip range gets a cream band.
+ * Keyboard: arrows move by day / week, Page Up / Page Down by month, Home / End to the start / end of the week,
+ * Enter or Space picks. One instance per QuoteForm; behaviour lives in datepicker.ts.
+ */
+import Icon from '../ui/Icon.astro';
+interface Props { id: string }
+const { id } = Astro.props;
+const dow = [
+  ['Sun', 'Sunday'], ['Mon', 'Monday'], ['Tue', 'Tuesday'], ['Wed', 'Wednesday'], ['Thu', 'Thursday'], ['Fri', 'Friday'], ['Sat', 'Saturday'],
+];
+---
+<dialog class="dp on-light" id={`${id}-dp`} aria-labelledby={`${id}-dp-title`} aria-describedby={`${id}-dp-help`} data-datepicker>
+  <h2 class="sr-only" id={`${id}-dp-title`} data-dp-title>Choose dates</h2>
+  <p class="sr-only" id={`${id}-dp-help`}>Use the arrow keys to move between days, Page Up and Page Down to change month, and Enter to choose a day.</p>
+  <button type="button" class="dp__close" aria-label="Close without saving" data-dp-close><Icon name="close" width={15} height={16} /></button>
+  <div class="dp__dow" aria-hidden="true">{dow.map(([s]) => <span>{s}</span>)}</div>
+  <div class="dp__months" data-dp-months data-dow={JSON.stringify(dow)}></div>
+  <p class="sr-only" aria-live="polite" data-dp-live></p>
+  <div class="dp__foot">
+    <div class="dp__sum" data-dp-sum>
+      <p class="dp__col"><span>Departure</span><strong data-dp-dep>–</strong></p>
+      <p class="dp__col dp__col--ret"><span>Return</span><strong data-dp-ret>–</strong></p>
+    </div>
+    <button type="button" class="dp__apply" data-dp-apply>Select these dates</button>
+  </div>
+</dialog>
+
+<style>
+  /* Geometry from "Dates pop up.svg" (394x695): 7 columns of 48px starting at x=27, 47px rows, 40px day circles. */
+  .dp {
+    --dp-rule: color-mix(in srgb, var(--c-navy) 36%, transparent);
+    width: min(394px, calc(100vw - 2rem));
+    height: min(695px, calc(100dvh - 1rem));
+    max-height: none;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-7);
+    background: var(--c-sky);
+    color: var(--c-navy);
+    font-family: var(--ff-sans);
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+  .dp[open] { display: flex; flex-direction: column; }
+  .dp::backdrop { background: var(--c-overlay, rgba(0, 0, 0, 0.5)); }
+  @media (min-width: 48rem) {
+    .dp::backdrop { background: transparent; }
+  }
+  .dp__close {
+    position: absolute;
+    top: 6.5px;
+    right: 9px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--c-navy);
+  }
+  .dp__close:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); }
+
+  .dp__dow {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(7, 48px);
+    margin: 67px 0 0;
+    padding: 0 0 10px 27px;              /* 9px gap + the 1px rule */
+    font-size: var(--fs-14);
+    line-height: 19px;
+    text-align: center;
+    background: linear-gradient(var(--dp-rule), var(--dp-rule)) 29px 100% / 336px 1px no-repeat;
+  }
+  .dp__months {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--c-navy-55) transparent;
+    padding-bottom: 16px;
+  }
+  .dp__months :global(.dp__month) { padding-top: 16px; }
+  .dp__months :global(.dp__mtitle) {
+    margin: 0;
+    font-size: var(--fs-16);
+    font-weight: var(--fw-semibold);
+    line-height: 22px;
+    text-align: center;
+  }
+  .dp__months :global(table) {
+    margin: 5px 0 0 27px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+  .dp__months :global(td) {
+    position: relative;
+    width: 48px;
+    height: 47px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .dp__months :global(td[data-date]) { cursor: pointer; }
+  .dp__months :global(td span) {
+    position: relative;
+    z-index: 1;
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: var(--fs-16);
+    line-height: 1;
+  }
+  .dp__months :global(td[data-date]:hover span) { background: color-mix(in srgb, var(--c-navy) 10%, transparent); }
+  .dp__months :global(td.is-today span) { color: var(--c-burgundy); font-weight: var(--fw-semibold); }
+  .dp__months :global(td[aria-disabled='true']) { cursor: default; }
+  .dp__months :global(td[aria-disabled='true'] span) { color: var(--dp-rule); background: none; }
+  /* range band (cream, 40px tall), rounded at the row ends and at the start / end days */
+  .dp__months :global(td.in-range::before),
+  .dp__months :global(td.is-start.has-end::before),
+  .dp__months :global(td.is-end::before) {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 40px;
+    margin-top: -20px;
+    background: var(--c-cream);
+  }
+  .dp__months :global(td.band-l::before) { border-top-left-radius: 20px; border-bottom-left-radius: 20px; }
+  .dp__months :global(td.band-r::before) { border-top-right-radius: 20px; border-bottom-right-radius: 20px; }
+  .dp__months :global(td.band-r:last-child::before) { right: -4px; }
+  .dp__months :global(td.is-start.has-end::before) { left: 50%; }
+  .dp__months :global(td.is-end::before) { right: 50%; }
+  .dp__months :global(td.is-end.is-start::before),
+  .dp__months :global(td.no-band::before) { display: none; }
+  .dp__months :global(td.is-start span),
+  .dp__months :global(td.is-end span) { background: var(--c-navy); color: var(--c-cream); font-weight: var(--fw-semibold); }
+  .dp__months :global(td:focus-visible) { outline: none; }
+  .dp__months :global(td:focus-visible span) { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+  .dp__months :global(td.is-start:focus-visible span),
+  .dp__months :global(td.is-end:focus-visible span) { outline-color: var(--c-burgundy); }
+
+  .dp__foot {
+    flex: none;
+    margin: 0 29px;
+    padding-bottom: 25px;
+    border-top: 1px solid var(--dp-rule);
+  }
+  .dp__sum { position: relative; display: grid; grid-template-columns: 1fr 1fr; margin: 0 -25px; padding: 8px 0 0; }
+  .dp__sum::before {
+    content: '';
+    position: absolute;
+    left: 188.5px;
+    top: 16px;
+    width: 1px;
+    height: 32px;
+    background: var(--dp-rule);
+  }
+  .dp__col { display: grid; margin: 0; text-align: center; }
+  .dp__col span { font-size: var(--fs-14); line-height: 19px; }
+  .dp__col strong { margin-top: 1.7px; font-size: var(--fs-16); font-weight: var(--fw-semibold); line-height: 22px; }
+  .dp[data-mode='single'] .dp__sum { grid-template-columns: 1fr; }
+  .dp[data-mode='single'] .dp__sum::before,
+  .dp[data-mode='single'] .dp__col--ret { display: none; }
+  .dp__col.is-active strong { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .dp__apply {
+    display: block;
+    width: 100%;
+    height: 50px;
+    margin-top: 13.3px;
+    border: 0;
+    border-radius: var(--r-7);
+    background: var(--c-burgundy);
+    color: var(--c-cream);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-semibold);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .dp__apply:hover:not(:disabled) { background: var(--c-burgundy-hover); }
+  .dp__apply:disabled { opacity: 0.55; cursor: not-allowed; }
+</style>

@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+onlyBuiltDependencies:
+  - sharp
+  - esbuild
+  - better-sqlite3
+  - '@swc/core'
