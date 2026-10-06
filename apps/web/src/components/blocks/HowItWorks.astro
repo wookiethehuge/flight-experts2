@@ -33,10 +33,10 @@ const rules = [48, 113, 179, 247];
                 <Img media={c.image} class="hiw__img" sizes="(min-width: 90rem) 309px, (min-width: 64rem) calc((100vw - 9rem) / 4), (min-width: 48rem) calc((100vw - 7rem) / 2), 46vw" widths={[176, 240, 309, 352, 480, 618, 720]} />
               )}
               {c.visual === 'options' && (
-                <div class="hiw__art" aria-hidden="true">
+                <div class="hiw__art" aria-hidden="true" data-hiw-anim="options">
                   <div class="opt">
-                    {rows.map((y) => (
-                      <div class="opt__row" style={`--y: ${y}`}>
+                    {rows.map((y, k) => (
+                      <div class="opt__row" style={`--y: ${y}; --k: ${k}`}>
                         <Icon name="flight" class="opt__plane" />
                         <span class="opt__route">New York &gt; London</span>
                         <span class="opt__cabin">Business</span>
@@ -45,12 +45,12 @@ const rules = [48, 113, 179, 247];
                         <span class="opt__off">-35%</span>
                       </div>
                     ))}
-                    {rules.map((y) => <span class="opt__rule" style={`--y: ${y}`} />)}
+                    {rules.map((y, k) => <span class="opt__rule" style={`--y: ${y}; --k: ${k}`} />)}
                   </div>
                 </div>
               )}
               {c.visual === 'checkout' && (
-                <div class="hiw__art" aria-hidden="true">
+                <div class="hiw__art" aria-hidden="true" data-hiw-anim="checkout">
                   <div class="chk" style={`--shield: url(${shieldMask.src})`}>
                     <span class="chk__shield" />
                     <span class="chk__t chk__head">Secure checkout</span>
@@ -68,7 +68,14 @@ const rules = [48, 113, 179, 247];
                     <span class="chk__t chk__b" style="--x: 84; --y: 143">2841</span>
                     <Icon name="chevron-right" class="chk__chev" />
                     <span class="chk__t chk__b chk__link" style="--x: 30; --y: 189">Passenger &amp; payment details</span>
-                    <span class="chk__btn">Confirm booking</span>
+                    <span class="chk__btn">
+                      <span class="chk__state chk__state--idle">Confirm booking</span>
+                      <span class="chk__state chk__state--busy"><span class="chk__spin" />Securing your booking…</span>
+                      <span class="chk__state chk__state--done">
+                        <svg class="chk__tick" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.5" /><path d="M4.75 8.25 7 10.5l4.25-4.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        Booking confirmed
+                      </span>
+                    </span>
                   </div>
                 </div>
               )}
@@ -231,6 +238,42 @@ const rules = [48, 113, 179, 247];
     background: var(--c-burgundy);
     color: var(--c-cream);
     font-weight: var(--fw-semibold);
+    overflow: hidden;
+    transition: transform 140ms var(--ease), background-color 300ms var(--ease);
+  }
+  /* button states (client animation brief): idle "Confirm booking" -> pressed -> "Securing your booking…" with a small
+     spinner -> tick + "Booking confirmed". Only the idle label shows without JS / with reduced motion. */
+  .chk__state {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center; gap: calc(7 * var(--u));
+    transition: opacity 220ms var(--ease), translate 220ms var(--ease);
+  }
+  .chk__state--busy, .chk__state--done { opacity: 0; translate: 0 calc(8 * var(--u)); }
+  .chk__spin {
+    width: calc(11 * var(--u)); height: calc(11 * var(--u));
+    border: calc(1.5 * var(--u)) solid color-mix(in srgb, var(--c-cream) 35%, transparent);
+    border-top-color: var(--c-cream);
+    border-radius: 50%;
+    animation: chk-spin 700ms linear infinite;
+  }
+  .chk__tick { width: calc(14 * var(--u)); height: calc(14 * var(--u)); flex: none; }
+  .chk[data-state='pressed'] .chk__btn { transform: scale(0.96); background: var(--c-burgundy-hover); }
+  .chk[data-state='busy'] .chk__btn, .chk[data-state='done'] .chk__btn { background: var(--c-burgundy-hover); }
+  .chk[data-state='busy'] .chk__state--idle, .chk[data-state='done'] .chk__state--idle { opacity: 0; translate: 0 calc(-8 * var(--u)); }
+  .chk[data-state='busy'] .chk__state--busy { opacity: 1; translate: none; }
+  .chk[data-state='done'] .chk__state--busy { opacity: 0; translate: 0 calc(-8 * var(--u)); }
+  .chk[data-state='done'] .chk__state--done { opacity: 1; translate: none; }
+  .chk[data-state='done'] .chk__tick path { stroke-dasharray: 12; stroke-dashoffset: 12; animation: chk-draw 360ms 120ms var(--ease) forwards; }
+  @keyframes chk-spin { to { rotate: 1turn; } }
+  @keyframes chk-draw { to { stroke-dashoffset: 0; } }
+
+  /* options appear one by one (client animation brief); hidden start state only with JS + motion allowed */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) [data-hiw-anim='options']:not([data-play]) :is(.opt__row, .opt__rule) { opacity: 0; translate: 0 calc(10 * var(--u)); }
+    [data-hiw-anim='options'] :is(.opt__row, .opt__rule) {
+      transition: opacity 380ms var(--ease), translate 380ms var(--ease);
+      transition-delay: calc(150ms + var(--k) * 280ms);
+    }
   }
 
 
@@ -242,3 +285,35 @@ const rules = [48, 113, 179, 247];
     .hiw__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
 </style>
+
+<script>
+  // How it works animations: play when the card is half in view, reset once it has fully left so they replay
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const timers = new WeakMap<Element, number[]>();
+    const clear = (el: Element) => { (timers.get(el) ?? []).forEach(clearTimeout); timers.set(el, []); };
+    const later = (el: Element, ms: number, fn: () => void) => timers.get(el)!.push(window.setTimeout(fn, ms));
+    const play = (art: HTMLElement) => {
+      clear(art);
+      if (art.dataset.hiwAnim === 'options') { art.setAttribute('data-play', ''); return; }
+      const chk = art.querySelector<HTMLElement>('.chk');
+      if (!chk) return;
+      later(art, 1500, () => (chk.dataset.state = 'pressed'));     // after the options have landed
+      later(art, 1700, () => (chk.dataset.state = 'busy'));
+      later(art, 3300, () => (chk.dataset.state = 'done'));
+    };
+    const reset = (art: HTMLElement) => {
+      clear(art);
+      art.removeAttribute('data-play');
+      const chk = art.querySelector<HTMLElement>('.chk');
+      if (chk) delete chk.dataset.state;
+    };
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const art = e.target as HTMLElement;
+        if (e.intersectionRatio >= 0.5) { if (!art.hasAttribute('data-played')) { art.setAttribute('data-played', ''); play(art); } }
+        else if (!e.isIntersecting) { art.removeAttribute('data-played'); reset(art); }
+      }
+    }, { threshold: [0, 0.5] });
+    document.querySelectorAll<HTMLElement>('[data-hiw-anim]').forEach((el) => { timers.set(el, []); io.observe(el); });
+  }
+</script>
