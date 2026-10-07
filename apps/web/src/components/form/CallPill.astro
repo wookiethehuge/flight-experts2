@@ -1,7 +1,8 @@
 ---
 /**
  * Light-blue "CALL US" pill used at the bottom of the quote form (artboards Main / Mobile / HomeContact / MobileContact).
- * 320x61 at 390, 380x61 at 1440 (width comes from the parent; values between are fluid): navy avatar circle 53x50,
+ * 320x61 at 390, 380x61 at 1440 (width comes from the parent; values between are fluid): a true 50px navy circle
+ * (the frames leave it empty: it now holds a headset glyph with a green "experts online" dot), the frames' 53x50 oval made round,
  * title 16px/600, subtitle 14px, 1px navy divider and the phone glyph on the right. Content from site settings.
  * Below ~300px wide (very small phones) the avatar is dropped so the number never collides with the divider.
  */
@@ -11,7 +12,16 @@ interface Props { settings: SiteSettings; class?: string }
 const { settings, class: cls } = Astro.props;
 ---
 <a href={settings.phone.href} class:list={['cp', cls]}>
-  <span class="cp__avatar" aria-hidden="true"></span>
+  <span class="cp__avatar" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 13.5v-1.75a7.5 7.5 0 0 1 15 0v1.75" />
+      <rect x="3.25" y="12.5" width="3.5" height="5.5" rx="1.5" />
+      <rect x="17.25" y="12.5" width="3.5" height="5.5" rx="1.5" />
+      <path d="M19 18v.5a3 3 0 0 1-3 3h-2.5" />
+      <rect x="10.5" y="20" width="3.25" height="2.5" rx="1.1" />
+    </svg>
+    <span class="cp__live"></span>
+  </span>
   <span class="cp__text">
     <span class="cp__title">{settings.callPill.title}</span>
     <span class="cp__sub">{settings.callPill.subtitle}</span>
@@ -45,13 +55,38 @@ const { settings, class: cls } = Astro.props;
   .cp:hover { background: var(--c-cream); }
   .cp__avatar {
     position: absolute;
-    left: 8.5px;
-    top: 5px;
-    width: 53px;
-    height: 50px;
+    left: 6px;
+    top: 5.5px;
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;                                  /* a true circle */
     border-radius: 50%;
     background: var(--c-navy);
+    color: var(--c-sky);
   }
+  .cp__avatar svg { width: 24px; height: 24px; }
+  .cp__live {
+    position: absolute;
+    right: 1px;
+    bottom: 3px;
+    width: 11px;
+    height: 11px;
+    border: 2px solid var(--c-sky);
+    border-radius: 50%;
+    background: #2fbf71;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cp__live::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background: #2fbf71;
+      animation: cp-live 2.4s ease-out infinite;
+    }
+  }
+  @keyframes cp-live { from { opacity: 0.6; scale: 1; } to { opacity: 0; scale: 2.4; } }
   .cp__text { position: absolute; inset: 0 auto 0 var(--cp-text); }
   .cp__title, .cp__sub { position: absolute; left: 0; white-space: nowrap; line-height: 1.35; }
   .cp__title { top: 10px; font-size: var(--fs-16); font-weight: var(--fw-semibold); }

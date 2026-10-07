@@ -10,8 +10,7 @@
  *             up into the hero. Other pages show them from load.
  *             The home page's light-blue phone tab (icon + number, 44px tall) slides in from the right edge once the
  *             hero form (#hero-form) has scrolled out of view; it sits low on the screen, clear of the circles.
- *   >= 64rem: the round "Get Flight Options" badge (117px) floats at the right (centred where the designed 156px
- *             badge was: About/BlogCollection x 1247, y 419), follows the page all the way down and opens the booking
+ *   >= 64rem: the round "Get Flight Options" badge (117px) is docked in the bottom-right corner, follows the page all the way down and opens the booking
  *             modal. On the home page it comes in as the hero leaves (client request).
  * `plane` also controls the desktop badge (pass plane: false to hide both, e.g. on the thank-you page).
  * The desktop badge steps aside only over on-page forms.
@@ -134,13 +133,11 @@ const showBadge = plane;
       display: block;
       position: fixed;
       z-index: 40;
-      /* the 117px badge centred where the designed 156px badge was (box y 419, x 1247 at 1440) */
-      top: min(27.4063rem, calc(100vh - 9.7813rem));
-      right: calc(max(0px, (100vw - var(--page-max)) / 2) + 3.5313rem);
-      transition: opacity var(--dur) var(--ease), visibility 0s linear 0s, top calc(var(--dur) * 1.5) var(--ease);
+      /* docked in the bottom-right corner the whole way down (client: it jumped when it moved for the footer) */
+      bottom: calc(2rem + env(safe-area-inset-bottom));
+      right: calc(max(0px, (100vw - var(--page-max)) / 2) + 2rem);
+      transition: opacity var(--dur) var(--ease), visibility 0s linear 0s;
     }
-    /* over the footer it slides down to the bottom corner (over the decorative wordmark), clear of links and icons */
-    .sticky[data-low] .sticky__badgewrap { top: calc(100vh - 7.3125rem - 1.5rem); }
     .sticky__badgewrap { transform-origin: 50% 50%; }
     /* step aside while an on-page form is on screen */
     .sticky[data-away] :global(.sticky__badge) { opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur); }
@@ -189,8 +186,6 @@ const showBadge = plane;
     });
     // never cover an on-page form (contact form, hero quote form)
     forms.forEach((el) => io.observe(el));
-    const foot = document.querySelector('.sf__cols');
-    if (foot) new IntersectionObserver(([e]) => root.toggleAttribute('data-low', e.isIntersecting)).observe(foot);
     document.querySelectorAll('[data-badge-avoid]').forEach((el) => io.observe(el));
     narrow.addEventListener('change', update);
   } else {

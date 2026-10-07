@@ -62,8 +62,11 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
   .pill__text { display: flex; flex-direction: column; align-items: center; width: 7.25rem; margin-top: -1px; }
   .pill__label { font-size: var(--fs-12); font-weight: var(--fw-light); line-height: 12px; white-space: nowrap; }
   .pill__num { margin-top: 1.5px; font-size: var(--fs-16); font-weight: var(--fw-medium); line-height: 16px; white-space: nowrap; }
+  /* chevron pinned to the pill's true vertical centre (it used to be centred inside the padded box: 5px low) */
+  .pill { position: relative; }
   .pill :global(.pill__chev) {
-    flex: none; align-self: center; margin: -1px 0 0 auto; color: var(--c-sky);
+    position: absolute; top: 50%; right: 26.5px; margin-top: -3.4px;   /* half its 6.79 height */
+    color: var(--c-sky);
     transition: transform var(--dur) var(--ease);
   }
   .pill[aria-expanded='true'] :global(.pill__chev) { transform: rotate(180deg); }
