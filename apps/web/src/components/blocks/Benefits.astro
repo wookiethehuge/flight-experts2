@@ -3,8 +3,8 @@
  * Burgundy benefits band under the hero: icon + bold title + text (Main 841-1039), 2x2 icon + title grid on mobile
  * (Mobile 885-1161). The mobile design shows titles only: the text stays in the DOM as visually hidden copy so
  * screen reader users get the same content.
- * Title/text flow as one paragraph (desktop "Optimize Your Time / & Budget. One expert ..."): a title ending in "."
- * runs straight into its text; otherwise the text starts on a new line. A newline in a title is a mobile line break
+ * Every item is laid out the same way (client: symmetry over the frame): four equal columns, the icon centred in the
+ * same 48px box, the bold title on its own line, the text below. A newline in a title is a mobile line break
  * (a space from tablet up), and "& " keeps with the next word.
  */
 import type { BenefitsBlock, SiteSettings } from '../../lib/types';
@@ -33,7 +33,7 @@ const titleHtml = (t: string) => {
         <li class="ben__item" data-reveal style={`--i: ${i}`}>
           <span class="ben__icon"><Img media={it.icon} decorative sizes="51px" /></span>
           <p class="ben__txt">
-            <strong class="ben__t" set:html={t.html} />{t.sentence ? ' ' : <br class="ben__br" />}<span class="ben__x">{!t.sentence && <span class="ben__sp"> </span>}{it.text}</span>
+            <strong class="ben__t" set:html={t.html} /><br class="ben__br" /><span class="ben__x"><span class="ben__sp"> </span>{it.text}</span>
           </p>
         </li>
       );
@@ -59,8 +59,8 @@ const titleHtml = (t: string) => {
     list-style: none;
   }
   .ben__item { display: flex; flex-direction: column; align-items: center; text-align: center; }
-  .ben__icon { display: flex; align-items: center; justify-content: center; height: 2.75rem; }   /* 44 */
-  .ben__icon :global(img) { display: block; width: auto; height: auto; max-height: 100%; }
+  .ben__icon { display: flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; }   /* 44 */
+  .ben__icon :global(img) { display: block; width: 100%; height: 100%; object-fit: contain; }
   .ben__txt {
     margin-top: 1.0625rem;                                  /* 17 */
     font-size: var(--fs-14);
@@ -76,25 +76,19 @@ const titleHtml = (t: string) => {
   @media (min-width: 48rem) {
     .ben { padding: 1.3125rem var(--gutter) 2rem; }         /* desktop 21 / 32 */
     .ben__list {
-      grid-template-columns: 215fr 66fr 198fr 100fr 196fr 117fr 172fr;   /* Main: x 188..1252 */
-      max-width: 66.5rem;                                   /* 1064 */
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      max-width: 68rem;
       padding: 0;
-      column-gap: 0;
+      column-gap: 2rem;
     }
-    .ben__item:nth-child(1) { grid-column: 1; }
-    .ben__item:nth-child(2) { grid-column: 3; }
-    .ben__item:nth-child(3) { grid-column: 5; }
-    .ben__item:nth-child(4) { grid-column: 7; }
-    .ben__icon { width: 4.875rem; height: 4.875rem; }       /* 78 box */
+    .ben__icon { width: 3rem; height: 3rem; margin-block: 0.9375rem; }   /* one 48 box for every icon */
     .ben__txt { margin-top: 0.375rem; font-size: var(--fs-16); line-height: 1.2625rem; }   /* 6, 16/20.2 */
     .ben__t :global(.ben__mbr) { display: none; }
     .ben__br { display: inline; }
     .ben__x { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
     .ben__sp { display: none; }
-    .ben__t :global(.ben__dot) { display: inline; }
   }
   @media (min-width: 48rem) and (max-width: 63.99rem) {
-    .ben__list { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 1.5rem; }
-    .ben__item:nth-child(n) { grid-column: auto; }
+    .ben__list { column-gap: 1.5rem; }
   }
 </style>

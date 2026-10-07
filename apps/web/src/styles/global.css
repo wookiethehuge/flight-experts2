@@ -72,14 +72,29 @@ html { scroll-behavior: smooth; }
     animation-delay: calc(min(var(--i, 0), 5) * var(--motion-stagger));
   }
   .js [data-reveal='subtle']:not(.is-visible) { translate: 0 calc(var(--motion-distance) / 2); }
-  .js [data-reveal='subtle'].is-visible:not(.is-instant) { animation-name: reveal-up-subtle; animation-duration: 420ms; }
+  .js [data-reveal='subtle'].is-visible:not(.is-instant) { animation-name: reveal-up-subtle; animation-duration: 1000ms; }
+
+  /* cards zoom in gently as they rise (AOS zoom-in feel, softened) */
+  .js [data-reveal]:is(.hiw__item, .rv__card, .co__card, .expertise__item, .ns__item, .blog-card):not(.is-visible) { scale: 0.92; }
+  .js [data-reveal]:is(.hiw__item, .rv__card, .co__card, .expertise__item, .ns__item, .blog-card).is-visible:not(.is-instant) {
+    animation-name: reveal-zoom;
+    animation-duration: 1300ms;
+  }
+  /* icons pop in just after their item, with a soft overshoot (AOS zoom-out + easeOutBack) */
+  .js [data-reveal]:not(.is-visible) :is(.ben__icon, .stats__icon, .co__icon) { opacity: 0; scale: 1.35; }
+  .js [data-reveal].is-visible:not(.is-instant) :is(.ben__icon, .stats__icon, .co__icon) {
+    animation: reveal-pop 1000ms var(--motion-back) both;
+    animation-delay: calc(min(var(--i, 0), 5) * var(--motion-stagger) + 250ms);
+  }
 }
+@keyframes reveal-zoom { from { opacity: 0; translate: 0 var(--motion-distance); scale: 0.92; } to { opacity: 1; translate: none; scale: 1; } }
+@keyframes reveal-pop { from { opacity: 0; scale: 1.35; } to { opacity: 1; scale: 1; } }
 @keyframes reveal-up { from { opacity: 0; translate: 0 var(--motion-distance); } to { opacity: 1; translate: none; } }
 @keyframes reveal-up-subtle { from { opacity: 0; translate: 0 calc(var(--motion-distance) / 2); } to { opacity: 1; translate: none; } }
 
 /* ---- hover lift for cards / tiles (pointer devices), with the same lift for keyboard focus inside the card ---- */
 @media (hover: hover) and (pointer: fine) {
-  .lift { transition: transform var(--dur) var(--motion-ease-out), box-shadow var(--dur) var(--motion-ease-out); }
+  .lift { transition: transform 450ms var(--motion-ease-out), box-shadow 450ms var(--motion-ease-out); }
   .lift:hover { transform: translateY(-4px); box-shadow: var(--sh-lift); }
 }
 .lift:has(:focus-visible) { transform: translateY(-4px); box-shadow: var(--sh-lift); }

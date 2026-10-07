@@ -56,7 +56,10 @@
   /* ---- spacing / layout ---- */
   --page-max: 90rem;                                                                          /* 1440 */
   --gutter: clamp(1.25rem, calc(1.25rem + 50 * (100vw - 24.375rem) / 1050), 4.375rem);        /* 20 -> 70 */
-  --section-y: clamp(3.25rem, calc(3.25rem + 48 * (100vw - 24.375rem) / 1050), 6.25rem);      /* 52 -> 100 */
+  /* client: overall vertical spacing was too generous. One factor tightens every section's top/bottom padding and the
+     big heading-to-content gaps (component internals and the hero height are untouched). */
+  --tighten: 0.75;
+  --section-y: calc(clamp(3.25rem, calc(3.25rem + 48 * (100vw - 24.375rem) / 1050), 6.25rem) * var(--tighten));      /* 52 -> 100 */
   --space-4: 0.25rem;
   --space-8: 0.5rem;
   --space-12: 0.75rem;
@@ -79,13 +82,16 @@
   --sh-tab: 0 2px 8px rgba(0, 0, 0, 0.18);
 
   /* ---- motion ---- */
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --dur: 180ms;
+  /* deliberately unhurried (client: smoother, slower, more premium) */
+  --ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --dur: 280ms;
   /* scroll reveals (global.css [data-reveal]) and hover lift (.lift); not in Figma, see research notes section 3 */
-  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --motion-reveal: 520ms;
-  --motion-stagger: 70ms;          /* per item, capped at index 5 */
-  --motion-distance: 16px;         /* 20px from 48rem */
+  /* reveal timing modelled on the client's reference (travelbusinessclass.com: AOS, 1.0-1.4s, ease-out-expo) */
+  --motion-ease-out: cubic-bezier(0.19, 1, 0.22, 1);
+  --motion-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-reveal: 1200ms;
+  --motion-stagger: 110ms;         /* per item, capped at index 5 */
+  --motion-distance: 48px;         /* 64px from 48rem */
   --sh-lift: 0 14px 28px -16px rgba(15, 21, 36, 0.35);
 
   /* ---- breakpoints (reference only; use in media queries) ----
@@ -93,7 +99,7 @@
 }
 
 @media (min-width: 48rem) {
-  :root { --motion-distance: 20px; }
+  :root { --motion-distance: 64px; }
 }
 @media (prefers-reduced-motion: reduce) {
   :root { --dur: 0ms; }

@@ -40,8 +40,8 @@ const hid = `next-h-${Astro.props.index}`;
     --line: 1px;
     background: color-mix(in srgb, var(--c-sky) 59%, var(--c-cream));
     color: var(--c-navy);
-    padding-block: clamp(3.5625rem, calc(3.5625rem + 40 * (100vw - 24.375rem) / 1050), 6.0625rem)  /* 57 -> 97 */
-      clamp(0.4375rem, calc(0.4375rem + 55 * (100vw - 24.375rem) / 1050), 3.875rem);               /* 7 -> 62: footer box starts here */
+    padding-block: calc(clamp(3.5625rem, calc(3.5625rem + 40 * (100vw - 24.375rem) / 1050), 6.0625rem) * var(--tighten))  /* 57 -> 97 */
+      calc(clamp(0.4375rem, calc(0.4375rem + 55 * (100vw - 24.375rem) / 1050), 3.875rem) * var(--tighten));               /* 7 -> 62: footer box starts here */
   }
   /* last block on the page: the band continues behind the footer plane and around the top of the burgundy arc */
   .next:last-child { position: relative; }

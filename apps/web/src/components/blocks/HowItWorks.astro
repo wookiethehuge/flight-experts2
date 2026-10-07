@@ -94,7 +94,7 @@ const rules = [48, 113, 179, 247];
     --f: calc((100vw - 24.375rem) / 1050);
     --hg: clamp(0.9375rem, calc(0.9375rem + 57 * var(--f)), 4.5rem);       /* side gutter 15 -> 72 */
     --gap: clamp(0.5rem, calc(0.5rem + 12 * var(--f)), 1.25rem);           /* 8 -> 20 */
-    padding-block: clamp(2.9163rem, calc(2.9163rem + 30.34 * var(--f)), 4.8125rem) clamp(3.4688rem, calc(3.4688rem + 54.5 * var(--f)), 6.875rem);  /* 46.66 -> 77 / 55.5 -> 110 */
+    padding-block: calc(clamp(2.9163rem, calc(2.9163rem + 30.34 * var(--f)), 4.8125rem) * var(--tighten)) calc(clamp(3.4688rem, calc(3.4688rem + 54.5 * var(--f)), 6.875rem) * var(--tighten));  /* 46.66 -> 77 / 55.5 -> 110 */
     color: var(--c-navy);
   }
   .hiw__inner { max-width: var(--page-max); margin-inline: auto; padding-inline: var(--hg); }
@@ -109,7 +109,7 @@ const rules = [48, 113, 179, 247];
   .hiw__wrap {
     position: relative;
     container-type: inline-size;                                             /* badge placement uses the grid width */
-    margin-top: clamp(1.5rem, calc(1.5rem + 35.6 * var(--f)), 3.725rem);     /* 24 -> 59.6 */
+    margin-top: calc(clamp(1.5rem, calc(1.5rem + 35.6 * var(--f)), 3.725rem) * var(--tighten));     /* 24 -> 59.6 */
   }
   .hiw__grid {
     display: grid;
@@ -173,22 +173,13 @@ const rules = [48, 113, 179, 247];
   .hiw__item:nth-child(4) .hiw__title { left: clamp(0.6875rem, calc(0.6875rem + 36 * var(--f)), 2.9375rem); }   /* 11 -> 47 */
   .hiw__cap {
     margin-top: clamp(0.8rem, calc(0.8rem + 22.2 * var(--f)), 2.1875rem);     /* 12.8 -> 35 */
-    padding-left: clamp(0.1875rem, calc(0.9375rem - 12 * var(--f)), 0.9375rem); /* 15 -> 3 */
+    padding-inline: clamp(0.1875rem, calc(0.9375rem - 12 * var(--f)), 0.9375rem); /* 15 -> 3 */
     max-width: var(--cap-w);
     font-size: clamp(0.875rem, calc(0.875rem + 4 * var(--f)), 1.125rem);     /* 14 -> 18 */
     line-height: 1.35;
     color: var(--c-black);
   }
-  .hiw__item:nth-child(4n + 1) { --cap-w: clamp(10.5rem, calc(10.5rem + 50 * var(--f)), 13.625rem); }   /* 153 (+15) -> 215 (+3) */
-  .hiw__item:nth-child(4n + 2) { --cap-w: clamp(11.3125rem, calc(11.3125rem + 86 * var(--f)), 16.6875rem); } /* 166 -> 264 */
-  .hiw__item:nth-child(4n + 3) { --cap-w: clamp(10.5rem, calc(10.5rem + 99 * var(--f)), 16.6875rem); }      /* 153 -> 264 */
-  .hiw__item:nth-child(4n + 4) { --cap-w: clamp(9.8125rem, calc(9.8125rem + 106 * var(--f)), 16.4375rem); } /* 142 -> 260 */
-  @media (max-width: 47.99rem) {
-    .hiw__item:nth-child(4n + 1) { --cap-w: 10.5rem; }
-    .hiw__item:nth-child(4n + 2) { --cap-w: 11.3125rem; }
-    .hiw__item:nth-child(4n + 3) { --cap-w: 10.5rem; }
-    .hiw__item:nth-child(4n + 4) { --cap-w: 9.8125rem; }
-  }
+  .hiw__item { --cap-w: 100%; }   /* every caption spans its card (client: symmetry) */
 
   /* ---------- drawn cards (1 design px = card width / 309) ---------- */
   .hiw__art { --u: calc(100cqi / 309); position: absolute; inset: 0; pointer-events: none; }
@@ -246,7 +237,7 @@ const rules = [48, 113, 179, 247];
   .chk__state {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center; gap: calc(7 * var(--u));
-    transition: opacity 220ms var(--ease), translate 220ms var(--ease);
+    transition: opacity 380ms var(--ease), translate 380ms var(--ease);
   }
   .chk__state--busy, .chk__state--done { opacity: 0; translate: 0 calc(8 * var(--u)); }
   .chk__spin {
@@ -270,10 +261,10 @@ const rules = [48, 113, 179, 247];
   /* options appear one by one (client animation brief); hidden start state only with JS + motion allowed */
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) [data-hiw-anim='options']:not([data-play]) :is(.opt__row, .opt__rule) { opacity: 0; translate: 0 calc(10 * var(--u)); }
-    [data-hiw-anim='options'] :is(.opt__row, .opt__rule) { transition: opacity 300ms var(--ease), translate 300ms var(--ease); }
+    [data-hiw-anim='options'] :is(.opt__row, .opt__rule) { transition: opacity 450ms var(--ease), translate 450ms var(--ease); }
     [data-hiw-anim='options'][data-play] :is(.opt__row, .opt__rule) {
-      transition-duration: 380ms;
-      transition-delay: calc(150ms + var(--k) * 280ms);              /* stagger only on the way in */
+      transition-duration: 650ms;
+      transition-delay: calc(200ms + var(--k) * 340ms);              /* stagger only on the way in */
     }
   }
 
@@ -299,12 +290,12 @@ const rules = [48, 113, 179, 247];
       const chk = art.querySelector<HTMLElement>('.chk');
       if (art.dataset.hiwAnim === 'options') art.setAttribute('data-play', '');
       else if (chk) {
-        later(art, 1500, () => (chk.dataset.state = 'pressed'));     // after the options have landed
-        later(art, 1700, () => (chk.dataset.state = 'busy'));
-        later(art, 3300, () => (chk.dataset.state = 'done'));
+        later(art, 1900, () => (chk.dataset.state = 'pressed'));     // after the options have landed
+        later(art, 2150, () => (chk.dataset.state = 'busy'));
+        later(art, 4000, () => (chk.dataset.state = 'done'));
       }
       // every 10s: back to the start state (fade out), then play again
-      later(art, 9600, () => { art.removeAttribute('data-play'); if (chk) delete chk.dataset.state; });
+      later(art, 9400, () => { art.removeAttribute('data-play'); if (chk) delete chk.dataset.state; });
       later(art, 10000, () => play(art));
     };
     const reset = (art: HTMLElement) => {

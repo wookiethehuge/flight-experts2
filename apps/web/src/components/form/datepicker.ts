@@ -1,6 +1,9 @@
 /**
  * Behaviour for DatePicker.astro: a modal <dialog> with a scrolling list of months rendered as ARIA grids.
  * Dates are local calendar days handled as ISO strings (yyyy-mm-dd).
+ * Like Kayak / Expedia there is no confirm button: picking the return date (round trip) or the date (one way) applies
+ * and closes the dialog after a short beat, so the choice is seen. Closing early (X, Escape, outside click) keeps
+ * whatever was already picked.
  */
 
 export const MONTHS_AHEAD = 12;
@@ -60,7 +63,7 @@ export function createDatePicker(dialog: HTMLDialogElement) {
   const live = dialog.querySelector<HTMLElement>('[data-dp-live]')!;
   const depOut = dialog.querySelector<HTMLElement>('[data-dp-dep]')!;
   const retOut = dialog.querySelector<HTMLElement>('[data-dp-ret]')!;
-  const apply = dialog.querySelector<HTMLButtonElement>('[data-dp-apply]')!;
+  let autoClose = 0;
   const title = dialog.querySelector<HTMLElement>('[data-dp-title]')!;
   const cols = dialog.querySelectorAll<HTMLElement>('.dp__col');
   let opts: PickerOptions | null = null;
@@ -129,7 +132,6 @@ export function createDatePicker(dialog: HTMLDialogElement) {
     retOut.textContent = ret ? fmtShort(ret) : '–';
     cols[0]?.classList.toggle('is-active', opts.mode === 'range' && phase === 'depart');
     cols[1]?.classList.toggle('is-active', opts.mode === 'range' && phase === 'return');
-    apply.disabled = !dep;
   }
 
   function focusDay(iso: string, scroll = true) {
@@ -145,8 +147,10 @@ export function createDatePicker(dialog: HTMLDialogElement) {
 
   function choose(iso: string) {
     if (!opts || iso < opts.min) return;
+    let done = false;
     if (opts.mode === 'single') {
       dep = iso;
+      done = true;
       live.textContent = `${fmtLong(iso)} selected.`;
     } else if (phase === 'depart' || !dep || iso < dep) {
       dep = iso;
@@ -155,9 +159,12 @@ export function createDatePicker(dialog: HTMLDialogElement) {
       live.textContent = `Departure ${fmtLong(iso)}. ${ret ? '' : 'Now choose your return date.'}`;
     } else {
       ret = iso;
-      live.textContent = `Return ${fmtLong(iso)}. Select these dates to confirm.`;
+      done = true;
+      live.textContent = `Return ${fmtLong(iso)}.`;
     }
     paint();
+    clearTimeout(autoClose);
+    if (done) autoClose = window.setTimeout(() => close(true), 280);
   }
 
   const place = () => { if (opts) placeDialog(dialog, opts.anchor, 'start'); };
@@ -165,12 +172,13 @@ export function createDatePicker(dialog: HTMLDialogElement) {
 
   function close(commit: boolean) {
     if (!opts) return;
+    clearTimeout(autoClose);
     const o = opts;
     opts = null;
     removeEventListener('scroll', onScroll, true);
     removeEventListener('resize', onScroll);
     if (dialog.open) dialog.close();
-    if (commit) o.onApply(dep, o.mode === 'range' ? ret : undefined);
+    if (commit && dep) o.onApply(dep, o.mode === 'range' ? ret : undefined);
     returnFocus?.focus();
   }
 
@@ -198,13 +206,12 @@ export function createDatePicker(dialog: HTMLDialogElement) {
       choose(iso);
     }
   });
-  apply.addEventListener('click', () => close(true));
-  dialog.querySelector('[data-dp-close]')!.addEventListener('click', () => close(false));
-  dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(false); });
+  dialog.querySelector('[data-dp-close]')!.addEventListener('click', () => close(true));
+  dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(true); });
   dialog.addEventListener('click', (e) => {
     if (e.target !== dialog) return;
     const r = dialog.getBoundingClientRect();
-    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) close(false);
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) close(true);
   });
 
   return {
@@ -218,7 +225,6 @@ export function createDatePicker(dialog: HTMLDialogElement) {
       phase = o.mode === 'range' && o.phase === 'return' && dep ? 'return' : 'depart';
       dialog.dataset.mode = o.mode;
       title.textContent = o.title;
-      apply.textContent = o.mode === 'range' ? 'Select these dates' : 'Select this date';
       live.textContent = '';
       paint();
       dialog.showModal();
@@ -231,6 +237,6 @@ export function createDatePicker(dialog: HTMLDialogElement) {
       const sec = cell(target)?.closest('section');
       if (sec) months.scrollTop = sec.offsetTop - months.offsetTop;
     },
-    close: () => close(false),
+    close: () => close(true),
   };
 }

@@ -48,7 +48,7 @@ const ext = (url: string) => /^https?:/i.test(url);
     --f: calc((100vw - 24.375rem) / 1050);
     /* 56 -> 103 top; bottom 5.5 -> 59.5 so the last card sits 84 (390) / 210 (1440) above the footer arc, as drawn
        (the footer adds its own 78 -> 150 above the arc) */
-    padding-block: clamp(3.5rem, calc(3.5rem + 47 * var(--f)), 6.4375rem) clamp(0.34375rem, calc(0.34375rem + 54 * var(--f)), 3.71875rem);
+    padding-block: calc(clamp(3.5rem, calc(3.5rem + 47 * var(--f)), 6.4375rem) * var(--tighten)) clamp(0.34375rem, calc(0.34375rem + 54 * var(--f)), 3.71875rem);  /* bottom kept: the footer plane needs it */
   }
   .co__h {
     font-family: var(--ff-serif);
@@ -81,20 +81,21 @@ const ext = (url: string) => /^https?:/i.test(url);
     box-shadow: var(--sh-card);
     color: var(--c-navy);
   }
-  /* icon box 41 -> 48; glyphs placed as drawn */
+  /* one icon box for every card (client: icons perfectly aligned): 48px, glyph centred, sizes balanced optically so
+     the phone, envelope and WhatsApp marks carry the same weight and sit on the same centre line */
   .co__icon {
     --ib: clamp(2.5625rem, calc(2.5625rem + 7 * var(--f)), 3rem);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: var(--ib);
     height: var(--ib);
     color: var(--c-navy);
   }
-  .co__icon :global(svg) { width: 100%; height: auto; }
-  .co__icon--phone :global(svg) { width: 75%; }
-  .co__icon--email { align-items: flex-start; justify-content: flex-start; padding-top: calc(var(--ib) * 0.07); }
-  .co__icon--email :global(svg) { width: 94%; }
+  .co__icon :global(svg) { display: block; height: auto; }
+  .co__icon--phone :global(svg) { width: 80%; }
+  .co__icon--email :global(svg) { width: 88%; }
+  .co__icon--whatsapp :global(svg) { width: 88%; }
   .co__icon :global(.co__wa-outline) { display: block; width: 2.5rem; height: auto; }             /* 40 x 39.66 */
   .co__icon :global(.co__wa-filled) { display: none; }
   @media (min-width: 48rem) {

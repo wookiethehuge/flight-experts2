@@ -64,13 +64,8 @@ const { block } = Astro.props;
     .stats__label { max-width: none; }
     .stats__sub { display: block; font-weight: var(--fw-regular); text-wrap: balance; }
   }
-  /* About (1440): a 1079 band at x 178 with item boxes 235 / 226 / 216 wide, 201 apart */
+  /* three equal columns centred on the page (client: symmetry) */
   @media (min-width: 64rem) {
-    .stats__list {
-      max-width: 67.4375rem;
-      grid-template-columns: minmax(0, 235fr) minmax(0, 226fr) minmax(0, 216fr);
-      column-gap: 18.628%;
-    }
+    .stats__list { max-width: 67.5rem; }
   }
-  @media (min-width: 90rem) { .stats__list { translate: -2.5px 0; } }
 </style>

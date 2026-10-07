@@ -88,7 +88,7 @@ const note = chat?.note || 'Message a flight expert on WhatsApp, call us 24/7, o
   }
   .chat__panel[hidden] { display: none; }
   @media (prefers-reduced-motion: no-preference) {
-    .chat__panel:not([hidden]) { animation: chat-in 180ms var(--ease); }
+    .chat__panel:not([hidden]) { animation: chat-in 320ms var(--motion-ease-out); }
   }
   @keyframes chat-in { from { opacity: 0; transform: scale(0.94); } }
   .chat__head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }

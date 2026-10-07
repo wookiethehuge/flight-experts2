@@ -28,7 +28,7 @@ const html = richText(block.content);
     padding-right: clamp(1.25rem, calc(1.25rem + 50 * (100vw - 24.375rem) / 1050), 4.375rem);       /* 20 -> 70 (390 frame: 24 left, 20 right) */
     padding-top: clamp(1.5rem, calc(1.5rem + 3.84 * (100vw - 24.375rem) / 1050), 1.74rem);          /* 24 -> 27.84 below the H1 */
     /* + the footer's own 78/150px offset = the frames' gap from the last line to the footer arc (114.9 / 255.2) */
-    padding-bottom: clamp(2.3056rem, calc(2.3056rem + 68.27 * (100vw - 24.375rem) / 1050), 6.5725rem);  /* 36.9 -> 105.2 */
+    padding-bottom: calc(clamp(2.3056rem, calc(2.3056rem + 68.27 * (100vw - 24.375rem) / 1050), 6.5725rem) * var(--tighten));  /* 36.9 -> 105.2 */
   }
   .rt {
     max-width: 66.25rem;                /* 1060: lines wrap as in the 1440 frame */

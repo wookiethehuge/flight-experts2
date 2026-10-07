@@ -28,8 +28,8 @@ const { block } = Astro.props;
 <style>
   .confirm {
     /* H1 top 82 (390) -> 183 (1440) from the top of the page, below the in-flow light header (58 -> 89 tall) */
-    padding-top: clamp(1.5rem, calc(1.5rem + 70 * (100vw - 24.375rem) / 1050), 5.875rem);         /* 24 -> 94 */
-    padding-bottom: clamp(3.5rem, calc(3.5rem + 14 * (100vw - 24.375rem) / 1050), 4.375rem);      /* 56 -> 70 */
+    padding-top: calc(clamp(1.5rem, calc(1.5rem + 70 * (100vw - 24.375rem) / 1050), 5.875rem) * var(--tighten));         /* 24 -> 94 */
+    padding-bottom: calc(clamp(3.5rem, calc(3.5rem + 14 * (100vw - 24.375rem) / 1050), 4.375rem) * var(--tighten));      /* 56 -> 70 */
     color: var(--c-navy);
   }
   .confirm__title {

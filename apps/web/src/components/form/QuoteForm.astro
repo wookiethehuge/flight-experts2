@@ -50,6 +50,9 @@ const stars: Media = { url: '/seed/trustpilot-stars.webp', alt: '' };
 const trustpilot: Media = { url: '/seed/trustpilot-logo.webp', alt: 'Trustpilot' };
 const DATE_PLACEHOLDER = 'Day, Aug 20';
 const consent = settings.consentNote ? inline(settings.consentNote, { breaks: false }) : '';
+const tpUrl = settings.trustpilot?.url;
+const TpTag = tpUrl ? 'a' : 'div';
+const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot (opens in a new tab)`;
 ---
 <div class:list={['qf', `qf--${variant}`]} id={id} data-quote-form data-trip="round" data-step="trip">
   <form class="qf__panel" novalidate data-endpoint={FORMS_ENDPOINT} data-turnstile={TURNSTILE_SITE_KEY || undefined} aria-label="Request your flight options">
@@ -155,11 +158,11 @@ const consent = settings.consentNote ? inline(settings.consentNote, { breaks: fa
   <DatePicker id={p} />
 
   {showRating && (
-    <div class:list={['qf__rating', showRating === 'mobile' && 'qf__rating--mobile']}>
+    <TpTag class:list={['qf__rating', showRating === 'mobile' && 'qf__rating--mobile']} {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
       <Img media={stars} sizes="109px" widths={[109, 218, 327]} class="qf__stars" decorative />
       <span>{ratingText}</span>
       <Img media={trustpilot} sizes="102px" widths={[102, 204, 306]} class="qf__tp" />
-    </div>
+    </TpTag>
   )}
 
   <template data-leg-template>
@@ -570,6 +573,7 @@ const consent = settings.consentNote ? inline(settings.consentNote, { breaks: fa
   }
 
   /* ---------------------------------------------------------------- Trustpilot row (Mobile artboard) */
+  a.qf__rating { color: inherit; text-decoration: none; }
   .qf__rating {
     display: flex;
     align-items: center;

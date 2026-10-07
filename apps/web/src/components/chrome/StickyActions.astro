@@ -8,7 +8,7 @@
  *             Home page: the circles (and the desktop badge) stay hidden until the hero has mostly scrolled away
  *             (its bottom edge above 60% of the viewport height), then fade in; they hide again when scrolling back
  *             up into the hero. Other pages show them from load.
- *             The home page's light-blue phone tab (Mobile artboard 353,1315) slides in from the right edge once the
+ *             The home page's light-blue phone tab (icon + number, 44px tall) slides in from the right edge once the
  *             hero form (#hero-form) has scrolled out of view; it sits low on the screen, clear of the circles.
  *   >= 64rem: the round "Get Flight Options" badge (117px) floats at the right (centred where the designed 156px
  *             badge was: About/BlogCollection x 1247, y 419), follows the page all the way down and opens the booking
@@ -30,7 +30,8 @@ const showBadge = plane;
   <aside class="sticky" data-sticky aria-label="Quick actions">
     {phoneTab && (
       <a class="sticky__tab" href={settings.phone.href} aria-label={`Call ${settings.phone.display}`} data-phone-tab>
-        <Icon name="phone" width={14} height={14} />
+        <Icon name="phone" width={16} height={16} />
+        <span class="sticky__tabnum">{settings.phone.display}</span>
       </a>
     )}
     {(plane || chat) && (
@@ -86,40 +87,43 @@ const showBadge = plane;
     opacity: 0;
     visibility: hidden;
     transform: scale(0.85);
-    transition: opacity 220ms var(--ease), transform 220ms var(--ease), visibility 0s linear 220ms;
+    transition: opacity 500ms var(--motion-ease-out), transform 500ms var(--motion-ease-out), visibility 0s linear 500ms;
   }
   :global(html.js) [data-await-anchor][data-shown] {
     opacity: 1;
     visibility: visible;
     transform: none;
-    transition: opacity 220ms var(--ease), transform 220ms var(--ease), visibility 0s;
+    transition: opacity 500ms var(--motion-ease-out), transform 500ms var(--motion-ease-out), visibility 0s;
   }
   @media (prefers-reduced-motion: reduce) {
     :global(html.js) .sticky__circles[data-await-anchor], :global(html.js) [data-await-anchor][data-shown] { transform: none; transition: none; }
   }
 
-  /* phone tab: 100 x 31 pill clipped by the viewport edge -> 37px visible. Low on the screen, and never above the
-     circles' bottom edge + 16px on short viewports */
+  /* phone tab (client: it was too small, a clipped 37px stub): a full 44px-tall pill against the right edge with the
+     phone icon and the number, sliding in from the edge. Low on the screen, clear of the circles above. */
   .sticky__tab {
     position: fixed;
     z-index: 40;
     right: 0;
-    bottom: max(calc(0.5rem + env(safe-area-inset-bottom)), min(calc(143px + env(safe-area-inset-bottom)), calc(55.7vh - 158px)));
+    bottom: max(calc(0.75rem + env(safe-area-inset-bottom)), min(calc(140px + env(safe-area-inset-bottom)), calc(55.7vh - 160px)));
     display: flex;
     align-items: center;
-    width: calc(37px + env(safe-area-inset-right));
-    height: 31px;
-    padding-left: 12px;
-    border-radius: 15.5px 0 0 15.5px;
+    gap: 0.5rem;
+    height: 44px;
+    padding: 0 calc(1rem + env(safe-area-inset-right)) 0 1rem;
+    border-radius: 22px 0 0 22px;
     background: var(--c-sky);
     box-shadow: var(--sh-tab);
     color: var(--c-navy);
-    clip-path: inset(-10px -10px -10px 100%);      /* slides in from the right edge without leaving the viewport */
+    font-size: var(--fs-14);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    white-space: nowrap;
+    translate: 105% 0;
     visibility: hidden;
-    transition: clip-path calc(var(--dur) * 1.5) var(--ease), visibility 0s linear calc(var(--dur) * 1.5);
+    transition: translate 650ms var(--motion-ease-out), visibility 0s linear 650ms;
   }
-  .sticky__tab::before { content: ''; position: absolute; inset: -7px 0 -7px -8px; }   /* 44px tall hit area */
-  .sticky__tab[data-shown] { clip-path: inset(-10px -10px -10px -10px); visibility: visible; transition: clip-path calc(var(--dur) * 1.5) var(--ease), visibility 0s; }
+  .sticky__tab[data-shown] { translate: none; visibility: visible; transition: translate 650ms var(--motion-ease-out), visibility 0s; }
   .sticky__tab:focus-visible { outline-color: var(--c-navy); }
 
   .sticky__badgewrap { display: none; }

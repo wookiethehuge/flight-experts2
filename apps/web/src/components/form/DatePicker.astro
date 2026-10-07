@@ -1,8 +1,8 @@
 ---
 /**
  * Date picker dialog (Figma component "Dates pop up", 394x695, light blue, radius 7): weekday header, a vertical
- * scrolling list of months (built by datepicker.ts on first open), a Departure / Return summary and
- * "Select these dates". Today is burgundy, selected days are navy circles and a round-trip range gets a cream band.
+ * scrolling list of months (built by datepicker.ts on first open) and a Departure / Return summary. No confirm
+ * button (client: works like Kayak / Expedia): the dialog closes by itself once the dates are complete. Today is burgundy, selected days are navy circles and a round-trip range gets a cream band.
  * Keyboard: arrows move by day / week, Page Up / Page Down by month, Home / End to the start / end of the week,
  * Enter or Space picks. One instance per QuoteForm; behaviour lives in datepicker.ts.
  */
@@ -16,7 +16,7 @@ const dow = [
 <dialog class="dp on-light" id={`${id}-dp`} aria-labelledby={`${id}-dp-title`} aria-describedby={`${id}-dp-help`} data-datepicker>
   <h2 class="sr-only" id={`${id}-dp-title`} data-dp-title>Choose dates</h2>
   <p class="sr-only" id={`${id}-dp-help`}>Use the arrow keys to move between days, Page Up and Page Down to change month, and Enter to choose a day.</p>
-  <button type="button" class="dp__close" aria-label="Close without saving" data-dp-close><Icon name="close" width={15} height={16} /></button>
+  <button type="button" class="dp__close" aria-label="Close" data-dp-close><Icon name="close" width={15} height={16} /></button>
   <div class="dp__dow" aria-hidden="true">{dow.map(([s]) => <span>{s}</span>)}</div>
   <div class="dp__months" data-dp-months data-dow={JSON.stringify(dow)}></div>
   <p class="sr-only" aria-live="polite" data-dp-live></p>
@@ -25,7 +25,6 @@ const dow = [
       <p class="dp__col"><span>Departure</span><strong data-dp-dep>–</strong></p>
       <p class="dp__col dp__col--ret"><span>Return</span><strong data-dp-ret>–</strong></p>
     </div>
-    <button type="button" class="dp__apply" data-dp-apply>Select these dates</button>
   </div>
 </dialog>
 
@@ -175,19 +174,4 @@ const dow = [
   .dp[data-mode='single'] .dp__sum::before,
   .dp[data-mode='single'] .dp__col--ret { display: none; }
   .dp__col.is-active strong { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
-  .dp__apply {
-    display: block;
-    width: 100%;
-    height: 50px;
-    margin-top: 13.3px;
-    border: 0;
-    border-radius: var(--r-7);
-    background: var(--c-burgundy);
-    color: var(--c-cream);
-    font-size: var(--fs-16);
-    font-weight: var(--fw-semibold);
-    transition: background-color var(--dur) var(--ease);
-  }
-  .dp__apply:hover:not(:disabled) { background: var(--c-burgundy-hover); }
-  .dp__apply:disabled { opacity: 0.55; cursor: not-allowed; }
 </style>

@@ -47,11 +47,11 @@ const hid = `faq-h-${index}`;
     --f: calc((100vw - 24.375rem) / 1050);
     background: var(--c-sky-59);
     /* 52 -> 62 top, 35 -> 98 bottom */
-    padding-block: clamp(3.25rem, calc(3.25rem + 10 * var(--f)), 3.875rem) clamp(2.1875rem, calc(2.1875rem + 63 * var(--f)), 6.125rem);
+    padding-block: calc(clamp(3.25rem, calc(3.25rem + 10 * var(--f)), 3.875rem) * var(--tighten)) calc(clamp(2.1875rem, calc(2.1875rem + 63 * var(--f)), 6.125rem) * var(--tighten));
     scroll-margin-top: 1rem;
   }
   /* Contact / ContactMobile: heading sits 44 (390) -> 77 (1440) below the band top (home: 52 -> 62) */
-  .faq--contact { padding-top: clamp(2.75rem, calc(2.75rem + 33 * var(--f)), 4.8125rem); }
+  .faq--contact { padding-top: calc(clamp(2.75rem, calc(2.75rem + 33 * var(--f)), 4.8125rem) * var(--tighten)); }
   /* mobile content sits 5px inside the 20px gutter (x 25) */
   .faq__inner { padding-inline-start: calc(var(--gutter) + clamp(0rem, calc(0.3125rem - 5 * var(--f)), 0.3125rem)); }
   .faq__h {
@@ -64,8 +64,9 @@ const hid = `faq-h-${index}`;
   }
   .faq__h :global(em) { font-style: italic; }
   .faq__list {
-    --chev-in: clamp(0.8125rem, calc(0.8125rem + 43 * var(--f)), 3.5rem);        /* chevron to card edge 13 -> 56 */
-    max-width: 76.1875rem;                                                      /* answer card 1219 */
+    /* one inset for both sides of the answer card and for every chevron, so they all share one right edge
+       (client: alignment); the list spans the full content width like the sections around it */
+    --chev-in: clamp(0.8125rem, calc(0.8125rem + 22 * var(--f)), 2.1875rem);     /* 13 -> 35 */
     margin-top: clamp(1.625rem, calc(1.8125rem - 3 * var(--f)), 1.8125rem);     /* 29 -> 26 */
     margin-inline-end: 1px;
   }
@@ -93,33 +94,44 @@ const hid = `faq-h-${index}`;
     height: auto;
     color: var(--c-navy);
   }
-  .faq__item[open] .faq__q :global(.faq__chev) { visibility: hidden; }
+  .faq__q :global(.faq__chev) { transition: rotate 450ms var(--motion-ease-out); }
+  .faq__item[open] .faq__q :global(.faq__chev) { rotate: 180deg; }
   .faq__q:hover .faq__qt { text-decoration: underline; text-underline-offset: 3px; }
   .faq__a {
     display: flex;
     align-items: flex-start;
     gap: 1.375rem;
     margin-top: clamp(1.125rem, calc(1.125rem + 2 * var(--f)), 1.25rem);        /* 18 -> 20 */
-    padding: clamp(0.875rem, calc(0.875rem + 13 * var(--f)), 1.6875rem) var(--chev-in) clamp(0.875rem, calc(0.875rem + 13 * var(--f)), 1.6875rem) 2.1875rem;
+    padding: clamp(0.875rem, calc(0.875rem + 13 * var(--f)), 1.6875rem) var(--chev-in);
     border-radius: var(--r-7);
     box-shadow: var(--sh-card);
     background: linear-gradient(160.67deg, rgba(255, 255, 255, 0.429) 39.482%, rgba(255, 255, 255, 0.65) 60.518%);
   }
   .faq__at {
     flex: 1;
-    max-width: clamp(16.375rem, calc(16.375rem + 627 * var(--f)), 55.5625rem);  /* 262 -> 889 */
+    max-width: 56rem;
     font-size: clamp(0.875rem, calc(0.875rem + 2 * var(--f)), 1rem);            /* 14 -> 16 */
     line-height: clamp(1.1875rem, calc(1.1875rem + 3 * var(--f)), 1.375rem);     /* 19 -> 22 */
     color: var(--c-navy);
   }
   .faq__at :global(a) { color: inherit; }
-  .faq__close { margin-left: auto; display: flex; cursor: pointer; padding-top: 0.25rem; }
+  .faq__close { display: none; }   /* the chevron stays in the question row and turns */
   .faq__close :global(.faq__chev--up) { transform: rotate(180deg); }
   @media (min-width: 48rem) {
     .faq__h { max-width: none; }
   }
-  @media (min-width: 64rem) {
-    .faq__a { align-items: center; }
-    .faq__close { padding-top: 0; }
+  /* smooth open / close where the browser can animate <details> content */
+  @supports (interpolate-size: allow-keywords) {
+    .faq__item { interpolate-size: allow-keywords; }
+    .faq__item::details-content {
+      block-size: 0;
+      overflow: clip;
+      overflow-clip-margin: 1.5rem;   /* keep the answer card's soft shadow */
+      transition: block-size 550ms var(--motion-ease-out), content-visibility 550ms allow-discrete;
+    }
+    .faq__item[open]::details-content { block-size: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .faq__item::details-content { transition: none; }
   }
 </style>

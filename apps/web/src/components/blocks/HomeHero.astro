@@ -9,7 +9,7 @@
  *   48-64rem : no design; stacked like mobile but with the desktop photo across the top, subheading, desktop rating
  *              row, logos, steps line and a 474px form.
  *   >= 64rem : Main artboard layout (form column 400 -> 474 wide up to 1440). Text column left (H1 y 273), form column right (form x 896 y 193, 474 wide;
- *              the steps are one line right-aligned above it, ending 13px above the form),
+ *              the steps are one line centred above it, ending 13px above the form),
  *              photo covers the 841px hero with the bottom navy gradient.
  * The photo is the LCP element: art-directed <picture> (portrait crop < 48rem), eager, fetchpriority high.
  */
@@ -31,6 +31,12 @@ const stars = { url: '/seed/trustpilot-stars.webp', alt: 'Rated five stars' } as
 const tp = { url: '/seed/trustpilot-logo.webp', alt: 'Trustpilot' } as Media;
 const accreditations = settings.accreditations ?? [];
 const steps = block.steps ?? [];
+// each heading line in its own mask so the lines can rise in one after the other
+const headingLines = inline(block.heading).split(/<br\s*\/?>/i).map((l, i) => `<span class="hero__line" style="--l: ${i}"><span>${l}</span></span>`).join('');
+// the whole rating row is one link to the Trustpilot profile (client: badge clickable everywhere)
+const tpUrl = settings.trustpilot?.url;
+const Rating = tpUrl ? 'a' : 'div';
+const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot (opens in a new tab)`;
 ---
 <section class="hero" aria-labelledby="hero-h1">
   {(desk || mob) && (
@@ -71,13 +77,13 @@ const steps = block.steps ?? [];
 
   <div class="container hero__inner">
     <div class="hero__text">
-      <h1 class="hero__h1" id="hero-h1" set:html={inline(block.heading)} />
+      <h1 class="hero__h1" id="hero-h1" set:html={headingLines} />
       {block.subheading && <p class="hero__sub">{block.subheading}</p>}
-      <div class="hero__rating hero__rating--d">
+      <Rating class="hero__rating hero__rating--d" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
         <Img media={stars} sizes="152px" widths={[152, 304]} class="hero__stars" />
         <span class="hero__rt">{block.ratingText}</span>
         <Img media={tp} sizes="142px" widths={[142, 284]} class="hero__tp" />
-      </div>
+      </Rating>
       {accreditations.length > 0 && (
         <ul class="hero__accr" role="list" aria-label="Accreditations">
           {accreditations.map((a) => (
@@ -104,11 +110,11 @@ const steps = block.steps ?? [];
       <div class="hero__form" id="quote">
         <QuoteForm id="hero-form" variant="hero" settings={settings} />
       </div>
-      <div class="hero__rating hero__rating--m">
+      <Rating class="hero__rating hero__rating--m" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
         <Img media={stars} sizes="109px" widths={[109, 218]} class="hero__stars" />
         <span class="hero__rt">{block.mobileRatingText || block.ratingText}</span>
         <Img media={tp} sizes="102px" widths={[102, 204]} class="hero__tp" />
-      </div>
+      </Rating>
     </div>
   </div>
 </section>
@@ -185,7 +191,9 @@ const steps = block.steps ?? [];
   }
 
   /* rating rows */
-  .hero__rating { align-items: center; }
+  .hero__rating { align-items: center; color: inherit; text-decoration: none; }
+  a.hero__rating { cursor: pointer; transition: opacity var(--dur) var(--ease); }
+  a.hero__rating:hover { opacity: 0.85; }
   .hero__rating--m { display: flex; }
   .hero__rating :global(img) { display: block; height: auto; }
   .hero__rating--m {
@@ -207,14 +215,14 @@ const steps = block.steps ?? [];
   .hero__accr {
     flex-wrap: wrap;
     align-items: center;
-    gap: 1rem 2rem;
+    gap: 1rem 1.5rem;
     margin: 1.9375rem 0 0;                                    /* 31 */
     padding: 0;
     list-style: none;
   }
-  .hero__accr li { display: flex; }
-  .hero__accr a { display: flex; }
-  .hero__accr :global(.hero__logo) { display: block; height: 3.375rem; width: auto; filter: url(#fe-mono-light); }  /* 54 */
+  /* every logo in the same 76 x 54 box, centred (client: symmetry); the wide IATA mark fits by width */
+  .hero__accr li, .hero__accr a { display: flex; align-items: center; justify-content: center; width: 4.75rem; height: 3.375rem; }
+  .hero__accr :global(.hero__logo) { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; filter: url(#fe-mono-light); }
   .hero__accr :global(.hero__logo--seal) { filter: url(#fe-mono-seal); }
 
   .hero__steps {
@@ -250,7 +258,7 @@ const steps = block.steps ?? [];
     .hero__rating--d { display: flex; margin-top: 1.5625rem; }   /* 25 */
     .hero__rating--m { display: none; }
     .hero__accr { display: flex; }
-    .hero__steps { display: flex; justify-content: flex-start; }
+    .hero__steps { display: flex; justify-content: center; }
     .hero__formcol { margin-top: 3rem; }
   }
 
@@ -273,16 +281,18 @@ const steps = block.steps ?? [];
     }
     .hero__text { padding-top: 6.8125rem; padding-left: 1px; } /* H1 y 273, x 71 */
     .hero__h1 { max-width: 44.25rem; }                        /* 708 */
-    /* steps: one line, right-aligned with the form and ending 13px above it (Main: x 1022-1370, y 164), so the form
-       keeps its designed y 193 (164 + one 16.2px line + 13) */
+    /* steps: one line centred over the search widget (client), ending 13px above it, so the form keeps its designed
+       y 193 (164 + one 16.2px line + 13) */
     .hero__formcol { position: relative; margin-top: 1.825rem; }
     .hero__steps {
       position: absolute;
+      left: 0;
       right: 0;
       bottom: calc(100% + 0.8125rem);
       display: flex;
       flex-wrap: nowrap;
-      justify-content: flex-end;
+      justify-content: center;
+      gap: 0 0.875rem;
       margin: 0;
     }
     .hero__rating--d :global(.hero__stars) { margin-left: -1px; }
@@ -299,4 +309,38 @@ const steps = block.steps ?? [];
       mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
     }
   }
+
+  /* ---------- entrance (client: the landing page should feel alive): photo settles from a slight zoom, the headline
+     lines rise out of their masks one after the other, then subheading, rating, logos and the form follow; the italic
+     line gets a soft light sweep every 9s. CSS only, from first paint; nothing moves with reduced motion. ---------- */
+  .hero__h1 :global(.hero__line) { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+  .hero__h1 :global(.hero__line > span) { display: inline-block; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .hero__bg img { animation: hero-settle 2600ms var(--motion-ease-out) both; }
+    :global(html.js) .hero__h1 :global(.hero__line > span) {
+      animation: hero-rise 1200ms var(--motion-ease-out) both;
+      animation-delay: calc(250ms + var(--l) * 220ms);
+    }
+    :global(html.js) :is(.hero__sub, .hero__rating, .hero__accr, .hero__steps, .hero__form) {
+      animation: hero-fade 1000ms var(--motion-ease-out) both;
+    }
+    :global(html.js) .hero__sub { animation-delay: 750ms; }
+    :global(html.js) .hero__rating { animation-delay: 900ms; }
+    :global(html.js) .hero__accr { animation-delay: 1050ms; }
+    :global(html.js) .hero__steps { animation-delay: 700ms; }
+    :global(html.js) .hero__form { animation-delay: 550ms; }
+    .hero__h1 :global(em) {
+      /* 300% wide and positioned 100% -> 0%, so the gradient always covers the whole line; the light band (at its
+         middle) travels from just off the left edge to just off the right */
+      background: linear-gradient(100deg, currentColor 0 44%, #ffffff 50%, currentColor 56% 100%) 100% 0 / 300% 100% no-repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: hero-sheen 9s ease-in-out 2.2s infinite;
+    }
+  }
+  @keyframes hero-settle { from { scale: 1.06; } to { scale: 1; } }
+  @keyframes hero-rise { from { opacity: 0; translate: 0 105%; } to { opacity: 1; translate: none; } }
+  @keyframes hero-fade { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: none; } }
+  @keyframes hero-sheen { 0% { background-position: 100% 0; } 24%, 100% { background-position: 0% 0; } }
 </style>

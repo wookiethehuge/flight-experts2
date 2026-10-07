@@ -42,7 +42,7 @@ const items = block.items ?? [];
 <style>
   .tech {
     padding-top: 0;
-    padding-bottom: clamp(3.8375rem, calc(3.8375rem + 6.6 * (100vw - 24.375rem) / 1050), 4.25rem);  /* 61.4 -> 68 (About hero) */
+    padding-bottom: calc(clamp(3.8375rem, calc(3.8375rem + 6.6 * (100vw - 24.375rem) / 1050), 4.25rem) * var(--tighten));  /* 61.4 -> 68 (About hero) */
     color: var(--c-navy);
   }
   .tech__head { max-width: 40rem; }
