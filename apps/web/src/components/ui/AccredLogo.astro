@@ -1,0 +1,33 @@
+---
+/**
+ * Accreditation logo. SVG logos (single-colour vector traces) are drawn as a CSS mask filled with the current text
+ * colour, so they stay razor sharp at any size and take each context's colour (light blue on the hero, burgundy in
+ * the light header). Raster logos fall back to <Img> (the caller's filter then tints them).
+ */
+import type { Media } from '../../lib/types';
+import { seedAsset } from '../../lib/cms';
+import Img from './Img.astro';
+
+interface Props { media: Media; alt: string; class?: string; sizes?: string; widths?: number[] }
+const { media, alt, class: cls, sizes = '86px', widths = [96, 172] } = Astro.props;
+const raw: any = seedAsset(media.url);
+const local = typeof raw === 'function' ? raw : raw && typeof raw === 'object' ? raw : null;
+const isSvg = /svg/.test(media.mimeType ?? '') || /\.svg(\?|$)/i.test(media.url) || local?.format === 'svg';
+const url: string = local?.src ?? media.url;
+const w = local?.width ?? media.width ?? 1;
+const h = local?.height ?? media.height ?? 1;
+---
+{isSvg ? (
+  <span class:list={['alogo', cls]} role="img" aria-label={alt} style={`--alogo: url("${url}"); aspect-ratio: ${w} / ${h};`} />
+) : (
+  <Img media={media} alt={alt} sizes={sizes} widths={widths} class={cls} />
+)}
+
+<style>
+  .alogo {
+    display: block;
+    background: currentColor;
+    -webkit-mask: var(--alogo) center / contain no-repeat;
+    mask: var(--alogo) center / contain no-repeat;
+  }
+</style>

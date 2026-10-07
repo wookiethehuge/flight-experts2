@@ -36,28 +36,28 @@
     {
       "name": "ASTA",
       "logo": {
-        "file": "accreditation-asta.webp",
+        "file": "accreditation-asta.svg",
         "alt": "ASTA, American Society of Travel Advisors"
       }
     },
     {
       "name": "IATA",
       "logo": {
-        "file": "accreditation-iata.webp",
+        "file": "accreditation-iata.svg",
         "alt": "IATA accredited agent"
       }
     },
     {
       "name": "IATAN",
       "logo": {
-        "file": "accreditation-iatan.webp",
+        "file": "accreditation-iatan.svg",
         "alt": "IATAN endorsed"
       }
     },
     {
       "name": "FDACS",
       "logo": {
-        "file": "accreditation-fdacs.webp",
+        "file": "accreditation-fdacs.svg",
         "alt": "Florida Department of Agriculture and Consumer Services, registered seller of travel"
       }
     }

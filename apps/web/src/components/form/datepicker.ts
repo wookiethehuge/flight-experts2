@@ -164,22 +164,25 @@ export function createDatePicker(dialog: HTMLDialogElement) {
     }
     paint();
     clearTimeout(autoClose);
-    if (done) autoClose = window.setTimeout(() => close(true), 280);
+    if (done) autoClose = window.setTimeout(() => close(true, true), 320);
   }
 
   const place = () => { if (opts) placeDialog(dialog, opts.anchor, 'start'); };
   const onScroll = (e: Event) => { if (!(e.target instanceof Node) || !dialog.contains(e.target)) place(); };
 
-  function close(commit: boolean) {
+  function close(commit: boolean, fade = false) {
     if (!opts) return;
     clearTimeout(autoClose);
     const o = opts;
     opts = null;
     removeEventListener('scroll', onScroll, true);
     removeEventListener('resize', onScroll);
-    if (dialog.open) dialog.close();
-    if (commit && dep) o.onApply(dep, o.mode === 'range' ? ret : undefined);
-    returnFocus?.focus();
+    if (commit && dep) o.onApply(dep, o.mode === 'range' ? ret : undefined);   // the field updates under the fade
+    const finish = () => { dialog.classList.remove('is-closing'); if (dialog.open) dialog.close(); returnFocus?.focus(); };
+    if (fade && dialog.open && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      dialog.classList.add('is-closing');
+      window.setTimeout(finish, 460);
+    } else finish();
   }
 
   months.addEventListener('click', (e) => {
@@ -223,10 +226,12 @@ export function createDatePicker(dialog: HTMLDialogElement) {
       ret = o.mode === 'range' ? o.ret : undefined;
       if (ret && dep && ret < dep) ret = undefined;
       phase = o.mode === 'range' && o.phase === 'return' && dep ? 'return' : 'depart';
+      dialog.classList.remove('is-closing');
       dialog.dataset.mode = o.mode;
       title.textContent = o.title;
       live.textContent = '';
       paint();
+      if (dialog.open) dialog.close();   // reopened during the fade-out
       dialog.showModal();
       place();
       addEventListener('scroll', onScroll, true);

@@ -17,6 +17,7 @@ import type { HomeHeroBlock, Media, SiteSettings } from '../../lib/types';
 import { inline } from '../../lib/inline';
 import { HERO_IMAGES, heroVariants } from '../../lib/hero-image';
 import Img from '../ui/Img.astro';
+import AccredLogo from '../ui/AccredLogo.astro';
 import QuoteForm from '../form/QuoteForm.astro';
 
 interface Props { block: HomeHeroBlock; settings: SiteSettings; page: string; index: number }
@@ -90,10 +91,10 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
             <li>
               {a.url ? (
                 <a href={a.url} rel="noopener" target="_blank">
-                  <Img media={a.logo} alt={a.logo.alt || a.name} sizes="86px" widths={[96, 172]} class:list={['hero__logo', /fdacs|seal/i.test(a.name) && 'hero__logo--seal']} />
+                  <AccredLogo media={a.logo} alt={a.logo.alt || a.name} class={`hero__logo${/fdacs|seal/i.test(a.name) ? ' hero__logo--seal' : ''}`} />
                 </a>
               ) : (
-                <Img media={a.logo} alt={a.logo.alt || a.name} sizes="86px" widths={[96, 172]} class:list={['hero__logo', /fdacs|seal/i.test(a.name) && 'hero__logo--seal']} />
+                <AccredLogo media={a.logo} alt={a.logo.alt || a.name} class={`hero__logo${/fdacs|seal/i.test(a.name) ? ' hero__logo--seal' : ''}`} />
               )}
             </li>
           ))}
@@ -223,6 +224,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   /* every logo in the same 76 x 54 box, centred (client: symmetry); the wide IATA mark fits by width */
   .hero__accr li, .hero__accr a { display: flex; align-items: center; justify-content: center; width: 4.75rem; height: 3.375rem; }
   .hero__accr :global(.hero__logo) { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; filter: url(#fe-mono-light); }
+  .hero__accr :global(.alogo.hero__logo) { height: 100%; width: auto; max-width: 100%; filter: none; color: var(--c-sky); }
   .hero__accr :global(.hero__logo--seal) { filter: url(#fe-mono-seal); }
 
   .hero__steps {

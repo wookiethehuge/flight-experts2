@@ -11,6 +11,7 @@
  */
 import logoRaw from '../../assets/seed/logo-light.svg?raw';
 import Img from '../ui/Img.astro';
+import AccredLogo from '../ui/AccredLogo.astro';
 import Icon from '../ui/Icon.astro';
 import PhonePill from './PhonePill.astro';
 import Menu from './Menu.astro';
@@ -25,6 +26,8 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
   <defs>
     <symbol id="fe-logo" viewBox="0 0 312 60">{logoPaths.map((d) => <path d={d} />)}</symbol>
     {/* the orbit mark (first two paths) and the wordmark apart, so the header can animate the mark */}
+    <radialGradient id="speck-glow"><stop offset="0" stop-color="#ffffff" /><stop offset="0.22" stop-color="#ffffff" /><stop offset="0.45" stop-color="#ffffff" stop-opacity="0.55" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
+    <radialGradient id="speck-glow-light"><stop offset="0" stop-color="#ffffff" /><stop offset="0.35" stop-color="#f3c6d6" stop-opacity="0.95" /><stop offset="1" stop-color="#800732" stop-opacity="0" /></radialGradient>
     <symbol id="fe-logo-mark" viewBox="0 0 312 60">{logoPaths.slice(0, 2).map((d) => <path d={d} />)}</symbol>
     <symbol id="fe-logo-word" viewBox="0 0 312 60">{logoPaths.slice(2).map((d) => <path d={d} />)}</symbol>
     <filter id="mono-brand" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
@@ -41,7 +44,21 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
 <header class:list={['site-header', `site-header--${theme}`]}>
   <div class="site-header__bar">
     <a class="site-header__logo" href="/" aria-label="Flight Experts home">
-      <svg viewBox="0 0 312 60" aria-hidden="true" focusable="false"><g class="site-header__mark"><use href="#fe-logo-mark" /></g><use href="#fe-logo-word" /></svg>
+      <svg viewBox="0 0 312 60" aria-hidden="true" focusable="false">
+        <use href="#fe-logo" />
+        {/* a tiny speck of light glides once round the horizontal ring, then once round the tilted ring (client:
+            subtle, "something invisible travelling around the circles"); SMIL so Safari runs it too */}
+        <g class="site-header__specks">
+          <circle class="site-header__speck" r="1.9" opacity="0">
+            <animateMotion id="speckX" path="M8.92,26.97 A16.85,5.28 -0.9 1 0 42.62,26.45 A16.85,5.28 -0.9 1 0 8.92,26.97" dur="2.8s" begin="1.8s; speckY.end+7s" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1" />
+            <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.18;0.82;1" dur="2.8s" begin="speckX.begin" fill="freeze" />
+          </circle>
+          <circle class="site-header__speck" r="1.9" opacity="0">
+            <animateMotion id="speckY" path="M18.32,41.60 A16.8,5.84 -61 1 0 34.60,12.22 A16.8,5.84 -61 1 0 18.32,41.60" dur="2.8s" begin="speckX.end+0.25s" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1" />
+            <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.18;0.82;1" dur="2.8s" begin="speckY.begin" fill="freeze" />
+          </circle>
+        </g>
+      </svg>
     </a>
 
     {theme === 'light' && settings.accreditations?.length > 0 && (
@@ -49,8 +66,8 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
         {settings.accreditations.map((a) => (
           <li class:list={[isSeal(a.name, a.logo?.alt) && 'seal']}>
             {a.url
-              ? <a href={a.url} target="_blank" rel="noopener"><Img media={a.logo} sizes="85px" widths={[64, 108, 170]} /></a>
-              : <Img media={a.logo} sizes="85px" widths={[64, 108, 170]} />}
+              ? <a href={a.url} target="_blank" rel="noopener"><AccredLogo media={a.logo} alt={a.logo.alt || a.name} sizes="85px" widths={[64, 108, 170]} /></a>
+              : <AccredLogo media={a.logo} alt={a.logo.alt || a.name} sizes="85px" widths={[64, 108, 170]} />}
           </li>
         ))}
       </ul>
@@ -99,17 +116,10 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
     color: inherit;
   }
   .site-header__logo svg { display: block; width: 100%; height: auto; aspect-ratio: 312 / 60; fill: currentColor; }
-  /* logo mark: turns in on load, then sways gently; a full turn on hover (client: "give it some life") */
-  .site-header__mark { transform-box: fill-box; transform-origin: 50% 50%; }
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html.js) .site-header__mark {
-      animation: mark-in 1600ms var(--motion-ease-out) 200ms both, mark-sway 7s ease-in-out 1800ms infinite;
-    }
-    .site-header__logo:hover .site-header__mark { animation: mark-spin 1100ms var(--motion-ease-out); }
-  }
-  @keyframes mark-in { from { opacity: 0; rotate: -200deg; scale: 0.6; } to { opacity: 1; rotate: 0deg; scale: 1; } }
-  @keyframes mark-sway { 0%, 100% { rotate: 0deg; } 50% { rotate: -14deg; } }
-  @keyframes mark-spin { from { rotate: 0deg; } to { rotate: 360deg; } }
+  /* the speck: a soft point of light, white over the dark header, a lighter burgundy glint over the light one */
+  .site-header__speck { fill: url(#speck-glow); }
+  .site-header--light .site-header__speck { fill: url(#speck-glow-light); }
+  @media (prefers-reduced-motion: reduce) { .site-header__specks { display: none; } }
 
   .site-header__actions {
     display: flex;
@@ -150,6 +160,7 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
     }
     .site-header__accreds li, .site-header__accreds a { display: flex; align-items: center; justify-content: center; width: 76px; height: 54px; }
     .site-header__accreds :global(img) { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; filter: url(#mono-brand); }
+    .site-header__accreds :global(.alogo) { height: 100%; width: auto; max-width: 100%; color: var(--c-burgundy); }
     .site-header__accreds .seal :global(img) { filter: url(#mono-brand-seal); }
   }
 </style>
