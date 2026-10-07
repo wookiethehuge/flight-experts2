@@ -24,7 +24,7 @@ if (ogImage) {
 <title>{fullTitle}</title>
 <meta name="description" content={desc} />
 {canonical && <link rel="canonical" href={canonical} />}
-{(noindex || seo.noindex || NOINDEX) && <meta name="robots" content="noindex, follow" />}
+{(noindex || seo.noindex || NOINDEX) && <meta name="robots" content="noindex, nofollow" />}
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content="Flight Experts" />
 <meta property="og:title" content={fullTitle} />
