@@ -67,7 +67,7 @@ const jsonLd = [
     /* mobile frame: 24px left edge (container 20 + 4), 20px right edge; desktop: 70 / 70 */
     padding-inline-start: calc(var(--gutter) + clamp(0rem, calc(0.25rem - 4 * (100vw - 24.375rem) / 1050), 0.25rem));
     margin-top: clamp(1.1875rem, calc(1.875rem - 11 * (100vw - 24.375rem) / 1050), 1.875rem);          /* 30 -> 19 */
-    padding-bottom: clamp(3rem, calc(3rem + 52 * (100vw - 24.375rem) / 1050), 6.25rem);
+    padding-bottom: var(--sec-y);
   }
   .blog-grid {
     display: grid;

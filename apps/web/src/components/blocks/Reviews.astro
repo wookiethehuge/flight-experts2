@@ -121,7 +121,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     --inset: calc(max(0px, (100vw - var(--page-max)) / 2) + clamp(1.5625rem, calc(1.5625rem + 95 * var(--f)), 7.5rem));   /* first card x 25 -> 120 */
     background: var(--c-navy);
     color: var(--c-sky);
-    padding-block: calc(clamp(3.375rem, calc(3.375rem + 26 * var(--f)), 5rem) * var(--tighten)) calc(clamp(1.75rem, calc(1.75rem + 75 * var(--f)), 6.4375rem) * var(--tighten));  /* 54 -> 80 / 28 -> 103 */
+    padding-block: var(--sec-y);
     overflow: hidden;
   }
   .rv :global(picture > source) { display: none; }                           /* keep <source> out of flex gaps */
@@ -258,7 +258,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     .rv__rating {
       justify-content: center;
       column-gap: 4.75rem;                                                       /* 76 */
-      margin: 2.1625rem 0 0;                                                     /* 34.6 */
+      margin: var(--sec-head) 0 0;
       padding-left: 2.75rem;                                                     /* row sits 22px right of centre */
     }
     .rv__tp :global(img) { width: 10.125rem; }                                  /* 162 */

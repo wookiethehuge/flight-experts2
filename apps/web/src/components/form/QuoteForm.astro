@@ -602,8 +602,9 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     .qf__br { display: none; }
     .qf__rating--mobile { display: none; }
 
-    /* multi-city: fixed 630px panel, the fields scroll, the submit bar stays at the bottom (Main isMulti) */
-    .qf[data-trip='multi'] .qf__panel { display: flex; flex-direction: column; height: 630px; }
+    /* multi-city: the panel keeps the height it had before switching (set in quote-form.ts), the fields scroll and
+       the submit bar stays at the bottom, so the page never jumps (client) */
+    .qf[data-trip='multi'] .qf__panel { display: flex; flex-direction: column; height: var(--qf-lock-h, 523px); }
     .qf[data-trip='multi'] .qf__body {
       flex: 1 1 auto;
       min-height: 0;
@@ -612,6 +613,9 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
       overflow-y: auto;
       overscroll-behavior: contain;
       border-radius: 14px 0 0 0;
+      /* soft fade at the bottom: shows there is more to scroll */
+      -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 48px), transparent);
+      mask-image: linear-gradient(to bottom, #000 calc(100% - 48px), transparent);
     }
     .qf[data-trip='multi'] .qf__body::-webkit-scrollbar { width: 5px; }
     .qf[data-trip='multi'] .qf__body::-webkit-scrollbar-track { background: transparent; margin: 22px 0 160px; }

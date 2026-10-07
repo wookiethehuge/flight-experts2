@@ -47,11 +47,11 @@ const hid = `faq-h-${index}`;
     --f: calc((100vw - 24.375rem) / 1050);
     background: var(--c-sky-59);
     /* 52 -> 62 top, 35 -> 98 bottom */
-    padding-block: calc(clamp(3.25rem, calc(3.25rem + 10 * var(--f)), 3.875rem) * var(--tighten)) calc(clamp(2.1875rem, calc(2.1875rem + 63 * var(--f)), 6.125rem) * var(--tighten));
+    padding-block: var(--sec-y);
     scroll-margin-top: 1rem;
   }
   /* Contact / ContactMobile: heading sits 44 (390) -> 77 (1440) below the band top (home: 52 -> 62) */
-  .faq--contact { padding-top: calc(clamp(2.75rem, calc(2.75rem + 33 * var(--f)), 4.8125rem) * var(--tighten)); }
+  .faq--contact { padding-top: var(--sec-y); }
   /* mobile content sits 5px inside the 20px gutter (x 25) */
   .faq__inner { padding-inline-start: calc(var(--gutter) + clamp(0rem, calc(0.3125rem - 5 * var(--f)), 0.3125rem)); }
   .faq__h {
@@ -67,7 +67,7 @@ const hid = `faq-h-${index}`;
     /* one inset for both sides of the answer card and for every chevron, so they all share one right edge
        (client: alignment); the list spans the full content width like the sections around it */
     --chev-in: clamp(0.8125rem, calc(0.8125rem + 22 * var(--f)), 2.1875rem);     /* 13 -> 35 */
-    margin-top: clamp(1.625rem, calc(1.8125rem - 3 * var(--f)), 1.8125rem);     /* 29 -> 26 */
+    margin-top: calc(var(--sec-head) - 0.5rem);   /* the 40px question rows carry 8px of their own */
     margin-inline-end: 1px;
   }
   .faq__item + .faq__item { margin-top: clamp(0.8125rem, calc(0.8125rem + 5 * var(--f)), 1.125rem); }   /* 13 -> 18 */

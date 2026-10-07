@@ -59,6 +59,11 @@
   /* client: overall vertical spacing was too generous. One factor tightens every section's top/bottom padding and the
      big heading-to-content gaps (component internals and the hero height are untouched). */
   --tighten: 0.75;
+  /* one vertical rhythm for every content section (client: consistent, tighter padding):
+     section padding 48 -> 80, heading to content 24 -> 40, top of an inner page under the header/breadcrumbs 24 -> 48 */
+  --sec-y: clamp(3rem, calc(3rem + 32 * (100vw - 24.375rem) / 1050), 5rem);
+  --sec-head: clamp(1.5rem, calc(1.5rem + 16 * (100vw - 24.375rem) / 1050), 2.5rem);
+  --page-top: clamp(1.5rem, calc(1.5rem + 24 * (100vw - 24.375rem) / 1050), 3rem);
   --section-y: calc(clamp(3.25rem, calc(3.25rem + 48 * (100vw - 24.375rem) / 1050), 6.25rem) * var(--tighten));      /* 52 -> 100 */
   --space-4: 0.25rem;
   --space-8: 0.5rem;

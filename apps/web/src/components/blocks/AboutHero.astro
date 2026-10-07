@@ -22,8 +22,8 @@ const heading = inline(block.heading).replace(/<br>/g, ' <br>');
 <style>
   .about-hero {
     /* 390: H1 top 82 (below the header); 1440: breadcrumbs, then H1 top 191 */
-    padding-top: calc(clamp(1.5rem, calc(1.5rem + 46 * (100vw - 24.375rem) / 1050), 4.375rem) * var(--tighten));
-    padding-bottom: calc(clamp(3.8375rem, calc(3.8375rem + 6.6 * (100vw - 24.375rem) / 1050), 4.25rem) * var(--tighten)); /* 61.4 -> 68 */
+    padding-top: var(--page-top);
+    padding-bottom: var(--sec-y);
   }
   .about-hero__title {
     font-family: var(--ff-serif);
@@ -37,7 +37,7 @@ const heading = inline(block.heading).replace(/<br>/g, ' <br>');
   .about-hero__title :global(br) { display: none; }
 
   .about-hero__body {
-    margin-top: clamp(1.5375rem, calc(1.5375rem + 17.24 * (100vw - 24.375rem) / 1050), 2.615rem); /* 24.6 -> 41.84 */
+    margin-top: var(--sec-head);
     font-size: var(--fs-body);                                                                  /* 14 -> 16 */
     line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);       /* 20 -> 24 */
     color: var(--c-navy);

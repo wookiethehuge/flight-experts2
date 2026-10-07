@@ -164,7 +164,10 @@ function init(root: HTMLElement) {
   });
 
   const footBtn = q<HTMLButtonElement>('[data-foot-btn]');
+  // multi-city keeps the panel at the round-trip height (the fields scroll inside), so switching never moves the page
+  const panel = q<HTMLElement>('.qf__panel');
   function setTrip(t: Trip) {
+    if (t === 'multi' && trip !== 'multi') root.style.setProperty('--qf-lock-h', `${panel.offsetHeight}px`);
     trip = t;
     root.dataset.trip = t;
     tripVal.textContent = TRIP_LABEL[t];

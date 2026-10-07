@@ -40,8 +40,7 @@ const hid = `next-h-${Astro.props.index}`;
     --line: 1px;
     background: color-mix(in srgb, var(--c-sky) 59%, var(--c-cream));
     color: var(--c-navy);
-    padding-block: calc(clamp(3.5625rem, calc(3.5625rem + 40 * (100vw - 24.375rem) / 1050), 6.0625rem) * var(--tighten))  /* 57 -> 97 */
-      calc(clamp(0.4375rem, calc(0.4375rem + 55 * (100vw - 24.375rem) / 1050), 3.875rem) * var(--tighten));               /* 7 -> 62: footer box starts here */
+    padding-block: var(--sec-y);
   }
   /* last block on the page: the band continues behind the footer plane and around the top of the burgundy arc */
   .next:last-child { position: relative; }
@@ -68,7 +67,7 @@ const hid = `next-h-${Astro.props.index}`;
   .next__steps {
     display: grid;
     row-gap: var(--step-gap);
-    margin: clamp(3.0625rem, calc(3.1875rem + -2 * (100vw - 24.375rem) / 1050), 3.1875rem) 0 0;    /* 51 -> 49 */
+    margin: var(--sec-head) 0 0;
     padding: 0 0 0 clamp(0rem, calc(0.75rem + -12 * (100vw - 24.375rem) / 1050), 0.75rem);        /* circles at x 32 -> 70 */
     list-style: none;
   }

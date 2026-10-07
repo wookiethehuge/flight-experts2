@@ -243,8 +243,7 @@ const fields: F[] = [
     margin-inline: auto;
     /* the Contact frames inset this section 4px more than the page gutter on phones (24 vs 20) */
     padding-inline: calc(var(--gutter) + clamp(0rem, calc(0.25rem + -4 * (100vw - 24.375rem) / 1050), 0.25rem));
-    padding-block: calc(clamp(3.5rem, calc(3.5rem + 17 * (100vw - 24.375rem) / 1050), 4.5625rem) * var(--tighten))       /* 56 -> 73 */
-      calc(clamp(3.375rem, calc(3.375rem + 19 * (100vw - 24.375rem) / 1050), 4.5625rem) * var(--tighten));               /* 54 -> 73 */
+    padding-block: var(--sec-y);
   }
   .contact__grid { display: grid; row-gap: 2.25rem; }                                            /* card -> form 36 */
   .contact__main { container-type: inline-size; min-width: 0; }
