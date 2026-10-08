@@ -26,8 +26,8 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
   <defs>
     <symbol id="fe-logo" viewBox="0 0 312 60">{logoPaths.map((d) => <path d={d} />)}</symbol>
     {/* the orbit mark (first two paths) and the wordmark apart, so the header can animate the mark */}
-    <radialGradient id="speck-glow"><stop offset="0" stop-color="#ffffff" /><stop offset="0.22" stop-color="#ffffff" /><stop offset="0.45" stop-color="#ffffff" stop-opacity="0.55" /><stop offset="1" stop-color="#ffffff" stop-opacity="0" /></radialGradient>
-    <radialGradient id="speck-glow-light"><stop offset="0" stop-color="#ffffff" /><stop offset="0.35" stop-color="#f3c6d6" stop-opacity="0.95" /><stop offset="1" stop-color="#800732" stop-opacity="0" /></radialGradient>
+    <radialGradient id="speck-glow"><stop offset="0" stop-color="#ffffff" /><stop offset="0.18" stop-color="#ffffff" /><stop offset="0.4" stop-color="#eaf6ff" stop-opacity="0.75" /><stop offset="0.7" stop-color="#c7e8ff" stop-opacity="0.28" /><stop offset="1" stop-color="#c7e8ff" stop-opacity="0" /></radialGradient>
+    <radialGradient id="speck-glow-light"><stop offset="0" stop-color="#ffffff" /><stop offset="0.18" stop-color="#ffffff" /><stop offset="0.42" stop-color="#f6d3df" stop-opacity="0.8" /><stop offset="0.72" stop-color="#c2577e" stop-opacity="0.22" /><stop offset="1" stop-color="#800732" stop-opacity="0" /></radialGradient>
     <symbol id="fe-logo-mark" viewBox="0 0 312 60">{logoPaths.slice(0, 2).map((d) => <path d={d} />)}</symbol>
     <symbol id="fe-logo-word" viewBox="0 0 312 60">{logoPaths.slice(2).map((d) => <path d={d} />)}</symbol>
     <filter id="mono-brand" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB">
@@ -49,14 +49,14 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
         {/* a tiny speck of light glides once round the horizontal ring, then once round the tilted ring (client:
             subtle, "something invisible travelling around the circles"); SMIL so Safari runs it too */}
         <g class="site-header__specks">
-          <circle class="site-header__speck" r="1.9" opacity="0">
-            <animateMotion id="speckX" path="M8.92,26.97 A16.85,5.28 -0.9 1 0 42.62,26.45 A16.85,5.28 -0.9 1 0 8.92,26.97" dur="2.8s" begin="1.8s; speckY.end+7s" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1" />
+          <ellipse class="site-header__speck" rx="4.6" ry="2.1" opacity="0">
+            <animateMotion id="speckX" path="M8.92,26.97 A16.85,5.28 -0.9 1 0 42.62,26.45 A16.85,5.28 -0.9 1 0 8.92,26.97" dur="2.8s" begin="1.8s; speckY.end+7s" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1" rotate="auto" />
             <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.18;0.82;1" dur="2.8s" begin="speckX.begin" fill="freeze" />
-          </circle>
-          <circle class="site-header__speck" r="1.9" opacity="0">
-            <animateMotion id="speckY" path="M18.32,41.60 A16.8,5.84 -61 1 0 34.60,12.22 A16.8,5.84 -61 1 0 18.32,41.60" dur="2.8s" begin="speckX.end+0.25s" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1" />
+          </ellipse>
+          <ellipse class="site-header__speck" rx="4.6" ry="2.1" opacity="0">
+            <animateMotion id="speckY" path="M18.32,41.60 A16.8,5.84 -61 1 0 34.60,12.22 A16.8,5.84 -61 1 0 18.32,41.60" dur="2.8s" begin="speckX.end+0.25s" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1" rotate="auto" />
             <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.18;0.82;1" dur="2.8s" begin="speckY.begin" fill="freeze" />
-          </circle>
+          </ellipse>
         </g>
       </svg>
     </a>
@@ -117,7 +117,8 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
   }
   .site-header__logo svg { display: block; width: 100%; height: auto; aspect-ratio: 312 / 60; fill: currentColor; }
   /* the speck: a soft point of light, white over the dark header, a lighter burgundy glint over the light one */
-  .site-header__speck { fill: url(#speck-glow); }
+  /* a soft smudge of light, stretched along its path (rotate=auto), with a hot core and a wide halo */
+  .site-header__speck { fill: url(#speck-glow); filter: drop-shadow(0 0 1.6px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 4px rgba(199, 232, 255, 0.55)); }
   .site-header--light .site-header__speck { fill: url(#speck-glow-light); }
   @media (prefers-reduced-motion: reduce) { .site-header__specks { display: none; } }
 
