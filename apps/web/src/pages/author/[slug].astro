@@ -56,6 +56,8 @@ const person = {
   sameAs: [author.linkedin, author.x].filter(external),
 };
 const seo = { ...(author.seo ?? {}), image: author.seo?.image ?? author.photo };
+// bio fields are plain textareas: a blank line starts a new paragraph
+const paras = (t?: string | null) => (t ?? '').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
 ---
 <BaseLayout title={`${author.name}, ${author.role}`} description={author.bioIntro} seo={seo} headerTheme="light" jsonLd={[person]} sticky={{ plane: false, chat: true }}>
   <Breadcrumbs items={crumbs} />
@@ -81,9 +83,9 @@ const seo = { ...(author.seo ?? {}), image: author.seo?.image ?? author.photo };
 
     <div class="author__intro">
       <h1 class="author__title"><em>About</em> <span>{author.name}</span></h1>
-      {author.bioIntro && <p class="author__bio">{author.bioIntro}</p>}
+      {paras(author.bioIntro).map((t) => <p class="author__bio">{t}</p>)}
       {author.quote && <blockquote class="author__quote"><p>{author.quote}</p></blockquote>}
-      {author.bioMore && <p class="author__bio">{author.bioMore}</p>}
+      {paras(author.bioMore).map((t) => <p class="author__bio">{t}</p>)}
     </div>
 
     {(author.expertise?.length ?? 0) > 0 && (
@@ -174,6 +176,7 @@ const seo = { ...(author.seo ?? {}), image: author.seo?.image ?? author.photo };
     line-height: clamp(1.3125rem, calc(1.3125rem + 3 * (100vw - 24.375rem) / 1050), 1.5rem);      /* 21 -> 24 */
   }
   .author__title + .author__bio { margin-top: clamp(1.0694rem, calc(1.0694rem + 10.73 * (100vw - 24.375rem) / 1050), 1.74rem); } /* 17.1 -> 27.84 */
+  .author__bio + .author__bio { margin-top: 1em; }
   .author__quote + .author__bio { margin-top: clamp(1.365rem, calc(2.0069rem + -10.27 * (100vw - 24.375rem) / 1050), 2.0069rem); } /* 32.1 -> 21.84 */
   .author__quote {
     margin: clamp(1.3875rem, calc(1.9375rem + -8.8 * (100vw - 24.375rem) / 1050), 1.9375rem) 2px 0 -3px;  /* 31 -> 22.2; box 21..368 in the 390 frame */

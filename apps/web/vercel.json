@@ -37,5 +37,12 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/author/sarah-smith/",
+      "destination": "/author/mike-chirilenco/",
+      "permanent": true
+    }
   ]
 }
