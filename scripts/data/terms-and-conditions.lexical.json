@@ -1,0 +1,3142 @@
+{
+ "root": {
+  "type": "root",
+  "format": "",
+  "indent": 0,
+  "version": 1,
+  "children": [
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Please review these Terms of Use (“Terms”) carefully before using the ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "link",
+      "version": 3,
+      "format": "",
+      "indent": 0,
+      "direction": "ltr",
+      "fields": {
+       "url": "https://flight-experts.com/",
+       "linkType": "custom",
+       "newTab": false
+      },
+      "children": [
+       {
+        "mode": "normal",
+        "text": "https://flight-experts.com",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ]
+     },
+     {
+      "mode": "normal",
+      "text": " website (the “Service”, the “Site”) operated by Flight-Experts (“us”, “we”, or “our”). The terms “Flight-Experts”, “Company”, “us”, “we”, or “our” refer to a travel agency specializing in the sales of business class air travel. The term “you” refers to the customer visiting the Website and/or booking a reservation through our travel consultants/agents.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "This website is offered to you conditioned upon your acceptance without modification of all the terms, conditions, and notices set forth below (collectively, the “Agreement”). By accessing or using this website in any manner, you agree to be bound by this Agreement. To the extent you book any travel products or services on this website or through our call center agents, you agree that this Agreement shall apply to all such transactions. Please read the Agreement carefully. If you do not accept all of these terms and conditions, please do not use this website or make bookings through this website or our call center agents. Be sure to return to this page periodically to review the most current version of the Agreement. We reserve the right at any time, at our sole discretion, to change or otherwise modify the Agreement without prior notice, and your continued access or use of this website signifies your acceptance of the updated or modified Agreement.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "User Representation",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "By using the website, you imply that:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "You are 18 years of age or older,",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "You possess the legal authority to create a binding legal obligation,",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "All information provided by you on the website is true, accurate, and complete,",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Your use of this website is limited to making or managing travel reservations for yourself or on behalf of someone else.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts reserves the right to request documentation for any reservation that requires further validation from the cardholder. Cancellation may occur if the requested documents are not provided.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Booking Process",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "For your convenience, the following terms in these Terms of Use shall have the meanings below:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "“Service Element” – a single product or service listed on the Site that can be booked independently (e.g., flight).",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "“Travel Supplier” – a vendor of one or more Service Elements (e.g., airlines). Flight-Experts does not act as principal but makes arrangements with third-party Travel Suppliers for Service Elements.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "“Booking” – a negotiation process with the Travel Supplier carried out by you while using this Site for the purpose of obtaining one or more Service Elements that may result in a contract with the Travel Supplier once we receive full payment.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "To complete a Booking, the following steps ensure its validity:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "When we place Service Elements on our Site, we are inviting you to confirm their purchase. This is done only once you press “Book” on the payment page of the Site.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Once you have done so, you have given your approval (which cannot be withdrawn if you change your mind) to Flight-Experts to purchase the relevant Service Element(s) from the relevant Travel Supplier(s) (e.g., your “Booking”). We are free to accept your approval on behalf of the relevant Travel Supplier or to reject it, at our sole discretion.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "We will then need to check the availability of the relevant Service Element(s). The Flight-Experts email confirmation that you receive after pressing “Book” is NOT the contractual acceptance of the Booking but merely an acknowledgment that we have received your confirmation to proceed with the purchase of chosen tickets.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "If the relevant Service Element is available, your Booking will be processed. The contract pertaining to the relevant Booking is formed when payment in full has been received.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The contract between you and the relevant Travel Supplier will relate only to those Service Elements confirmed by email with booking reference numbers and ticket numbers for your air travel.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 5
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The terms of your Booking (such as price, availability, and/or dates of travel) are not guaranteed until the contract is formed between you and the Travel Supplier and a ticket has been issued and/or a reservation has been made and confirmed by the Travel Supplier. Once you have completed the Booking stage, you can only cancel or change the details (such as names or destinations) of your Booking at our sole discretion and in accordance with these Terms of Use.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 6
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "These Booking processes will apply to any of our individual Service Element’s Terms of Use set out below. We reserve the right to change the Booking process at any time, with changes automatically taking effect from the date such changes are posted on this Site.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 7
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Airline Rules, Itinerary Changes, and Price Changes",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Airline tickets are subject to the published conditions of carriage and rules of the applicable airline. Airlines might also assess their own taxes and fees on your flights, but if such additional costs arise, you will be informed in a timely manner. Please contact us for additional information if you have questions.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "The contract of carriage in use by the applicable airline, when issued, shall be between the applicable airline and the passenger. Airlines retain the right to adjust flight times and schedules at any time – schedule changes can result in an itinerary that falls outside of contractual agreements. Airlines may also change or cancel flights or itineraries at their discretion.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "In the event of a flight cancellation while at the airport, please see the airline ticketing counter or gate representative, as they have the most power to change your itinerary to the next available flight or accommodate you per the airline rules. This is the fastest way to get you on the next flight out.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Travel insurance is highly recommended but not directly offered by Flight-Experts. Instead, we have partnered with an insurance broker (see here) who can provide competitive offers based on your requests. The insurance covers a variety of issues, from illness to problems with travel service providers, ensuring you get what you paid for or can make alternative arrangements.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Purchases",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "The Global Distribution System (GDS) shows real-time availability for flights up to eleven months from today’s date. Flight-Experts cannot provide service for any request beyond the specified time frame. Please note that all fares must be paid in full once the tickets are issued and sent to your email.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you wish to purchase any product or service made available through the Service (website), you may be asked to supply certain information relevant to your purchase, including, without limitation, your personal data for issuing tickets, your credit card number, the expiration date of your credit card, billing address, and more.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "You represent and warrant that: (i) you have the legal right to use any credit card(s) or alternative payment method(s) in connection with any purchase; and that (ii) the information you supply to us is true, correct, and complete.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "We use third-party service providers for the purpose of facilitating payment and completing the purchase. By submitting your information, you grant us the right to provide the information to these third parties subject to our Privacy Policy.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "We reserve the right to refuse or cancel your order at any time for reasons including, but not limited to, product or service availability, errors in the description or price of the product or service, error in your order, or other reasons. We also reserve the right to refuse or cancel your order if fraud or an unauthorized or illegal transaction is suspected.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Exchanges, Cancellations, and Refunds",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts offers tickets at discounted fares obtained from third-party companies, which contain more restrictions than tickets available to the general public and booked directly from the airline. This means that many fares are non-reroutable, non-exchangeable, and non-transferable. Name changes on tickets are also not allowed – only the original passenger can use the ticket(s). By purchasing the ticket from Flight-Experts and confirming the checkout form, you agree that these terms are reasonable and necessary to maintain the operations of the Flight-Experts business.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you need to cancel your ticket for any reason, please contact your Travel Consultant to review your options. Cancellation and refund terms and conditions will apply to your reservation and purchase of travel-related goods and services that you select from airline suppliers. If refunds are possible for the particular ticket, they will not be in cash but company credit will be offered instead. In addition, a $250.00 fee per person will be charged to process such cases.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "No-show tickets cannot be refunded, nor can they be exchanged. Unless the reservation is canceled up to 72 hours before departure and the trip rescheduled before the original departure date, the ticket is suspended and refunds are not possible.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Based on U.S. Department regulations, you can request a free refund or exchange the current reservation for a new one free of charge within 24 hours after the initial booking. This rule only applies to bookings made in the United States. If you are booking a flight that does not originate from the US or vice-versa, please contact your Travel Consultant to find out whether the 24-hour free cancellation rule applies.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Missed Flights",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you miss your flight, go to the airline counter immediately or call your Travel Consultant if you are not near the airport. Missed flights are not refundable, and changes or replacement flights will be at the discretion of the airline supplier. In some cases, we may be able to help you, but in most cases, you will not be provided with a replacement flight unless the airline itself allows it.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Baggage Allowance",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Travelers may have to pay additional fees at the airport if their checked items exceed the weight, size, or number specified in the standard baggage allowance of the airline. Some airlines do not offer any free baggage allowance. Baggage allowance for your specific trip will be explained to you to ensure you are fully aware of all baggage terms (weight, size, pieces of baggage) before confirming the booking. Baggage allowance policies and baggage fees associated with checked or carry-on baggage vary widely and are subject to change by the airlines at any time.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Frequent Traveler Points",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Frequent traveler awards (miles, points, etc.), upgrades, certificate vouchers, and other discounts or incentives may not apply to some Flight-Experts flights. Please check with the airline directly regarding its frequent flyer program rules and guidelines. Some fares may not qualify for airline mileage accrual. Please contact your Flight-Experts Travel Consultant for more details on mileage accrual.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Ticket Protection: Terms and Conditions",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Ticket Protection is a service provided by Flight-Experts to assist you in dealing with unexpected circumstances and obtaining refunds from airlines where applicable. This is not an insurance policy. The following outlines the scope of the service and the conditions under which it applies.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Lost Baggage",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Ticket Protection covers baggage mishandled by airlines or airport employees. If your checked baggage is not returned to you within 120 hours of your flight arrival time, Flight-Experts will compensate you $1000 per undelivered bag. Compensation is limited to two missing bags per person and applies only to baggage checked in at the airport. Carry-on bags are not covered. You must file a claim with the airline before reporting your mishandled bag to Flight-Experts. Report mishandled bags to Flight-Experts within 24 hours of your flight’s arrival time by calling or emailing your Flight-Experts consultant. Service cannot be provided for bags reported missing after the 24-hour deadline.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Missed Connection, Delayed, or Canceled Flights",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you miss a departure or connecting flight, or if there is a delay or cancellation that affects your journey, Flight-Experts will work with the airlines on your behalf to obtain a free exchange (subject to seat availability in the same booking class) or retain travel credit for future use. Flight-Experts will process these cases without any agency service fees, though airline fees or fare differences may apply. Processing fees are waived only for the first change of the reservation.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Illness",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you are unable to travel due to illness or hospitalization, Flight-Experts will work with the airline to obtain a full travel credit or refund (subject to airline fare rules) for all unused and partially used tickets, provided you cannot continue the trip. To be eligible for airline credit or refund, you must provide hospital admittance or discharge forms, or a doctor’s note to Flight-Experts and cancel your ticket reservation before the scheduled departure.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "By using Ticket Protection, you agree to the terms and conditions set forth above. For any questions or further assistance, please contact your Flight-Experts consultant.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Supplier Rules and Restrictions",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Additional terms and conditions will apply to your reservation and purchase of travel-related goods and services selected from the airline. Please read these additional terms and conditions carefully on the airline websites. You agree to comply with the terms and conditions of purchase imposed by any supplier with whom you choose to deal, including, but not limited to, timely payment of all amounts due and adherence to the suppliers’ rules and restrictions regarding availability and use of fares, products, or services. Flight-Experts reserves the right to cancel your booking if full payment is not received in a timely manner.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Some airlines may require you to present a credit card or cash deposit upon check-in to cover additional expenses incurred during your travel. This deposit is unrelated to any payment received by Flight-Experts for your booking. You acknowledge that some third-party providers offering certain services and/or activities may require you to sign their liability waiver before participating in the service and/or activity they offer.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "You understand that any violation of such suppliers’ rules and restrictions may result in the cancellation of your reservation(s), denial of access to the applicable travel product or services, forfeiture of any monies paid for such reservation(s), and/or debiting your account for any costs incurred by Flight-Experts as a result of such violation.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Travel Destinations and Visa Requirements",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "International travel necessitates passengers to possess a valid Passport or another internationally recognized identification document, which must be presented for all international flights. Some countries may additionally require a visa and/or health card. It is the responsibility of passengers to ensure they have all necessary travel documents at check-in. While our Travel Consultants will provide assistance to the best of their abilities, passengers are strongly advised to review visa requirements for all layovers, as certain countries may mandate a transit visa. Passengers transiting via or connecting between airports within the European Union – Schengen Zone may require a Schengen Entry visa. For updated requirements, please contact the embassy of the country you plan to visit or transit through.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Certain countries may have specific criteria for one-way travel – passengers must verify their eligibility for one-way travel to avoid any issues.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Although most travel, including international travel, is typically trouble-free, travel to certain destinations may involve greater risks. Flight-Experts advises passengers to review travel prohibitions, warnings, announcements, and advisories before finalizing travel plans to international destinations. Information about conditions in various countries and the associated travel risks can be found on reliable online sources, such as the official websites of state agencies in the countries you intend to visit.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts does not guarantee that travel to any particular international destination is advisable or without risk when offering to sell travel to those destinations upon your request. Flight-Experts is not liable for any damages or losses that may arise from travel to such destinations.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Intellectual Property",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "The Service, including all original content, features, and functionality, remains the exclusive property of Flight-Experts and its licensors. The Service is safeguarded by copyright, trademark, and other relevant laws. Our trademarks and trade dress cannot be used in connection with any product or service without Flight-Experts’s prior written consent.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Reviews, Comments, and Other Submissions",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "By submitting content via email, posts on this Site, or otherwise, including airline reviews, questions, comments, suggestions, ideas, or similar content (collectively referred to as “Submissions”), you grant Flight-Experts and its service partners the right to use such Submissions in any media and to display your name associated with such Submission. You acknowledge that Flight-Experts may choose to attribute your comments or reviews (e.g., listing your name and hometown with an airline review you submit) at our discretion and that these submissions may be shared with our supplier partners. You further agree that Submissions are non-confidential and non-proprietary. Flight-Experts does not take responsibility and assumes no liability for any Submissions you post or submit. We are not obligated to post your comments and reserve the right, at our sole discretion, to decide which comments are published on the Site or through other communication channels. If you disagree with these terms and conditions, please do not provide us with any Submissions.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "You are solely responsible for the content of your Submissions. You are prohibited from posting or transmitting to or from this Site: (i) any unlawful, threatening, libelous, defamatory, obscene, pornographic, or otherwise objectionable material that would violate rights of publicity and/or privacy or any law; (ii) any commercial material or content, including but not limited to solicitation of funds, advertising, or marketing of goods or services; and (iii) any material or content that infringes, misappropriates, or violates any copyright, trademark, patent right, or other proprietary rights of any third party. You will be solely liable for any damages resulting from any violation of these restrictions or any other harm caused by your posting of content on this Site. You acknowledge that Flight-Experts may exercise its rights (e.g., use, publish, delete) over any content you submit without prior notice to you. Only your most recent submission is eligible for use if you submit more than one review for the same airline.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Links to Other Websites",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Our Service may include links to third-party websites or services that are not owned or controlled by Flight-Experts. We do not assume responsibility for the content, privacy policies, or practices of any third-party websites or services. We do not endorse the offerings of these entities or individuals, nor do we warrant their websites.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "You acknowledge and agree that Flight-Experts shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such content, goods, or services available on or through any such third-party websites or services. We strongly recommend reviewing the terms and conditions and privacy policies of any third-party websites or services you visit.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Termination",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts reserves the right to terminate or suspend your access to the Service immediately, without prior notice or liability, at our sole discretion, for any reason whatsoever, including but not limited to a breach of the Terms. All provisions of the Terms that by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity, and limitations of liability.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Changes",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days’ notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "By continuing to access or use our Service after any revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, you are no longer authorized to use the Service.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Liability Disclaimer",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts expressly reserves the right to correct any pricing errors on our website and/or on pending reservations made under an incorrect price. In such an event, if available, we will offer you the opportunity to keep your pending reservation at the correct price or we will cancel your reservation without penalty.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts, its affiliates, and their respective suppliers make no representations about the suitability of the information, software, products, and services contained on this website for any purpose. The inclusion or offering of any products or services on this website does not constitute an endorsement or recommendation of such products or services by Flight-Experts or its affiliates. All such information, software, products, and services are provided “as is” without warranty of any kind.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts disclaims all warranties and conditions that this website, its servers, or any email sent from us is free of viruses or other harmful components.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "The carriers and other suppliers providing travel or other services on this website are independent contractors and not agents or employees of Flight-Experts. Therefore, we are not liable for the acts, errors, omissions, representations, warranties, breaches, or negligence of any such suppliers, nor for any personal injuries, death, property damage, or other damages or expenses resulting from them. Flight-Experts has no liability and will make no refund in the event of any delay, cancellation, overbooking, strike, force majeure, or other causes beyond our direct control, and has no responsibility for any additional expense, omissions, delays, re-routing, or acts of any government or authority.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "In no event shall Flight-Experts be liable for any direct, indirect, punitive, incidental, special, or consequential damages arising out of, or in any way connected with, your access or use of this Site (including, but not limited to, your reliance upon opinions appearing on this website; any computer viruses, information, software, linked sites, products, and services obtained through this website; or otherwise arising out of the access to, display of, or use of this website) whether based on a theory of negligence, contract, tort, strict liability, or otherwise, and even if Flight-Experts has been advised of the possibility of such damages.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If, despite the limitations mentioned above, Flight-Experts is found liable for any loss or damage which arises out of or in any way connected with any of the occurrences described above, then our liability shall in no event exceed, in the aggregate, more than one hundred dollars (US$100.00) or the equivalent in local currency.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "The limitation of liability reflects the allocation of risk between the parties. The limitations specified in this section will survive and apply even if any limited remedy specified in these Terms is found to have failed of its essential purpose. The limitations of liability provided in these Terms ensure the benefit of Flight-Experts.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Some jurisdictions do not allow the exclusion of certain warranties or the limitation or exclusion of liability for incidental or consequential damages. Accordingly, some of the above limitations may not apply to you.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Indemnification",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "You agree to defend and indemnify Flight-Experts, its affiliates, and/or their respective suppliers, as well as any of their officers, managers, members, directors, employees, and agents from and against any claims, causes of action, demands, recoveries, losses, damages, fines, penalties, or other costs or expenses of any kind or nature, including but not limited to legal and accounting fees, brought by third parties as a result of:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Your breach of this Agreement or the documents referenced herein,",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Your violation of any law or the rights of a third party,",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Your inappropriate or intentionally fraudulent use of this Site.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Transaction and Currency Conversion Fees",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "All transactions are in US Dollars. We may issue a quotation in your local currency for customer convenience, but all invoices and payments will be requested in US Dollars. Any foreign currency quotations will be converted to US Dollars using the conversion rate listed on ‘Yahoo Finance’ on the date of the order. We do not add any transaction fees or commissions for this conversion. However, Flight-Experts cannot be responsible for any currency conversion fees applied by the customer’s financial institution.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Currency exchange rates and foreign transaction fees applied by the customer’s financial institution are determined solely by the customer’s financial institution on the day they process the transaction. If you have any questions about these fees or the exchange rate applied to your booking, please contact your financial institution directly.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Refunds and Chargebacks",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "In any circumstance, after confirmation and payment, refunds and chargebacks will be discussed and handled based on the terms and conditions of the travel suppliers and the circumstances of the request. If we detect any fraud, chargebacks, or disputes, we reserve the right to block the user’s account and report the user to the respective credit card or bank institution.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "SMS Terms and Conditions",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "​",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Data Security measures?",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "We implement robust data security measures to ensure the protection of your personal information. Access to sensitive data is restricted to authorized personnel only, using role-based permissions and multi-factor authentication for enhanced security. All data is encrypted during transmission and storage to prevent unauthorized access. Physical documents are secured in locked storage, while digital data is stored on encrypted servers protected by firewalls and intrusion detection systems.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Regular security audits and vulnerability assessments are conducted to identify and address potential risks. Data backups are performed routinely and stored securely to enable recovery in case of data loss. Employees receive training on data protection policies, safe handling of sensitive information, and recognizing cybersecurity threats. Additionally, we maintain a clear incident response plan to swiftly address any data breaches, ensuring containment, notification, and remediation. These measures uphold the confidentiality, integrity, and availability of your information.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Types of SMS Communications",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you have consented to receive text messages from Flight-Experts, you may receive text messages related to ( Welcome to Flight-Experts! Hello John, this is a follow up message regarding your booking request to London. We have a scheduled call with you today at 1 PM EST. Please let me know if you would like to reschedule. Thank you. ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Reply STOP to opt out. Message and data rates may apply, for assistance, text “Help” or visit our ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "link",
+      "version": 3,
+      "format": "",
+      "indent": 0,
+      "direction": "ltr",
+      "fields": {
+       "url": "/privacy-policy",
+       "linkType": "custom",
+       "newTab": false
+      },
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Privacy Policy",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ]
+     },
+     {
+      "mode": "normal",
+      "text": " and ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "link",
+      "version": 3,
+      "format": "",
+      "indent": 0,
+      "direction": "ltr",
+      "fields": {
+       "url": "/terms-and-conditions",
+       "linkType": "custom",
+       "newTab": false
+      },
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Terms of Service",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ]
+     },
+     {
+      "mode": "normal",
+      "text": ".",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Potential Fees for SMS Messaging:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Many carriers charge a fee for each message sent or received. This can vary depending on the carrier’s pricing structure and whether the message is sent domestically or internationally.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Messaging Frequency:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Our SMS message frequency will be from 200 to 350 text messages daily across all users",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Opt-in Process:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "To subscribe to SMS alerts, text “HELP” to “",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "(888) 855-2389",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "“. you must provide explicit consent by checking the box below the form through our ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "link",
+      "version": 3,
+      "format": "",
+      "indent": 0,
+      "direction": "ltr",
+      "fields": {
+       "url": "https://flight-experts.com/",
+       "linkType": "custom",
+       "newTab": false
+      },
+      "children": [
+       {
+        "mode": "normal",
+        "text": "website",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ]
+     },
+     {
+      "mode": "normal",
+      "text": ".",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Confirmation: ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "You will receive a confirmation messages like this:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Thank you for subscribing! 🎉",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "You’re now opted in to receive updates, notifications, and resources from us. We’re excited to keep you informed about services and opportunities tailored to your needs.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you ever want to update your preferences or unsubscribe, you can do so anytime by “Replying STOP”.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Welcome aboard!",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "​",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "​​",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Opt-Out Instructions:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Customer will be able to Opt-out for SMS messaging from Flight-Experts by replying “STOP” at any time to any received SMS message, once opted-out they will receive no further SMS communication. They can Opt back In at any time by replying “START”.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Confirmation",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": ":",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "You will receive a confirmation messages like this:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": " ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "You have unsubscribed and will no longer receive messages from Flight-Experts.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "​",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Automatic Unsubscription:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "After you opt-out, you may receive a final confirmation message from us acknowledging your request.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Standard Messaging Disclosures:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Messaging frequency may vary.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Message and data rates may apply.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To opt out at any time, text STOP.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "For assistance, text HELP or visit our website at ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://flight-experts.com",
+         "linkType": "custom",
+         "newTab": false
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://flight-experts.com",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ".",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Visit ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "/privacy-policy",
+         "linkType": "custom",
+         "newTab": false
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://flight-experts.com/privacy-policy/",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": " for privacy policy and ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "/terms-and-conditions",
+         "linkType": "custom",
+         "newTab": false
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://flight-experts.com/terms-of-use/",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": "for Terms of Service.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "linebreak",
+        "version": 1
+       },
+       {
+        "type": "linebreak",
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 5
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Compliance Information:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "We comply with all relevant SMS regulations, including the Telephone Consumer Protection Act (TCPA) and guidelines from the Cellular Telecommunications Industry Association (CTIA).",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Our messages are only sent to individuals who have opted in to receive communications from flight-experts.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "For more information on our privacy practices, please review our Privacy Policy.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Visit us at ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://flight-experts.com/",
+         "linkType": "custom",
+         "newTab": false
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "www.flight-experts.com",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": " for more information about our services.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Thank you for being a part of our community!",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "SMS For Consent Communication",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "The information (Phone Numbers) obtained as part of the SMS consent process will not be shared with third parties for marketing purposes.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Privacy Policy:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "For more details, please review our ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "link",
+      "version": 3,
+      "format": "",
+      "indent": 0,
+      "direction": "ltr",
+      "fields": {
+       "url": "/privacy-policy",
+       "linkType": "custom",
+       "newTab": false
+      },
+      "children": [
+       {
+        "mode": "normal",
+        "text": "privacy policy",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ]
+     },
+     {
+      "mode": "normal",
+      "text": ".",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   }
+  ],
+  "direction": "ltr"
+ }
+}

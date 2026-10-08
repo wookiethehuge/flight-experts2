@@ -1,0 +1,2485 @@
+{
+ "root": {
+  "type": "root",
+  "format": "",
+  "indent": 0,
+  "version": 1,
+  "children": [
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "This page informs you of Flight-Experts’ policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "1. Introduction",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts operates the ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "link",
+      "version": 3,
+      "format": "",
+      "indent": 0,
+      "direction": "ltr",
+      "fields": {
+       "url": "https://flight-experts.com/",
+       "linkType": "custom",
+       "newTab": false
+      },
+      "children": [
+       {
+        "mode": "normal",
+        "text": "https://flight-experts.com/",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ]
+     },
+     {
+      "mode": "normal",
+      "text": " website . This Privacy Policy explains how we collect, use, and share personal information about you and your rights with respect to this information. By using our Service, you agree to the collection and use of information in accordance with this policy.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "2. Types of Information Collected",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Personal Data",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "We may collect personal data to identify and contact you, including but not limited to:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Email address",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "First name and last name",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Phone number",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Address, State, Province, ZIP/Postal code, City",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Cookies and Usage Data",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 5
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Usage Data",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "We collect information on how our Service is accessed and used, which may include:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "IP address",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Browser type and version",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Pages visited",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Time and date of visit",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Time spent on each page",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 5
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Device identifiers and other diagnostic data",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 6
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Cookies and Tracking Data",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "We use cookies and similar tracking technologies to monitor and track activities on our Service.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "3. Method of Information Collection",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "We collect information directly from you when you use our Service, such as when you provide your contact details to make inquiries, and automatically through the use of cookies and similar technologies when you visit our website.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "4. Purpose of Data Collection",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts uses the data we collect for various purposes:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To provide, maintain, and improve our Service",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To notify you of any changes to our Service",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To allow you to participate in interactive features",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To provide customer support",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To monitor and analyze Service usage for improvement",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 5
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To send marketing and promotional communications (you may opt out at any time)",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 6
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "To detect, prevent, and address technical issues and ensure security",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 7
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "By providing your phone number, you agree to receive calls and text messages from Flight-Experts, including SMS marketing. You can opt-out of receiving text messages by sending “STOP” in response to any message.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "5. Data Security Measures",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "The security of your personal data is important to us. We use commercially acceptable methods to protect your information; however, no method of transmission over the Internet or electronic storage is 100% secure. We strive to use the most effective security measures to protect your data but cannot guarantee its absolute security.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "6. Data Sharing",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "We do not share your personal information, including phone numbers, with any third parties for their direct marketing purposes or allow them to send SMS on our behalf. SMS consent and Phone Numbers collected\\captured for SMS purposes will not be shared, sold, or disclosed with any third parties, or any other individual for any type of marketing purposes or affiliate marketing.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "7. User Rights",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "As a user, you have the following rights regarding your personal data:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Right to Access",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": ": Request access to your personal data held by us.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Right to Rectify",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": ": Request correction of any inaccurate or incomplete data.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Right to Object",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": ": Object to processing of your data.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Right to Restrict Processing",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": ": Request that we restrict how we use your data.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Right to Data Portability",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": ": Obtain a copy of your data in a structured, machine-readable format.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 5
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Right to Withdraw Consent",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": ": Withdraw consent at any time if we rely on consent to process your data.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 6
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you wish to exercise any of these rights, please contact us using the information provided below.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "8. Contact Information",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "For any questions, concerns, or requests related to your personal data or this Privacy Policy, please reach out to us:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Contact Details",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Email: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "mailto:info@flight-experts.com",
+         "linkType": "custom",
+         "newTab": false
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "info@flight-experts.com ",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Phone: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "tel:+18888552389",
+         "linkType": "custom",
+         "newTab": false
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "(888) 855-2389",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Address: 1150 Airport Rd, Unit 159, Destin, FL 32541",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Additional Sections for Compliance",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h2"
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Retention of Data",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h3"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts will retain your personal data only as long as necessary to fulfill the purposes for which it was collected, as outlined in this Privacy Policy. We will also retain and use your information as required to comply with legal obligations, resolve disputes, and enforce our policies.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Transfer of Data",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h3"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Your information may be transferred to and maintained on servers located outside your jurisdiction, where data protection laws may differ. By using our Service, you consent to such transfers. We ensure adequate protections are in place to secure your data when it is transferred internationally.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "heading",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "“Do Not Track” Signals",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "tag": "h3"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Flight-Experts does not respond to “Do Not Track” signals. You may adjust your browser settings to refuse cookies or indicate when a cookie is being sent. ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": " ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Do Not Track is a preference you can set in your web browser to inform websites that you do not want to be tracked.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Note:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": " This policy is compliant with the GDPR and applicable privacy laws. For residents of the EEA, your local data protection authority is available for any complaints related to data collection and processing.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Your Data Protection Rights under General Data Protection Regulation (GDPR)",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "If you are a resident of the European Economic Area (EEA), you have certain data protection rights. Flight-Experts aims to take reasonable steps to allow you to correct, amend, delete, or limit the use of your Personal Data. If you wish to be informed what Personal Data we hold about you and if you want it to be removed from our systems, please contact us.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "In certain circumstances, you have the following data protection rights:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The right to access, update, or to delete the information we have on you. Whenever made possible, you can access, update, or request deletion of your Personal Data directly within your account settings section. If you are unable to perform these actions yourself, please contact us to assist you.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The right of rectification. You have the right to have your information rectified if that information is inaccurate or incomplete.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The right to object. You have the right to object to our processing of your Personal Data.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The right of restriction. You have the right to request that we restrict the processing of your personal information.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The right to data portability. You have the right to be provided with a copy of the information we have on you in a structured, machine-readable, and commonly used format.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 5
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "The right to withdraw consent. You also have the right to withdraw your consent at any time where Flight-Experts relied on your consent to process your personal information.",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 6
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Please note that we may ask you to verify your identity before responding to such requests. You have the right to complain to a Data Protection Authority about our collection and use of your Personal Data. For more information, please contact your local data protection authority in the European Economic Area (EEA).",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Service Providers",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "We may employ third-party companies and individuals to facilitate our Service (“Service Providers”), to provide the Service on our behalf, to perform Service-related services, or to assist us in analyzing how our Service is used. These third parties have access to your Personal Data only to perform these tasks on our behalf and are obligated not to disclose or use it for any other purpose.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Analytics",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "We may use third-party Service Providers to monitor and analyze the use of our Service.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Google Analytics:",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": " Google Analytics is a web analytics service offered by Google that tracks and reports website traffic. Google uses the data collected to track and monitor the use of our Service. This data is shared with other Google services. Google may use the collected data to contextualize and personalize the ads of its own advertising network. You can opt-out of having made your activity on the Service available to Google Analytics by installing the Google Analytics opt-out browser add-on. The add-on prevents Google Analytics JavaScript (ga.js, analytics.js, and dc.js) from sharing information with Google Analytics about visits activity. For more information on the privacy practices of Google, please visit the Google Privacy & Terms web page: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://policies.google.com/privacy?hl=en",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://policies.google.com/privacy?hl=en",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ".",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Behavioral Remarketing",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Flight-Experts uses remarketing services to advertise on third-party websites to you after you visit our Service. We and our third-party vendors use cookies to inform, optimize, and serve ads based on your past visits to our Service.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "list",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Google Ads:",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": " Google Ads remarketing service provided by Google Inc. You can opt-out of Google Analytics for Display Advertising and customize the Google Display Network ads by visiting the Google Ads Settings page: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://www.google.com/settings/ads",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "http://www.google.com/settings/ads",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ". Google also recommends installing the Google Analytics Opt-out Browser Add-on – ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://tools.google.com/dlpage/gaoptout",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://tools.google.com/dlpage/gaoptout",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": " – for your web browser. Google Analytics Opt-out Browser Add-on provides visitors with the ability to prevent their data from being collected and used by Google Analytics. For more information on the privacy practices of Google, please visit the Google Privacy & Terms web page: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://policies.google.com/privacy?hl=en",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://policies.google.com/privacy?hl=en",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ".",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 1
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Bing Ads:",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": " Bing Ads remarketing service provided by Microsoft Inc. You can opt-out of Bing Ads remarketing by visiting: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ". You can learn more about the privacy practices and policies of Microsoft by visiting their Privacy Policy page: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://privacy.microsoft.com/en-us/PrivacyStatement",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://privacy.microsoft.com/en-us/PrivacyStatement",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ".",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 2
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Twitter Ads:",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": " Twitter remarketing service provided by Twitter Inc. You can opt-out of Twitter’s interest-based ads by following their instructions: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://support.twitter.com/articles/20170405",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://support.twitter.com/articles/20170405",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ". You can learn more about the privacy practices and policies of Twitter by visiting their Privacy Policy page: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://twitter.com/privacy",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://twitter.com/privacy",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ".",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 3
+     },
+     {
+      "type": "listitem",
+      "format": "",
+      "indent": 0,
+      "version": 1,
+      "children": [
+       {
+        "mode": "normal",
+        "text": "Facebook Ads:",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 1,
+        "version": 1
+       },
+       {
+        "mode": "normal",
+        "text": " Facebook remarketing service provided by Facebook Inc. You can learn more about interest-based advertising from Facebook by visiting this page: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://www.facebook.com/help/164968693837950",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://www.facebook.com/help/164968693837950",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ". To opt-out of Facebook’s interest-based ads follow these instructions from Facebook: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://www.facebook.com/help/568137493302217",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://www.facebook.com/help/568137493302217",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ". Facebook adheres to the Self-Regulatory Principles for Online Behavioral Advertising established by the Digital Advertising Alliance. You can also opt-out from Facebook and other participating companies through the Digital Advertising Alliance in the USA ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "http://www.aboutads.info/choices/",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "http://www.aboutads.info/choices/",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ", the Digital Advertising Alliance of Canada in Canada ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "http://youradchoices.ca/",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "http://youradchoices.ca/ or",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": "the European Interactive Digital Advertising Alliance in Europe ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "http://www.youronlinechoices.eu/",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "http://www.youronlinechoices.eu/",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ", or opt-out using your mobile device settings. For more information on the privacy practices of Facebook, please visit Facebook’s Data Policy: ",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       },
+       {
+        "type": "link",
+        "version": 3,
+        "format": "",
+        "indent": 0,
+        "direction": "ltr",
+        "fields": {
+         "url": "https://www.facebook.com/privacy/explanation",
+         "linkType": "custom",
+         "newTab": true
+        },
+        "children": [
+         {
+          "mode": "normal",
+          "text": "https://www.facebook.com/privacy/explanation",
+          "type": "text",
+          "style": "",
+          "detail": 0,
+          "format": 0,
+          "version": 1
+         }
+        ]
+       },
+       {
+        "mode": "normal",
+        "text": ".",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ],
+      "direction": "ltr",
+      "value": 4
+     }
+    ],
+    "direction": "ltr",
+    "listType": "bullet",
+    "start": 1,
+    "tag": "ul"
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Payments",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "We may employ third-party companies and individuals to facilitate our Service (“Service Providers”), to provide the Service on our behalf, to perform Service-related services, or to assist us in analyzing how our Service is used. These third parties have access to your Personal Data only to perform these tasks on our behalf and are obligated not to disclose or use it for any other purpose.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Links to Other Sites",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Our Service may contain links to other sites that are not operated by us. If you click on a third-party link, you will be directed to that third party’s site. We strongly advise you to review the Privacy Policy of every site you visit. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Children’s Privacy",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "Our Service does not address anyone under the age of 18 (“Children”). We do not knowingly collect personally identifiable information from anyone under the age of 18. If you are a parent or guardian and you are aware that your child has provided us with Personal Data, please contact us. If we become aware that we have collected Personal Data from children without verification of parental consent, we take steps to remove that information from our servers.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Changes to This Privacy Policy",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   },
+   {
+    "type": "paragraph",
+    "format": "",
+    "indent": 0,
+    "version": 1,
+    "children": [
+     {
+      "mode": "normal",
+      "text": "Contact Us",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 1,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "If you have any questions about this Privacy Policy, please contact us:",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "linebreak",
+      "version": 1
+     },
+     {
+      "mode": "normal",
+      "text": "By email: ",
+      "type": "text",
+      "style": "",
+      "detail": 0,
+      "format": 0,
+      "version": 1
+     },
+     {
+      "type": "link",
+      "version": 3,
+      "format": "",
+      "indent": 0,
+      "direction": "ltr",
+      "fields": {
+       "url": "mailto:info@flight-experts.com",
+       "linkType": "custom",
+       "newTab": false
+      },
+      "children": [
+       {
+        "mode": "normal",
+        "text": "info@flight-experts.com",
+        "type": "text",
+        "style": "",
+        "detail": 0,
+        "format": 0,
+        "version": 1
+       }
+      ]
+     }
+    ],
+    "direction": "ltr",
+    "textFormat": 0,
+    "textStyle": ""
+   }
+  ],
+  "direction": "ltr"
+ }
+}
