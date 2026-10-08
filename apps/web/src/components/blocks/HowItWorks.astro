@@ -20,6 +20,8 @@ const cards = block.cards ?? [];
 const hid = `hiw-h-${index}`;
 const rows = [0, 64, 130, 196];
 const rules = [48, 113, 179, 247];
+// city lights on the globe card: [x %, y %, delay s]
+const cities = [[10.6, 75.9, 0], [53.2, 75, 1.1], [71.6, 72.7, 2.3], [70.7, 78.9, 0.6], [90.5, 86.5, 1.7], [83.2, 89.6, 2.9]];
 ---
 <section class="hiw on-light" aria-labelledby={hid}>
   <div class="hiw__inner">
@@ -31,6 +33,18 @@ const rules = [48, 113, 179, 247];
             <div class:list={['hiw__card', `hiw__card--${c.visual}`, 'lift']}>
               {c.visual === 'image' && c.image && (
                 <Img media={c.image} class="hiw__img" sizes="(min-width: 90rem) 309px, (min-width: 64rem) calc((100vw - 9rem) / 4), (min-width: 48rem) calc((100vw - 7rem) / 2), 46vw" widths={[176, 240, 309, 352, 480, 618, 720]} />
+              )}
+              {/* ambient light (client): city lights switching on across the globe on the first card, a glint on the
+                  glass on the last; positions are % of the card (fixed 309:439 aspect, image object-fit cover) */}
+              {c.visual === 'image' && i === 0 && (
+                <span class="hiw__fx" aria-hidden="true">
+                  {cities.map(([x, y, d]) => <span class="hiw__city" style={`--x: ${x}%; --y: ${y}%; --d: ${d}s`} />)}
+                </span>
+              )}
+              {c.visual === 'image' && i === cards.length - 1 && i > 0 && (
+                <span class="hiw__fx" aria-hidden="true">
+                  <span class="hiw__glint" style="--x: 57.3%; --y: 45%"><svg viewBox="0 0 24 24"><path d="M12 0C12.6 7.2 16.8 11.4 24 12C16.8 12.6 12.6 16.8 12 24C11.4 16.8 7.2 12.6 0 12C7.2 11.4 11.4 7.2 12 0Z" /></svg></span>
+                </span>
               )}
               {c.visual === 'options' && (
                 <div class="hiw__art" aria-hidden="true" data-hiw-anim="options">
@@ -180,6 +194,35 @@ const rules = [48, 113, 179, 247];
     color: var(--c-black);
   }
   .hiw__item { --cap-w: 100%; }   /* every caption spans its card (client: symmetry) */
+
+  /* ---------- ambient light on the photo cards ---------- */
+  .hiw__fx { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+  .hiw__city {
+    position: absolute; left: var(--x); top: var(--y);
+    width: 6px; height: 6px; margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: #fffaf0;
+    box-shadow: 0 0 5px 2px rgba(255, 220, 150, 1), 0 0 16px 6px rgba(255, 186, 80, 0.55), 0 0 30px 10px rgba(255, 170, 60, 0.18);
+    opacity: 0.25;
+  }
+  .hiw__glint { position: absolute; left: var(--x); top: var(--y); width: 24px; height: 24px; margin: -12px 0 0 -12px; opacity: 0; }
+  .hiw__glint svg { display: block; width: 100%; height: 100%; fill: #fff; filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 7px rgba(255, 236, 200, 0.6)); }
+  @media (prefers-reduced-motion: no-preference) {
+    .hiw__city { animation: hiw-city 3.6s ease-in-out var(--d) infinite; }
+    .hiw__glint { animation: hiw-glint 4.8s ease-in-out 1.2s infinite; }
+    /* nothing runs while the section is off screen */
+    .hiw__item:not(.is-visible) :is(.hiw__city, .hiw__glint) { animation-play-state: paused; }
+  }
+  @keyframes hiw-city {
+    0%, 100% { opacity: 0.2; scale: 0.6; }
+    45% { opacity: 1; scale: 1.15; }
+    60% { opacity: 0.85; scale: 1; }
+  }
+  @keyframes hiw-glint {
+    0%, 62%, 100% { opacity: 0; scale: 0.2; rotate: 0deg; }
+    72% { opacity: 1; scale: 1; rotate: 45deg; }
+    84% { opacity: 0; scale: 0.4; rotate: 90deg; }
+  }
 
   /* ---------- drawn cards (1 design px = card width / 309) ---------- */
   .hiw__art { --u: calc(100cqi / 309); position: absolute; inset: 0; pointer-events: none; }
