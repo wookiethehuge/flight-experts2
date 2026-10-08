@@ -78,39 +78,56 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
   .pill--filled:hover, .pill--filled[aria-expanded='true'] { box-shadow: inset 0 0 0 1px var(--c-navy); }
   .pill--filled:focus-visible { outline-color: var(--c-navy); }
 
-  /* drop-down: sky card right-aligned under the pill (Figma: 155 wide, 9px below, right-aligned text) */
+  /* drop-down: sky card the pill's width under it (Figma: 155 wide, 9px below, right-aligned text) */
+  /* drop-down: exactly the pill's width, text centred like the pill, and it slides down smoothly (client) */
   .pill__menu {
     position: absolute;
     z-index: 60;
-    top: calc(100% + 0.5625rem);
+    top: calc(100% + 0.5rem);
+    left: 0;
     right: 0;
     display: grid;
-    gap: 0.6875rem;
-    min-width: 9.6875rem;
+    gap: 0.875rem;
     margin: 0;
-    padding: 0.8125rem 1.3125rem 0.8125rem 1.3125rem;
+    padding: 1rem 1rem 1.0625rem;
     border-radius: var(--r-7);
     background: var(--c-sky);
-    box-shadow: 0 6px 24px -12px rgba(15, 21, 36, 0.35);
+    box-shadow: 0 10px 28px -14px rgba(15, 21, 36, 0.45);
     list-style: none;
-    text-align: right;
+    text-align: center;
+    /* closed: folded up behind its top edge */
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -6px;
+    clip-path: inset(0 0 100% 0 round var(--r-7));
+    transition: clip-path 520ms var(--motion-ease-out), translate 520ms var(--motion-ease-out), opacity 300ms ease, visibility 0s linear 520ms;
   }
   .pill__menu[hidden] { display: none; }
-  .pill__menu a { display: grid; justify-items: end; color: var(--c-navy); text-decoration: none; }
+  .pill__menu[data-open] {
+    opacity: 1;
+    visibility: visible;
+    translate: none;
+    clip-path: inset(0 0 0 0 round var(--r-7));
+    transition: clip-path 520ms var(--motion-ease-out), translate 520ms var(--motion-ease-out), opacity 220ms ease, visibility 0s;
+  }
+  .pill__menu a { display: grid; justify-items: center; color: var(--c-navy); text-decoration: none; }
   .pill__menu a:hover .pill__num { text-decoration: underline; text-underline-offset: 2px; }
   .pill__menu a:focus-visible { outline-color: var(--c-navy); outline-offset: 3px; border-radius: 2px; }
   .pill__menu .pill__num { margin-top: 2px; }
+  @media (prefers-reduced-motion: reduce) { .pill__menu, .pill__menu[data-open] { transition: none; translate: none; } }
 </style>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-phone-pill]').forEach((wrap) => {
     const btn = wrap.querySelector<HTMLAnchorElement>('[data-pill-toggle]')!;
     const menu = wrap.querySelector<HTMLElement>('.pill__menu')!;
-    const set = (open: boolean) => { menu.hidden = !open; btn.setAttribute('aria-expanded', String(open)); };
-    btn.addEventListener('click', (e) => { e.preventDefault(); set(menu.hidden); });
-    btn.addEventListener('keydown', (e) => { if (e.key === ' ') { e.preventDefault(); set(menu.hidden); } });
+    menu.hidden = false;   // closed state now comes from CSS (no data-open), so it can animate
+    const isOpen = () => menu.hasAttribute('data-open');
+    const set = (open: boolean) => { menu.toggleAttribute('data-open', open); btn.setAttribute('aria-expanded', String(open)); };
+    btn.addEventListener('click', (e) => { e.preventDefault(); set(!isOpen()); });
+    btn.addEventListener('keydown', (e) => { if (e.key === ' ') { e.preventDefault(); set(!isOpen()); } });
     document.addEventListener('click', (e) => { if (!wrap.contains(e.target as Node)) set(false); });
-    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); btn.focus(); } });
+    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) { set(false); btn.focus(); } });
     wrap.addEventListener('focusout', (e) => { if (!wrap.contains(e.relatedTarget as Node)) set(false); });
   });
 </script>
