@@ -271,7 +271,8 @@ const fields: F[] = [
     border-radius: 1.5px;
     transition: border-color var(--dur) var(--ease);
   }
-  .field__box:focus-within { outline: 2px solid var(--c-burgundy); outline-offset: 2px; }
+  /* focus: the field's own border darkens with a soft glow (no second box around it) */
+  .field__box:focus-within { border-color: var(--c-navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sky) 55%, transparent); }
   .field__box label {
     flex: none;
     min-width: var(--label-min);

@@ -332,7 +332,16 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     font-size: var(--fs-14);
   }
   .qf__input::placeholder { color: var(--c-white-55); opacity: 1; }
-  .qf__input:focus-visible, .qf__date-btn:focus-visible { outline-offset: -3px; }
+  /* focus: no outline box inside the bordered field (client: "box inside box"); the whole row lights up softly
+     instead, with a sky underline glow, so keyboard users still see where they are */
+  .qf__input:focus, .qf__input:focus-visible, .qf__date-btn:focus-visible { outline: none; }
+  .qf__row, .qf__mrow, .qf__date { transition: background-color 280ms ease, box-shadow 280ms ease; }
+  :is(.qf__row, .qf__mrow):focus-within {
+    background: color-mix(in srgb, var(--c-sky) 9%, transparent);
+    box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--c-sky) 70%, transparent);
+  }
+  .qf__date:has(.qf__date-btn:focus-visible) { box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--c-sky) 70%, transparent); }
+  :is(.qf__row, .qf__mrow):focus-within:has([aria-invalid='true']) { box-shadow: inset 3px 0 0 var(--qf-error), inset 0 -2px 0 color-mix(in srgb, var(--c-sky) 70%, transparent); }
   .qf__input:-webkit-autofill {
     -webkit-text-fill-color: var(--c-cream);
     box-shadow: inset 0 0 0 100px var(--c-navy);
