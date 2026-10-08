@@ -43,7 +43,7 @@ const cities = [[10.6, 75.9, 0], [53.2, 75, 1.1], [71.6, 72.7, 2.3], [70.7, 78.9
               )}
               {c.visual === 'image' && i === cards.length - 1 && i > 0 && (
                 <span class="hiw__fx" aria-hidden="true">
-                  <span class="hiw__glint" style="--x: 57.3%; --y: 45%"><svg viewBox="0 0 24 24"><path d="M12 0C12.6 7.2 16.8 11.4 24 12C16.8 12.6 12.6 16.8 12 24C11.4 16.8 7.2 12.6 0 12C7.2 11.4 11.4 7.2 12 0Z" /></svg></span>
+                  <span class="hiw__glint" style="--x: 51.6%; --y: 48.6%" />
                 </span>
               )}
               {c.visual === 'options' && (
@@ -205,11 +205,21 @@ const cities = [[10.6, 75.9, 0], [53.2, 75, 1.1], [71.6, 72.7, 2.3], [70.7, 78.9
     box-shadow: 0 0 3px 1px rgba(255, 220, 150, 0.8), 0 0 10px 3px rgba(255, 190, 90, 0.25);
     opacity: 0;
   }
-  .hiw__glint { position: absolute; left: var(--x); top: var(--y); width: 14px; height: 14px; margin: -7px 0 0 -7px; opacity: 0; }
-  .hiw__glint svg { display: block; width: 100%; height: 100%; fill: #fff; filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8)); }
+  /* light passing over the glass: a thin, soft vertical sheen that slides across its body, as a real reflection
+     would (no icon shape); screen blend so it only ever brightens the glass */
+  .hiw__glint {
+    position: absolute; left: var(--x); top: var(--y);
+    width: 3px; height: 9%; translate: -50% -50%;
+    border-radius: 2px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.85) 30%, rgba(255, 255, 255, 0.85) 70%, transparent);
+    filter: blur(0.8px);
+    rotate: 4deg;
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
   @media (prefers-reduced-motion: no-preference) {
     .hiw__city { animation: hiw-city 6.5s ease-in-out calc(var(--d) * 1.8) infinite; }
-    .hiw__glint { animation: hiw-glint 8s ease-in-out 2s infinite; }
+    .hiw__glint { animation: hiw-glint 7s cubic-bezier(0.45, 0, 0.55, 1) 2s infinite; }
     /* nothing runs while the section is off screen */
     .hiw__item:not(.is-visible) :is(.hiw__city, .hiw__glint) { animation-play-state: paused; }
   }
@@ -218,9 +228,9 @@ const cities = [[10.6, 75.9, 0], [53.2, 75, 1.1], [71.6, 72.7, 2.3], [70.7, 78.9
     40%, 55% { opacity: 0.7; }
   }
   @keyframes hiw-glint {
-    0%, 70%, 100% { opacity: 0; scale: 0.3; rotate: 0deg; }
-    78% { opacity: 0.75; scale: 1; rotate: 20deg; }
-    88% { opacity: 0; scale: 0.5; rotate: 40deg; }
+    0%, 58%, 100% { opacity: 0; translate: calc(-50% - 13px) -50%; }
+    68%, 76% { opacity: 0.75; }
+    88% { opacity: 0; translate: calc(-50% + 13px) -50%; }
   }
 
   /* ---------- drawn cards (1 design px = card width / 309) ---------- */
