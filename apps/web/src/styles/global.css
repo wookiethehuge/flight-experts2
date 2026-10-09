@@ -75,8 +75,8 @@ html { scroll-behavior: smooth; }
   .js [data-reveal='subtle'].is-visible:not(.is-instant) { animation-name: reveal-up-subtle; animation-duration: 1000ms; }
 
   /* cards zoom in gently as they rise (AOS zoom-in feel, softened) */
-  .js [data-reveal]:is(.hiw__item, .rv__card, .co__card, .expertise__item, .ns__item, .blog-card):not(.is-visible) { scale: 0.92; }
-  .js [data-reveal]:is(.hiw__item, .rv__card, .co__card, .expertise__item, .ns__item, .blog-card).is-visible:not(.is-instant) {
+  .js [data-reveal]:is(.hiw__item, .co__card, .expertise__item, .ns__item, .blog-card):not(.is-visible) { scale: 0.92; }
+  .js [data-reveal]:is(.hiw__item, .co__card, .expertise__item, .ns__item, .blog-card).is-visible:not(.is-instant) {
     animation-name: reveal-zoom;
     animation-duration: 1300ms;
   }
@@ -117,3 +117,11 @@ html { scroll-behavior: smooth; }
 .ap-sub { font-size: var(--fs-12); opacity: 0.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (prefers-reduced-motion: no-preference) { .ap-list:not([hidden]) { animation: ap-in 220ms var(--motion-ease-out); } }
 @keyframes ap-in { from { opacity: 0; translate: 0 -4px; } }
+
+/* review cards live in a sideways scroller: they fade and drift in from the right instead of rising, so they never
+   stick out below the strip (which made the carousel draggable up and down on phones) */
+@media (prefers-reduced-motion: no-preference) {
+  .js .rv__card[data-reveal]:not(.is-visible) { translate: 24px 0; }
+  .js .rv__card[data-reveal].is-visible:not(.is-instant) { animation-name: reveal-side; }
+}
+@keyframes reveal-side { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: none; } }
