@@ -57,6 +57,8 @@ const html = richText(block.content);
   .rt :global(h4) { font-size: inherit; line-height: inherit; }
   .rt > :global(:first-child) { margin-top: 0; }
 
+  .rt :global(p + p) { margin-top: 0.75em; }
+
   .rt :global(ul),
   .rt :global(ol) { margin: 0.75em 0; padding-left: 1.25em; }
   .rt :global(li + li) { margin-top: 0.25em; }

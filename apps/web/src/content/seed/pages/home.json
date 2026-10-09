@@ -63,11 +63,14 @@
       "blockType": "faq",
       "heading": "*Frequently* asked questions",
       "items": [
-        { "question": "Lorem ipsum dolor sit amet consectetur.", "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt." },
-        { "question": "Lorem ipsum dolor sit amet consectetur.", "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt." },
-        { "question": "Lorem ipsum dolor sit amet consectetur.", "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt." },
-        { "question": "Lorem ipsum dolor sit amet consectetur.", "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt." },
-        { "question": "Lorem ipsum dolor sit amet consectetur.", "answer": "Lorem ipsum dolor sit amet consectetur. Neque ipsum luctus tincidunt ipsum venenatis dui purus mattis. Nec volutpat et rhoncus consectetur. Vitae molestie nulla amet turpis odio viverra eget mi imperdiet. In enim aliquam ut neque tincidunt." }
+        { "question": "How are your business class fares lower than booking direct?", "answer": "We hold negotiated contracts with airlines and ticket consolidators. These are private, contract fares that are not published on public booking sites, which is why the same seat can cost considerably less." },
+        { "question": "Are these tickets on real, scheduled airlines?", "answer": "Yes. Every booking is a standard e-ticket on a commercial carrier, confirmed directly in the airline’s system. You fly exactly as you would on any ticket bought from the airline." },
+        { "question": "Is there a charge to use Flight-Experts?", "answer": "No. Your consultant sources and quotes options at no cost. You pay only for the ticket itself, and only once it is issued." },
+        { "question": "When do I pay?", "answer": "After your tickets are issued and sent to your email. The price shown at checkout includes all taxes and fees and is the final amount." },
+        { "question": "How quickly will I receive my options?", "answer": "Usually within 30 minutes of your request, though complex or multi-city routes can take a little longer." },
+        { "question": "What cabins and destinations do you cover?", "answer": "Business and first class, worldwide, including round trip, one way, and multi-city itineraries." },
+        { "question": "Is my payment and personal information secure?", "answer": "Payment is taken through a secure checkout, and your details are handled under our privacy policy." },
+        { "question": "Can you handle group or multi-passenger bookings?", "answer": "Yes. Share the passenger details in your request and your consultant will build the itinerary around the group." }
       ]
     },
     {
