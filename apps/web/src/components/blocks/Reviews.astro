@@ -108,8 +108,24 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   for (const root of document.querySelectorAll<HTMLElement>('[data-reviews]')) {
     const track = root.querySelector<HTMLElement>('.rv__track');
     if (!track) continue;
-    for (const btn of root.querySelectorAll<HTMLButtonElement>('.rv__nav')) {
-      btn.hidden = false;
+    const navs = [...root.querySelectorAll<HTMLButtonElement>('.rv__nav')];
+    // arrows only when there is somewhere to go: hidden when every card fits, dimmed at the start / end
+    // the first card snaps a little in from 0 (scroll padding), so "start" is where the first card rests
+    const start = () => { const c = track.querySelector<HTMLElement>('.rv__card'); return c ? Math.max(0, c.offsetLeft - (parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0)) : 0; };
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const min = Math.min(start(), max);
+      for (const b of navs) {
+        b.hidden = max - min < 120;            // less than a third of a card to move: every review is in view
+        const atEdge = Number(b.dataset.dir) < 0 ? track.scrollLeft <= min + 4 : track.scrollLeft >= max - 4;
+        b.disabled = atEdge;
+      }
+    };
+    track.addEventListener('scroll', sync, { passive: true });
+    addEventListener('resize', sync);
+    new ResizeObserver(sync).observe(track);
+    sync();
+    for (const btn of navs) {
       btn.addEventListener('click', () => {
         const card = track.querySelector<HTMLElement>('.rv__card');
         const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
@@ -247,6 +263,8 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     background: transparent;
     color: var(--c-cream);
   }
+  .rv__nav[hidden] { display: none; }
+  .rv__nav:disabled { opacity: 0.3; cursor: default; }
   .rv__nav[hidden] { display: none; }
   .rv__nav :global(.rv__navic) { width: 1.125rem; height: auto; }             /* chevron 18 wide in a 36 box */
   .rv__nav--prev { display: none; left: calc(max(0px, (100vw - var(--page-max)) / 2) + 3.625rem - 0.25rem); }   /* x 58 */
