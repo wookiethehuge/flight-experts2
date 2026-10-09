@@ -58,6 +58,13 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
       />
     </picture>
   )}
+  {/* desktop: warm light falling in from the cabin window; it swings and drifts as the page scrolls (client idea) */}
+  <div class="hero__beams" aria-hidden="true" data-hero-beams>
+    <span class="hero__beam hero__beam--1"></span>
+    <span class="hero__beam hero__beam--2"></span>
+    <span class="hero__beam hero__beam--3"></span>
+    <span class="hero__glow"></span>
+  </div>
   <div class="hero__shade" aria-hidden="true"></div>
 
   <svg class="hero__filters" width="0" height="0" aria-hidden="true" focusable="false">
@@ -346,4 +353,53 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   @keyframes hero-rise { from { opacity: 0; translate: 0 105%; } to { opacity: 1; translate: none; } }
   @keyframes hero-fade { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: none; } }
   @keyframes hero-sheen { 0% { background-position: 100% 0; } 24%, 100% { background-position: 0% 0; } }
+
+  /* ---------- window light (desktop only) ---------- */
+  .hero__beams { display: none; }
+  @media (min-width: 64rem) {
+    .hero__beams {
+      --p: 0;                                   /* 0 at the top of the page -> 1 when the hero has scrolled away */
+      display: block; position: absolute; z-index: -1; inset: 0; overflow: hidden; pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: calc(1 - var(--p) * 0.85);
+    }
+    .hero__beam, .hero__glow { position: absolute; left: 21%; top: 24%; transform-origin: 0 50%; }
+    .hero__beam {
+      height: var(--h); width: 85%;
+      background: linear-gradient(90deg, rgba(255, 214, 160, var(--a)) 0%, rgba(255, 196, 130, calc(var(--a) * 0.55)) 35%, transparent 85%);
+      filter: blur(var(--b));
+      border-radius: 50%;
+      rotate: calc(var(--r) + var(--p) * 9deg);
+      translate: calc(var(--p) * -4%) calc(-50% + var(--p) * 18%);
+      transition: rotate 120ms linear, translate 120ms linear;
+    }
+    .hero__beam--1 { --h: 9%;  --a: 0.20; --b: 18px; --r: 33deg; }
+    .hero__beam--2 { --h: 4%;  --a: 0.26; --b: 10px; --r: 38deg; }
+    .hero__beam--3 { --h: 14%; --a: 0.10; --b: 30px; --r: 28deg; }
+    .hero__glow {
+      width: 22%; aspect-ratio: 1; translate: -50% -50%;
+      background: radial-gradient(closest-side, rgba(255, 220, 170, 0.22), transparent);
+      filter: blur(10px);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .hero__beam--1 { animation: beam-breathe 7s ease-in-out infinite; }
+      .hero__beam--2 { animation: beam-breathe 9s ease-in-out -3s infinite; }
+      .hero__beam--3 { animation: beam-breathe 11s ease-in-out -6s infinite; }
+    }
+  }
+  /* wider than 1440 the photo is centred at its natural width: keep the light on the window */
+  @media (min-width: 90.0625rem) { .hero__beams { left: 50%; right: auto; width: 90rem; translate: -50% 0; } }
+  @keyframes beam-breathe { 0%, 100% { opacity: 0.75; } 50% { opacity: 1; } }
 </style>
+
+<script>
+  // window light follows the scroll (desktop, motion allowed): --p goes 0 -> 1 over the hero's height
+  const beams = document.querySelector<HTMLElement>('[data-hero-beams]');
+  if (beams && matchMedia('(min-width: 64rem)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const hero = beams.closest<HTMLElement>('.hero')!;
+    let raf = 0;
+    const set = () => { raf = 0; const h = hero.offsetHeight || 1; beams.style.setProperty('--p', String(Math.min(1, Math.max(0, scrollY / h)))); };
+    addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(set); }, { passive: true });
+    set();
+  }
+</script>
