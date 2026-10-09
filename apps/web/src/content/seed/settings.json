@@ -55,10 +55,10 @@
       }
     },
     {
-      "name": "FDACS",
+      "name": "USDA",
       "logo": {
-        "file": "accreditation-fdacs.svg",
-        "alt": "Florida Department of Agriculture and Consumer Services, registered seller of travel"
+        "file": "accreditation-usda.svg",
+        "alt": "USDA, United States Department of Agriculture"
       }
     }
   ],
