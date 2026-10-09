@@ -51,7 +51,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
           <Img media={{ ...stars, alt: `Rated ${r.rating} out of 5 stars` }} class="rv__cstars" sizes="98px" widths={[98, 196]} />
           <h3 class="rv__title">
             {(r.reviewUrl || tpUrl)
-              ? <a class="rv__link" href={r.reviewUrl || tpUrl} target="_blank" rel="noopener">{r.title}<span class="sr-only"> (read on Trustpilot, opens in a new tab)</span></a>
+              ? <a class="rv__link" href={r.reviewUrl || tpUrl} target="_blank" rel="noopener" draggable="false">{r.title}<span class="sr-only"> (read on Trustpilot, opens in a new tab)</span></a>
               : r.title}
           </h3>
           {r.body && <p class="rv__body">{excerpt(r.body)}</p>}
@@ -172,7 +172,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     padding: 0 var(--gutter) 0 var(--inset);
     list-style: none;
     overflow-x: auto;
-    overscroll-behavior-x: contain;
+    overscroll-behavior-x: none;          /* no rubber-band past the first / last card */
     scroll-snap-type: x mandatory;
     scroll-padding-inline: var(--inset) var(--gutter);
     scrollbar-width: none;
@@ -194,7 +194,10 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   /* each card links to its review on Trustpilot (synced reviews carry their own URL; hand-entered ones open the
      profile). The title link is stretched over the whole card. */
   .rv__card { position: relative; transition: background-color 450ms var(--motion-ease-out), translate 450ms var(--motion-ease-out); }
-  .rv__link { color: inherit; text-decoration: none; }
+  .rv__link { color: inherit; text-decoration: none; -webkit-user-drag: none; }
+  /* holding a finger on a card must not pick it up as a draggable link or pop the link preview (iOS) */
+  .rv__card { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .rv__card :global(img) { -webkit-user-drag: none; pointer-events: none; }
   .rv__link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
   .rv__link:focus-visible { outline: none; }
   .rv__card:has(.rv__link:focus-visible) { outline: 2px solid var(--c-sky); outline-offset: 3px; }
