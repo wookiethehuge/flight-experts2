@@ -315,7 +315,8 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   /* ---------- entrance (client: the landing page should feel alive): photo settles from a slight zoom, the headline
      lines rise out of their masks one after the other, then subheading, rating, logos and the form follow; the italic
      line gets a soft light sweep every 9s. CSS only, from first paint; nothing moves with reduced motion. ---------- */
-  .hero__h1 :global(.hero__line) { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+  /* the mask leaves room for italic descenders and overhangs (the y of "Pay" was clipped) */
+  .hero__h1 :global(.hero__line) { display: block; overflow: hidden; padding: 0 0.12em 0.26em; margin: 0 -0.12em -0.26em; }
   .hero__h1 :global(.hero__line > span) { display: inline-block; }
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) .hero__bg img { animation: hero-settle 2600ms var(--motion-ease-out) both; }

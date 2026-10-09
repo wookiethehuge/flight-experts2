@@ -52,6 +52,7 @@ export function turnstileFor(slot: HTMLElement | null, siteKey: string | undefin
             sitekey: siteKey,
             theme: opts.theme ?? 'auto',
             size: 'flexible',
+            appearance: 'interaction-only',   // hidden unless Cloudflare actually needs the visitor to click
             'response-field-name': 'cf-turnstile-response',
             callback: (t: string) => opts.onChange?.(t),
             'expired-callback': () => opts.onChange?.(''),

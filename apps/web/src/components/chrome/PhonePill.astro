@@ -76,7 +76,7 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
   .pill--filled { color: var(--c-navy); background: var(--c-sky); }
   .pill--filled :global(.pill__chev) { color: var(--c-navy); }
   .pill--filled:hover, .pill--filled[aria-expanded='true'] { box-shadow: inset 0 0 0 1px var(--c-navy); }
-  .pill--filled:focus-visible { outline-color: var(--c-navy); }
+  .pill:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sky) 35%, transparent); }
 
   /* drop-down: sky card the pill's width under it (Figma: 155 wide, 9px below, right-aligned text) */
   /* drop-down: exactly the pill's width, text centred like the pill, and it slides down smoothly (client) */

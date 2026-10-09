@@ -1,8 +1,7 @@
 ---
 /**
  * Floating actions.
- *   < 64rem : 51px burgundy circles at the right edge in the upper middle of the viewport (BlogArticleMobile: x 331,
- *             y 374 / 434 in a 390x844 viewport = right 8px, top 44.3% / +60px). Plane opens the booking modal
+ *   < 64rem : 51px burgundy circles stacked in the bottom-right corner (client: out of the content's way). Plane opens the booking modal
  *             (open-booking event); chat opens the live chat (ChatWidget: Jivo when configured, otherwise a small
  *             built-in panel with WhatsApp, call and the quote form).
  *             Home page: the circles (and the desktop badge) stay hidden until the hero has mostly scrolled away
@@ -50,21 +49,21 @@ const showBadge = plane;
 <style>
   .sticky {
     --edge-r: max(0.5rem, env(safe-area-inset-right));            /* x 331 + 51 = 382 in a 390 frame: 8px from the edge */
-    --circles-top: 44.3%;                                           /* y 374 of 844 */
+    --circles-bottom: calc(1rem + env(safe-area-inset-bottom));     /* bottom-right corner (client) */
   }
 
   .sticky__circles {
     position: fixed;
     z-index: 40;
-    top: var(--circles-top);
+    bottom: var(--circles-bottom);
     right: var(--edge-r);
     display: grid;
     gap: 9px;                                                       /* 434 - 374 - 51 */
     pointer-events: none;                                           /* only the buttons take clicks */
-    transform-origin: 100% 0;
+    transform-origin: 100% 100%;
   }
   .sticky__circles > :global(*) { pointer-events: auto; }
-  .sticky__circles--chat-only { padding-top: 60px; }                /* chat keeps its own slot (y 434) */
+  .sticky__circles--chat-only { padding-top: 0; }
   .sticky__btn, .sticky__circles :global(.sticky__btn) {
     display: grid;
     place-items: center;

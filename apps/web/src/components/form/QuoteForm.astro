@@ -263,6 +263,11 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   }
   .qf__pill--cabin { padding-right: 26px; }
   .qf__pill:hover { background: var(--c-sky-8); }
+  /* focus (e.g. when a popup closes and focus returns here): no second ring around the pill, just a soft glow and
+     tint on the pill itself */
+  .qf__pill { transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .qf__pill:focus-visible { outline: none; background: var(--c-sky-8); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sky) 28%, transparent); }
+  .qf__pill:focus:not(:focus-visible) { outline: none; }
   .qf__pill-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .qf__chev {
     position: absolute;

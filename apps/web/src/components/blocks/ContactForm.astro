@@ -347,7 +347,8 @@ const fields: F[] = [
   .cform__topic-opt input:focus-visible + span { outline: 2px solid var(--c-navy); outline-offset: 2px; }
 
   .cform__captcha { margin-top: 1rem; }
-  .cform__captcha-slot { min-height: 65px; }                                                     /* reserve the widget's height: no layout shift */
+  .cform__captcha:not(:has(iframe)) { margin-top: 0; }
+  .cform__captcha-slot:empty { display: none; }
   .cform__captcha.field--invalid .cform__captcha-slot { outline: 1px solid var(--c-burgundy); outline-offset: 2px; }
   .cform__alert {
     margin-top: 1rem;

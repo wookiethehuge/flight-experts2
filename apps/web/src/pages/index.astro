@@ -23,6 +23,6 @@ const jsonLd = faq && faq.items?.length
     }]
   : [];
 ---
-<BaseLayout title="Flight Experts" seo={page.seo} headerTheme="dark" jsonLd={jsonLd} sticky={{ plane: true, chat: true, phoneTab: true }} preload={preload}>
+<BaseLayout title="Flight Experts" seo={page.seo} headerTheme="dark" jsonLd={jsonLd} sticky={{ plane: true, chat: true, phoneTab: false }} preload={preload}>
   <BlockRenderer blocks={page.layout} settings={settings} page="home" />
 </BaseLayout>
