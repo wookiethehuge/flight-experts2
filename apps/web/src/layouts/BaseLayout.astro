@@ -88,7 +88,7 @@ const site = { '@context': 'https://schema.org', '@type': 'WebSite', '@id': new 
         ];
         map.forEach(function (m) {
           document.querySelectorAll(m[0]).forEach(function (e) {
-            if (e.closest('.hero') || e.hasAttribute('data-reveal')) return;
+            if (e.closest('.hero, .rt') || e.hasAttribute('data-reveal')) return;   // long-form text (legal pages) stays still
             e.setAttribute('data-reveal', '');
             e.style.setProperty('--i', m[1]);
           });
