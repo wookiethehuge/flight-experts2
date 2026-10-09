@@ -9,6 +9,7 @@ import Header from '../components/chrome/Header.astro';
 import Footer from '../components/chrome/Footer.astro';
 import StickyActions from '../components/chrome/StickyActions.astro';
 import BookingModal from '../components/form/BookingModal.astro';
+import CallbackModal from '../components/form/CallbackModal.astro';
 import { getNavigation, getSettings } from '../lib/cms';
 import type { Seo as SeoData } from '../lib/types';
 import type { ImagePreload } from '../lib/hero-image';
@@ -72,6 +73,7 @@ const site = { '@context': 'https://schema.org', '@type': 'WebSite', '@id': new 
     <Footer settings={settings} navigation={navigation} />
     <StickyActions settings={settings} {...sticky} />
     <BookingModal settings={settings} />
+    <CallbackModal settings={settings} />
     <script is:inline>
       // Scroll reveals ([data-reveal], global.css): one IntersectionObserver, each element revealed once.
       // Elements already on screen are shown at once without animation (never delays LCP).

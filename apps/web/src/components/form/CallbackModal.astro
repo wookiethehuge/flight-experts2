@@ -1,0 +1,166 @@
+---
+/**
+ * "Request a callback" dialog: name, phone, email and a preferred time to call. Saved to the CMS as an enquiry
+ * (kind 'contact', topic 'sales', subject "Callback request"), so it lands in Leads > Enquiries like the other forms.
+ * Opens from any element with [data-open-callback] (the "Request a callback" links on the contact cards).
+ * Same spam protection as the other forms: honeypot, elapsed-time check, Turnstile when a site key is set.
+ */
+import Icon from '../ui/Icon.astro';
+import Honeypot from './Honeypot.astro';
+import { FORMS_ENDPOINT, TURNSTILE_SITE_KEY } from '../../lib/forms';
+import type { SiteSettings } from '../../lib/types';
+interface Props { settings: SiteSettings }
+const { settings } = Astro.props;
+const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (12pm – 5pm ET)', 'Evening (5pm – 8pm ET)'];
+---
+<dialog class="cb on-light" id="callback-modal" aria-labelledby="cb-title" data-callback-modal>
+  <form class="cb__panel" novalidate data-endpoint={FORMS_ENDPOINT} data-turnstile={TURNSTILE_SITE_KEY || undefined}>
+    <button type="button" class="cb__close" aria-label="Close" data-cb-close><Icon name="close" width={15} height={16} /></button>
+    <h2 class="cb__title" id="cb-title">Request a <em>callback</em></h2>
+    <p class="cb__intro">Leave your number and a flight expert will call you back. Prefer to talk now? <a href={settings.phone.href}>{settings.phone.display}</a></p>
+
+    <div class="cb__fields">
+      <label class="cb__field" data-field="name"><span>Name</span><input name="name" type="text" autocomplete="name" required /><em class="cb__err" hidden></em></label>
+      <label class="cb__field" data-field="phone"><span>Phone</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required /><em class="cb__err" hidden></em></label>
+      <label class="cb__field" data-field="email"><span>Email</span><input name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" required /><em class="cb__err" hidden></em></label>
+      <label class="cb__field" data-field="time"><span>Best time to call</span>
+        <select name="time">{times.map((t) => <option>{t}</option>)}</select>
+      </label>
+    </div>
+    <div class="cb__ts" data-turnstile-slot></div>
+    <Honeypot />
+    <p class="cb__alert" role="alert" hidden data-cb-alert></p>
+    <button type="submit" class="cb__submit" data-cb-submit>Request my callback</button>
+    <p class="cb__done" hidden data-cb-done role="status">Thank you. A flight expert will call you shortly.</p>
+  </form>
+</dialog>
+
+<script>
+  import { submitEnquiry, startTimer } from '../../scripts/enquiry';
+  import { turnstileFor } from '../../scripts/turnstile';
+
+  const dialog = document.querySelector<HTMLDialogElement>('[data-callback-modal]');
+  const form = dialog?.querySelector<HTMLFormElement>('form');
+  if (dialog && form) {
+    const submit = form.querySelector<HTMLButtonElement>('[data-cb-submit]')!;
+    const alertEl = form.querySelector<HTMLElement>('[data-cb-alert]')!;
+    const done = form.querySelector<HTMLElement>('[data-cb-done]')!;
+    const ts = turnstileFor(form.querySelector<HTMLElement>('[data-turnstile-slot]'), form.dataset.turnstile, { theme: 'light' });
+    let t0 = startTimer();
+    let opener: HTMLElement | null = null;
+    const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const phoneOk = (v: string) => /^\+?[\d\s().-]+$/.test(v) && v.replace(/\D/g, '').length >= 7 && v.replace(/\D/g, '').length <= 15;
+    const val = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement | null)?.value ?? '').trim();
+    const setErr = (n: string, msg: string) => {
+      const wrap = form.querySelector<HTMLElement>(`[data-field="${n}"]`); const err = wrap?.querySelector<HTMLElement>('.cb__err');
+      const input = form.elements.namedItem(n) as HTMLInputElement | null;
+      wrap?.classList.toggle('is-invalid', !!msg); if (err) { err.textContent = msg; err.hidden = !msg; }
+      if (msg) input?.setAttribute('aria-invalid', 'true'); else input?.removeAttribute('aria-invalid');
+    };
+    const validate = () => {
+      const checks: [string, string][] = [
+        ['name', val('name') ? '' : 'Please enter your name.'],
+        ['phone', !val('phone') ? 'Please enter your phone number.' : phoneOk(val('phone')) ? '' : 'Please enter a valid phone number.'],
+        ['email', !val('email') ? 'Please enter your email address.' : EMAIL.test(val('email')) ? '' : 'Please enter a valid email address.'],
+      ];
+      let first: string | null = null;
+      for (const [n, m] of checks) { setErr(n, m); if (m && !first) first = n; }
+      return first;
+    };
+
+    const open = (trigger?: HTMLElement | null) => {
+      if (dialog.open) return;
+      opener = trigger ?? null;
+      dialog.showModal();
+      void ts?.ensure();
+      (form.elements.namedItem('name') as HTMLInputElement).focus();
+    };
+    const close = () => {
+      dialog.classList.add('is-closing');
+      setTimeout(() => { dialog.classList.remove('is-closing'); dialog.close(); opener?.focus(); }, 300);
+    };
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-open-callback]');
+      if (t) { e.preventDefault(); open(t); }
+    });
+    form.querySelector('[data-cb-close]')!.addEventListener('click', close);
+    dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (form.getAttribute('aria-busy') === 'true') return;
+      alertEl.hidden = true;
+      const first = validate();
+      if (first) { (form.elements.namedItem(first) as HTMLInputElement).focus(); return; }
+      if (ts && !ts.token()) await ts.ensure();
+      form.setAttribute('aria-busy', 'true'); submit.disabled = true; submit.textContent = 'Sending…';
+      const res = await submitEnquiry(form, {
+        kind: 'contact', topic: 'sales', name: val('name'), firstName: val('name'),
+        phone: val('phone'), email: val('email'),
+        subject: 'Callback request', message: `Please call me back. Best time: ${val('time')}.`,
+      }, t0);
+      form.removeAttribute('aria-busy'); submit.disabled = false; submit.textContent = 'Request my callback';
+      if (res.ok) {
+        form.classList.add('is-done'); done.hidden = false; submit.hidden = true;
+        setTimeout(() => { close(); setTimeout(() => { form.reset(); form.classList.remove('is-done'); done.hidden = true; submit.hidden = false; t0 = startTimer(); ts?.reset(); }, 400); }, 2600);
+        return;
+      }
+      for (const [path, msg] of Object.entries(res.fieldErrors ?? {})) setErr(path === 'firstName' ? 'name' : path, msg);
+      ts?.reset();
+      alertEl.textContent = res.message; alertEl.hidden = false;
+    });
+  }
+</script>
+
+<style>
+  .cb {
+    width: min(26rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-7);
+    background: var(--c-cream);
+    color: var(--c-navy);
+    box-shadow: 0 30px 60px -30px rgba(15, 21, 36, 0.6);
+  }
+  .cb::backdrop { background: rgba(15, 21, 36, 0.55); backdrop-filter: blur(2px); }
+  @media (prefers-reduced-motion: no-preference) {
+    .cb[open] { animation: cb-in 420ms var(--motion-ease-out) both; }
+    .cb[open]::backdrop { animation: cb-fade 420ms ease both; }
+    .cb.is-closing { animation: cb-out 300ms ease both; }
+  }
+  @keyframes cb-in { from { opacity: 0; translate: 0 14px; scale: 0.98; } to { opacity: 1; translate: none; scale: 1; } }
+  @keyframes cb-out { to { opacity: 0; translate: 0 8px; } }
+  @keyframes cb-fade { from { opacity: 0; } }
+  .cb__panel { position: relative; display: grid; gap: 1rem; padding: 2rem 1.75rem 1.75rem; }
+  .cb__close { position: absolute; top: 0.75rem; right: 0.75rem; display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 50%; background: none; color: var(--c-navy); cursor: pointer; }
+  .cb__close:hover { background: color-mix(in srgb, var(--c-navy) 7%, transparent); }
+  .cb__title { font-family: var(--ff-serif); font-weight: var(--fw-regular); font-size: 1.75rem; line-height: 1.2; color: var(--c-navy-ink); }
+  .cb__title em { font-style: italic; }
+  .cb__intro { font-size: var(--fs-14); line-height: 1.45; color: color-mix(in srgb, var(--c-navy) 80%, transparent); }
+  .cb__intro a { color: var(--c-burgundy); font-weight: var(--fw-semibold); white-space: nowrap; }
+  .cb__fields { display: grid; gap: 0.625rem; }
+  .cb__field { display: grid; gap: 0.25rem; font-size: var(--fs-14); font-weight: var(--fw-medium); }
+  .cb__field input, .cb__field select {
+    height: 3rem; padding: 0 0.875rem;
+    border: 1px solid var(--c-sky); border-radius: 1.5px;
+    background: var(--c-white); color: var(--c-navy); font: inherit; font-weight: var(--fw-regular); font-size: var(--fs-16);
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+  .cb__field :is(input, select):focus { outline: none; border-color: var(--c-navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sky) 55%, transparent); }
+  .cb__field.is-invalid :is(input, select) { border-color: var(--c-burgundy); }
+  .cb__err { font-style: normal; font-size: var(--fs-13); color: var(--c-burgundy); }
+  .cb__ts:empty { display: none; }
+  .cb__alert { font-size: var(--fs-14); color: var(--c-burgundy); }
+  .cb__submit {
+    height: 3.125rem; border: 0; border-radius: var(--r-3);
+    background: var(--c-burgundy); color: var(--c-cream); font: inherit; font-weight: var(--fw-semibold); font-size: var(--fs-16);
+    cursor: pointer; transition: background-color var(--dur) var(--ease);
+  }
+  .cb__submit:hover { background: var(--c-burgundy-hover); }
+  .cb__submit:disabled { opacity: 0.7; cursor: progress; }
+  .cb__done { padding: 0.875rem 1rem; border-radius: var(--r-3); background: color-mix(in srgb, var(--c-sky) 55%, transparent); font-weight: var(--fw-medium); text-align: center; }
+  .cb.is-done .cb__fields { opacity: 0.5; pointer-events: none; }
+</style>

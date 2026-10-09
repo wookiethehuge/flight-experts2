@@ -33,7 +33,7 @@ const ext = (url: string) => /^https?:/i.test(url);
           </span>
           <TitleTag class="co__title" id={`co-${index}-${i}`}>{c.title}</TitleTag>
           <p class="co__body" set:html={inline(c.body)} />
-          <a class="co__link" href={c.linkUrl} aria-describedby={`co-${index}-${i}`} {...(ext(c.linkUrl) ? { target: '_blank', rel: 'noopener' } : {})}>
+          <a class="co__link" href={c.linkUrl} {...(/callback/i.test(c.linkLabel) ? { "data-open-callback": "", role: "button", "aria-haspopup": "dialog" } : {})} aria-describedby={`co-${index}-${i}`} {...(ext(c.linkUrl) ? { target: '_blank', rel: 'noopener' } : {})}>
             {c.linkLabel}<Icon name="chevron-right-6" class="co__chev" />
             {ext(c.linkUrl) && <span class="sr-only"> (opens in a new tab)</span>}
           </a>

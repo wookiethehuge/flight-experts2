@@ -22,8 +22,8 @@ const dow = [
   <p class="sr-only" aria-live="polite" data-dp-live></p>
   <div class="dp__foot">
     <div class="dp__sum" data-dp-sum>
-      <p class="dp__col"><span>Departure</span><strong data-dp-dep>–</strong></p>
-      <p class="dp__col dp__col--ret"><span>Return</span><strong data-dp-ret>–</strong></p>
+      <button type="button" class="dp__col" data-dp-phase="depart"><span>Departure</span><strong data-dp-dep>–</strong></button>
+      <button type="button" class="dp__col dp__col--ret" data-dp-phase="return"><span>Return</span><strong data-dp-ret>–</strong></button>
     </div>
   </div>
 </dialog>
@@ -175,7 +175,9 @@ const dow = [
     height: 32px;
     background: var(--dp-rule);
   }
-  .dp__col { display: grid; margin: 0; text-align: center; }
+  /* Departure / Return are buttons: tap one to choose which date the next click sets */
+  .dp__col { display: grid; margin: 0; padding: 4px 0; border: 0; background: none; color: inherit; font: inherit; text-align: center; cursor: pointer; border-radius: var(--r-3); transition: background-color var(--dur) var(--ease); }
+  .dp__col:hover { background: color-mix(in srgb, var(--c-navy) 6%, transparent); }
   .dp__col span { font-size: var(--fs-14); line-height: 19px; }
   .dp__col strong { margin-top: 1.7px; font-size: var(--fs-16); font-weight: var(--fw-semibold); line-height: 22px; }
   .dp[data-mode='single'] .dp__sum { grid-template-columns: 1fr; }

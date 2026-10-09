@@ -153,9 +153,11 @@ export function createDatePicker(dialog: HTMLDialogElement) {
       done = true;
       live.textContent = `${fmtLong(iso)} selected.`;
     } else if (phase === 'depart' || !dep || iso < dep) {
+      const keepRet = phase === 'depart' && !!ret && iso < ret;   // only the departure was being changed
       dep = iso;
       if (ret && ret < iso) ret = undefined;
       phase = 'return';
+      if (keepRet) done = true;
       live.textContent = `Departure ${fmtLong(iso)}. ${ret ? '' : 'Now choose your return date.'}`;
     } else {
       ret = iso;
@@ -210,6 +212,16 @@ export function createDatePicker(dialog: HTMLDialogElement) {
     }
   });
   dialog.querySelector('[data-dp-close]')!.addEventListener('click', () => close(true));
+  // tapping Departure / Return in the summary picks which date the next day click sets, and jumps to it
+  dialog.querySelectorAll<HTMLButtonElement>('[data-dp-phase]').forEach((b) => b.addEventListener('click', () => {
+    if (!opts || opts.mode !== 'range') return;
+    clearTimeout(autoClose);
+    phase = b.dataset.dpPhase === 'return' && dep ? 'return' : 'depart';
+    live.textContent = phase === 'return' ? 'Choose your return date.' : 'Choose your departure date.';
+    paint();
+    const target = phase === 'return' ? (ret ?? addDays(dep!, 1)) : (dep ?? todayIso());
+    focusDay(target);
+  }));
   dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(true); });
   dialog.addEventListener('click', (e) => {
     if (e.target !== dialog) return;

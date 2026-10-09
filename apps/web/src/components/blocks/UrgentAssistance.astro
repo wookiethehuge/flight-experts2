@@ -39,7 +39,7 @@ const hid = `urgent-h-${Astro.props.index}`;
             <div class:list={['ucard__icon', `ucard__icon--${c.icon}`]}><Icon name={c.icon} /></div>
             <h3 class="ucard__title">{c.title}</h3>
             <p class="ucard__body" set:html={inline(c.body)} />
-            <a class="ucard__link" href={c.linkUrl} {...(/^https?:/.test(c.linkUrl) ? { target: '_blank', rel: 'noopener' } : {})}>
+            <a class="ucard__link" href={c.linkUrl} {...(/callback/i.test(c.linkLabel) ? { "data-open-callback": "", role: "button", "aria-haspopup": "dialog" } : {})} {...(/^https?:/.test(c.linkUrl) ? { target: '_blank', rel: 'noopener' } : {})}>
               {c.linkLabel}<Icon name="chevron-right-6" class="ucard__chev" />
             </a>
           </li>
