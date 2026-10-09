@@ -227,8 +227,9 @@ const mail = `mailto:${settings.email}`;
     fill: var(--c-burgundy-deep);
   }
   .sf__inner:has(.sf__legal) + .sf__wordmark { margin-top: 0; }
-  /* the wordmark ends inside the burgundy, never on the page edge (client: it sat a pixel over the cream line) */
-  .sf__frame { padding-bottom: calc(clamp(0.75rem, calc(0.75rem + 12 * (100vw - 24.375rem) / 1050), 1.5rem) + env(safe-area-inset-bottom)); }
+  /* the wordmark sits flush on the very bottom edge, as in the Figma; the burgundy runs 2px past it so no sub-pixel
+     line of the cream page can show underneath (client) */
+  .sf__art { bottom: -2px; }
 
   /* ---- tablet: links | support, payments row below */
   @media (min-width: 48rem) {
