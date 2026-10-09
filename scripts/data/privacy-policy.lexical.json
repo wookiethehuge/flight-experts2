@@ -1047,10 +1047,12 @@
     "textStyle": ""
    },
    {
-    "type": "paragraph",
+    "type": "heading",
+    "tag": "h3",
     "format": "",
     "indent": 0,
     "version": 1,
+    "direction": "ltr",
     "children": [
      {
       "mode": "normal",
@@ -1058,13 +1060,10 @@
       "type": "text",
       "style": "",
       "detail": 0,
-      "format": 1,
+      "format": 0,
       "version": 1
      }
-    ],
-    "direction": "ltr",
-    "textFormat": 0,
-    "textStyle": ""
+    ]
    },
    {
     "type": "list",
@@ -1369,10 +1368,12 @@
     "textStyle": ""
    },
    {
-    "type": "paragraph",
+    "type": "heading",
+    "tag": "h3",
     "format": "",
     "indent": 0,
     "version": 1,
+    "direction": "ltr",
     "children": [
      {
       "mode": "normal",
@@ -1380,13 +1381,10 @@
       "type": "text",
       "style": "",
       "detail": 0,
-      "format": 1,
+      "format": 0,
       "version": 1
      }
-    ],
-    "direction": "ltr",
-    "textFormat": 0,
-    "textStyle": ""
+    ]
    },
    {
     "type": "paragraph",
