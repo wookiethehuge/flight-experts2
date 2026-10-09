@@ -173,7 +173,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     list-style: none;
     overflow-x: auto;
     overflow-y: hidden;                   /* sideways only: a held card can't be dragged up / down inside the frame */
-    overscroll-behavior: none;            /* no rubber-band past the first / last card */
+    overscroll-behavior-x: none;          /* no sideways rubber-band past the first / last card; vertical scroll passes to the page */
     scroll-snap-type: x mandatory;
     scroll-padding-inline: var(--inset) var(--gutter);
     scrollbar-width: none;
