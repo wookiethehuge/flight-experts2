@@ -108,6 +108,7 @@ html { scroll-behavior: smooth; }
   border: 0; border-radius: var(--r-7); background: var(--c-sky); color: var(--c-navy);
   box-shadow: 0 18px 40px -18px rgba(15, 21, 36, 0.55); list-style: none; overscroll-behavior: contain;
 }
+.ap-list--page { position: absolute; }   /* page coordinates: rides along with the scroll */
 .ap-list[hidden] { display: none; }
 .ap-list li { display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.625rem; border-radius: var(--r-3); cursor: pointer; }
 .ap-list li[aria-selected='true'], .ap-list li:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); }

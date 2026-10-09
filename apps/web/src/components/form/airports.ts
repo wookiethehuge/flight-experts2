@@ -53,6 +53,10 @@ export function initAirportSuggest(root: HTMLElement) {
   list.hidden = true;
   const popover = 'popover' in HTMLElement.prototype;
   if (popover) list.setAttribute('popover', 'manual');
+  // On the page the list is absolutely positioned in page coordinates, so it scrolls with the page natively (a fixed
+  // list re-placed on scroll lagged and jumped around on iOS). Inside the booking dialog it stays fixed.
+  const inDialog = !!root.closest('dialog');
+  if (!inDialog) list.classList.add('ap-list--page');
   (root.closest('dialog') ?? document.body).append(list);
 
   let input: HTMLInputElement | null = null;
@@ -64,7 +68,8 @@ export function initAirportSuggest(root: HTMLElement) {
     if (!input) return;
     const field = input.closest<HTMLElement>('.qf__row, .qf__mrow') ?? input;
     const r = field.getBoundingClientRect();
-    Object.assign(list.style, { left: `${r.left}px`, top: `${r.bottom + 4}px`, width: `${r.width}px` });
+    const dx = inDialog ? 0 : scrollX, dy = inDialog ? 0 : scrollY;
+    Object.assign(list.style, { left: `${r.left + dx}px`, top: `${r.bottom + 4 + dy}px`, width: `${r.width}px` });
   };
   const show = (on: boolean) => {
     list.hidden = !on;
@@ -124,5 +129,5 @@ export function initAirportSuggest(root: HTMLElement) {
     if (li) pick(Number(li.dataset.i));
   });
   addEventListener('resize', place);
-  addEventListener('scroll', place, true);
+  if (inDialog) addEventListener('scroll', place, true);
 }

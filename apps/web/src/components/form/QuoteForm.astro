@@ -336,6 +336,8 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     color: var(--c-cream);
     font-size: var(--fs-14);
   }
+  /* 16px on touch screens: below that, iOS zooms the page in on focus (and the airport list looked like it jumped) */
+  @media (hover: none) and (pointer: coarse) { .qf__input { font-size: 16px; } }
   .qf__input::placeholder { color: var(--c-white-55); opacity: 1; }
   /* focus: no outline box inside the bordered field (client: "box inside box"); the whole row lights up softly
      instead, with a sky underline glow, so keyboard users still see where they are */
