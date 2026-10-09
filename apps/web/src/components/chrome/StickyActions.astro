@@ -79,6 +79,9 @@ const showBadge = plane;
     transition: background-color var(--dur) var(--ease);
   }
   .sticky__btn:hover { background: var(--c-burgundy-hover); }
+  /* focus returns here when the booking form / chat closes: soft glow instead of a second ring */
+  .sticky__btn:focus, .sticky__circles :global(.sticky__btn:focus) { outline: none; }
+  .sticky__btn:focus-visible, .sticky__circles :global(.sticky__btn:focus-visible) { box-shadow: var(--sh-float), 0 0 0 4px color-mix(in srgb, var(--c-sky) 35%, transparent); }
 
   /* home: hidden until the hero has scrolled away, then fade in */
   :global(html.js) [data-await-anchor] {

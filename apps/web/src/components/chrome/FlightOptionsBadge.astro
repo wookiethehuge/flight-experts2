@@ -70,5 +70,9 @@ const aria = plain(label);
   .badge__text :global(em) { font-style: italic; }
   .badge :global(.badge__arrow) { width: calc(15.62 * var(--u)); height: auto; margin-top: calc(8.4 * var(--u)); }
   .badge:hover .badge__disc { background: var(--c-burgundy-hover); transform: scale(1.03); }
-  .badge:focus-visible { outline-offset: -4px; border-radius: 50%; }
+  /* focus (also when the booking form closes and focus returns here): no second ring, just a soft sky glow on the
+     disc itself */
+  .badge:focus, .badge:focus-visible { outline: none; }
+  .badge__disc { transition: box-shadow var(--dur) var(--ease); }
+  .badge:focus-visible .badge__disc { box-shadow: 0 0 0 calc(4 * var(--u)) color-mix(in srgb, var(--c-sky) 30%, transparent); }
 </style>
