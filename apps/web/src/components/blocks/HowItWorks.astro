@@ -218,14 +218,15 @@ const cities = [[10.6, 75.9, 0], [53.2, 75, 1.1], [71.6, 72.7, 2.3], [70.7, 78.9
     opacity: 0;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .hiw__city { animation: hiw-city 6.5s ease-in-out calc(var(--d) * 1.8) infinite; }
+    .hiw__city { animation: hiw-city 3.2s ease-in-out calc(var(--d) * 0.6) infinite; }
+    .hiw__city:nth-child(even) { animation-duration: 3.9s; }   /* two rhythms, so they never pulse in step */
     .hiw__glint { animation: hiw-glint 7s cubic-bezier(0.45, 0, 0.55, 1) 2s infinite; }
     /* nothing runs while the section is off screen */
     .hiw__item:not(.is-visible) :is(.hiw__city, .hiw__glint) { animation-play-state: paused; }
   }
   @keyframes hiw-city {
     0%, 100% { opacity: 0; }
-    40%, 55% { opacity: 0.7; }
+    42%, 54% { opacity: 0.7; }
   }
   @keyframes hiw-glint {
     0%, 58%, 100% { opacity: 0; translate: calc(-50% - 13px) -50%; }
