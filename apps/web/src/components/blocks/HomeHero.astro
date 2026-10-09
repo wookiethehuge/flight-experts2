@@ -63,6 +63,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     <span class="hero__beam hero__beam--1"></span>
     <span class="hero__beam hero__beam--2"></span>
     <span class="hero__beam hero__beam--3"></span>
+    <span class="hero__cone"></span>
     <span class="hero__glow"></span>
   </div>
   <div class="hero__shade" aria-hidden="true"></div>
@@ -363,7 +364,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
       mix-blend-mode: screen;
       opacity: calc(1 - var(--p) * 0.85);
     }
-    .hero__beam, .hero__glow { position: absolute; left: 21%; top: 24%; transform-origin: 0 50%; }
+    .hero__beam, .hero__cone, .hero__glow { position: absolute; left: 21%; top: 24%; transform-origin: 0 50%; }
     .hero__beam {
       height: var(--h); width: 85%;
       background: linear-gradient(90deg, rgba(255, 214, 160, var(--a)) 0%, rgba(255, 196, 130, calc(var(--a) * 0.55)) 35%, transparent 85%);
@@ -373,9 +374,21 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
       translate: calc(var(--p) * -4%) calc(-50% + var(--p) * 18%);
       transition: rotate 120ms linear, translate 120ms linear;
     }
-    .hero__beam--1 { --h: 9%;  --a: 0.20; --b: 18px; --r: 33deg; }
-    .hero__beam--2 { --h: 4%;  --a: 0.26; --b: 10px; --r: 38deg; }
-    .hero__beam--3 { --h: 14%; --a: 0.10; --b: 30px; --r: 28deg; }
+    .hero__beam--1 { --h: 10%; --a: 0.16; --b: 20px; --r: 37deg; }
+    .hero__beam--2 { --h: 4%;  --a: 0.20; --b: 10px; --r: 43deg; }
+    .hero__beam--3 { --h: 16%; --a: 0.09; --b: 32px; --r: 34deg; }
+    /* the wide wash: a soft cone from the window, ~33deg to ~50deg below horizontal, fading with distance */
+    .hero__cone {
+      left: 21%; top: 22%; width: 72%; height: 130%;
+      transform-origin: 0 0;
+      background: conic-gradient(from 0deg at 0 0, transparent 114deg, rgba(255, 206, 150, 0.15) 124deg, rgba(255, 214, 160, 0.19) 132deg, rgba(255, 200, 140, 0.13) 140deg, transparent 150deg);
+      -webkit-mask: radial-gradient(circle at 0 0, #000 8%, rgba(0, 0, 0, 0.6) 38%, transparent 72%);
+      mask: radial-gradient(circle at 0 0, #000 8%, rgba(0, 0, 0, 0.6) 38%, transparent 72%);
+      filter: blur(14px);
+      rotate: calc(var(--p) * 9deg);
+      translate: calc(var(--p) * -4%) calc(var(--p) * 10%);
+      transition: rotate 120ms linear, translate 120ms linear;
+    }
     .hero__glow {
       width: 22%; aspect-ratio: 1; translate: -50% -50%;
       background: radial-gradient(closest-side, rgba(255, 220, 170, 0.22), transparent);
@@ -385,6 +398,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
       .hero__beam--1 { animation: beam-breathe 7s ease-in-out infinite; }
       .hero__beam--2 { animation: beam-breathe 9s ease-in-out -3s infinite; }
       .hero__beam--3 { animation: beam-breathe 11s ease-in-out -6s infinite; }
+      .hero__cone { animation: beam-breathe 13s ease-in-out -4s infinite; }
     }
   }
   /* wider than 1440 the photo is centred at its natural width: keep the light on the window */
