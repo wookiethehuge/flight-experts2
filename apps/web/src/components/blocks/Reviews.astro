@@ -172,7 +172,8 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     padding: 0 var(--gutter) 0 var(--inset);
     list-style: none;
     overflow-x: auto;
-    overscroll-behavior-x: none;          /* no rubber-band past the first / last card */
+    overflow-y: hidden;                   /* sideways only: a held card can't be dragged up / down inside the frame */
+    overscroll-behavior: none;            /* no rubber-band past the first / last card */
     scroll-snap-type: x mandatory;
     scroll-padding-inline: var(--inset) var(--gutter);
     scrollbar-width: none;
@@ -203,7 +204,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   .rv__card:has(.rv__link:focus-visible) { outline: 2px solid var(--c-sky); outline-offset: 3px; }
   .rv__more { margin-top: auto; padding-top: 0.5rem; font-size: var(--fs-14); font-weight: var(--fw-medium); color: var(--c-sky); opacity: 0.75; transition: opacity 450ms var(--motion-ease-out); }
   .rv__more span { display: inline-block; transition: translate 450ms var(--motion-ease-out); }
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     .rv__card:has(.rv__link):hover { background: color-mix(in srgb, var(--c-sky) 13%, transparent); translate: 0 -3px; }
     .rv__card:hover .rv__more { opacity: 1; }
     .rv__card:hover .rv__more span { translate: 2px -2px; }
