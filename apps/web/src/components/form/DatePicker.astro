@@ -16,7 +16,7 @@ const dow = [
 <dialog class="dp on-light" id={`${id}-dp`} aria-labelledby={`${id}-dp-title`} aria-describedby={`${id}-dp-help`} data-datepicker>
   <h2 class="sr-only" id={`${id}-dp-title`} data-dp-title>Choose dates</h2>
   <p class="sr-only" id={`${id}-dp-help`}>Use the arrow keys to move between days, Page Up and Page Down to change month, and Enter to choose a day.</p>
-  <button type="button" class="dp__close" aria-label="Close" data-dp-close><Icon name="close" width={15} height={16} /></button>
+  <button type="button" class="dp__close" aria-label="Close" data-dp-close><Icon name="close" width={11} height={12} /></button>
   <div class="dp__dow" aria-hidden="true">{dow.map(([s]) => <span>{s}</span>)}</div>
   <div class="dp__months" data-dp-months data-dow={JSON.stringify(dow)}></div>
   <p class="sr-only" aria-live="polite" data-dp-live></p>
@@ -32,7 +32,12 @@ const dow = [
   /* Geometry from "Dates pop up.svg" (394x695): 7 columns of 48px starting at x=27, 47px rows, 40px day circles. */
   .dp {
     --dp-rule: color-mix(in srgb, var(--c-navy) 36%, transparent);
-    width: min(394px, calc(100vw - 2rem));
+    /* columns size to the panel: 48px at the designed 394 width, a little narrower on small phones, so the grid
+       never overflows sideways (client: the calendar felt like it was moving around) */
+    --dp-w: min(394px, calc(100vw - 2rem));
+    --dp-pad: clamp(10px, calc((var(--dp-w) - 336px) / 2), 27px);
+    --cell: min(48px, calc((var(--dp-w) - 2 * var(--dp-pad)) / 7));
+    width: var(--dp-w);
     height: min(695px, calc(100dvh - 1rem));
     max-height: none;
     margin: auto;
@@ -60,36 +65,44 @@ const dow = [
   }
   .dp__close {
     position: absolute;
-    top: 6.5px;
-    right: 9px;
+    top: 14px;
+    right: 12px;
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
     padding: 0;
     border: 0;
     border-radius: 50%;
     background: transparent;
-    color: var(--c-navy);
+    color: color-mix(in srgb, var(--c-navy) 75%, transparent);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
   }
-  .dp__close:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); }
+  /* small, quiet X (client: the big ring looked cheap); 44px tap area kept invisibly */
+  .dp__close::before { content: ''; position: absolute; inset: -6px; }
+  .dp__close:focus-visible { outline: none; background: color-mix(in srgb, var(--c-navy) 8%, transparent); color: var(--c-navy); }
+  .dp__close:focus:not(:focus-visible) { outline: none; }
+  .dp__close:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); color: var(--c-navy); }
 
   .dp__dow {
     flex: none;
     display: grid;
-    grid-template-columns: repeat(7, 48px);
+    grid-template-columns: repeat(7, var(--cell));
     margin: 67px 0 0;
-    padding: 0 0 10px 27px;              /* 9px gap + the 1px rule */
+    padding: 0 0 10px var(--dp-pad);     /* 9px gap + the 1px rule */
     font-size: var(--fs-14);
     line-height: 19px;
     text-align: center;
-    background: linear-gradient(var(--dp-rule), var(--dp-rule)) 29px 100% / 336px 1px no-repeat;
+    background: linear-gradient(var(--dp-rule), var(--dp-rule)) calc(var(--dp-pad) + 2px) 100% / calc(7 * var(--cell)) 1px no-repeat;
   }
   .dp__months {
     flex: 1 1 auto;
     min-height: 0;
+    overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
+    touch-action: pan-y;                 /* vertical scrolling only */
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: var(--c-navy-55) transparent;
     padding-bottom: 16px;
@@ -103,14 +116,14 @@ const dow = [
     text-align: center;
   }
   .dp__months :global(table) {
-    margin: 5px 0 0 27px;
+    margin: 5px 0 0 var(--dp-pad);
     border-collapse: collapse;
     border-spacing: 0;
     table-layout: fixed;
   }
   .dp__months :global(td) {
     position: relative;
-    width: 48px;
+    width: var(--cell);
     height: 47px;
     padding: 0;
     text-align: center;
@@ -122,8 +135,8 @@ const dow = [
     z-index: 1;
     display: inline-grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: min(40px, calc(var(--cell) - 6px));
+    height: min(40px, calc(var(--cell) - 6px));
     border-radius: 50%;
     font-size: var(--fs-16);
     line-height: 1;

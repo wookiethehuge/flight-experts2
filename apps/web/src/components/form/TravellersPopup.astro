@@ -21,7 +21,7 @@ const cabins = [
 ---
 <dialog class="tp on-light" id={`${id}-tp`} aria-labelledby={`${id}-tp-title`} data-travellers>
   <h2 class="sr-only" id={`${id}-tp-title`}>Cabin and travellers</h2>
-  <button type="button" class="tp__close" aria-label="Close without saving" data-tp-close><Icon name="close" width={15} height={16} /></button>
+  <button type="button" class="tp__close" aria-label="Close without saving" data-tp-close><Icon name="close" width={11} height={12} /></button>
   <div class="tp__rows">
     {rows.map((r) => (
       <div class="tp__row" role="group" aria-labelledby={`${id}-tp-${r.key}`} data-pax={r.key}>
@@ -72,19 +72,24 @@ const cabins = [
   }
   .tp__close {
     position: absolute;
-    top: 6px;
-    right: 9px;
+    top: 14px;
+    right: 12px;
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
     padding: 0;
     border: 0;
     border-radius: 50%;
     background: transparent;
-    color: var(--c-navy);
+    color: color-mix(in srgb, var(--c-navy) 75%, transparent);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
   }
-  .tp__close:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); }
+  /* small, quiet X (client: the big ring looked cheap); 44px tap area kept invisibly */
+  .tp__close::before { content: ''; position: absolute; inset: -6px; }
+  .tp__close:focus-visible { outline: none; background: color-mix(in srgb, var(--c-navy) 8%, transparent); color: var(--c-navy); }
+  .tp__close:focus:not(:focus-visible) { outline: none; }
+  .tp__close:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); color: var(--c-navy); }
 
   .tp__rows { display: grid; gap: 18px; }
   .tp__row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }

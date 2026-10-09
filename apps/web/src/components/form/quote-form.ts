@@ -6,6 +6,7 @@
 import { submitEnquiry, startTimer, THANK_YOU_URL } from '../../scripts/enquiry';
 import { createDatePicker, placeDialog, fmtShort, fmtLong, todayIso } from './datepicker';
 import { turnstileFor } from '../../scripts/turnstile';
+import { initAirportSuggest } from './airports';
 
 type Trip = 'round' | 'oneway' | 'multi';
 type Pax = { adults: number; children: number; infants: number };
@@ -24,6 +25,7 @@ export function initQuoteForms() {
     if (root.dataset.ready) return;
     root.dataset.ready = '1';
     init(root);
+    initAirportSuggest(root);
   });
 }
 
