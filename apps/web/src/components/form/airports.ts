@@ -6,43 +6,116 @@
  * Matching ignores accents and case: IATA code, city, airport name words and country. Exact code first, then
  * city / name starting with the text, then words starting with it, big airports before small ones.
  * The list is an ARIA combobox popup (arrows / Enter / Escape), shown in the top layer (popover) so it also works
- * inside the booking dialog; a pick writes "Airport name (IATA)" and the input keeps working as free text.
+ * inside the booking dialog; a pick writes "Airport name (IATA)" (or "London, all airports (LON)" for a city) and the
+ * input keeps working as free text.
+ * Layout follows the client's reference (travelbusinessclass.com): a city with several airports comes first with its
+ * metro code, its airports indented under it; other matches are single airport rows.
  */
 type Row = [string, string, string, string, number];
 interface Entry { row: Row; code: string; city: string; name: string; words: string[]; country: string }
+/** One line of the list: a whole city (all its airports) or one airport, which may sit indented under its city. */
+interface Item { kind: 'city' | 'airport'; code: string; title: string; sub: string; child?: boolean; value: string }
 
-const fold = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-let data: Promise<Entry[]> | null = null;
+const fold = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+// Cities with several airports, by their IATA metropolitan code (the data's own city names are too uneven to group on:
+// "Ferno (VA)" is Milan Malpensa, "Narita" is Tokyo). Searching the city or its code lists the city first, then its airports.
+const METROS: [code: string, city: string, country: string, airports: string[], aliases?: string[]][] = [
+  ['LON', 'London', 'United Kingdom', ['LHR', 'LGW', 'STN', 'LCY', 'LTN', 'SEN']],
+  ['NYC', 'New York', 'United States', ['JFK', 'EWR', 'LGA']],
+  ['PAR', 'Paris', 'France', ['CDG', 'ORY', 'BVA']],
+  ['MIL', 'Milan', 'Italy', ['MXP', 'LIN', 'BGY'], ['milano']],
+  ['ROM', 'Rome', 'Italy', ['FCO', 'CIA'], ['roma']],
+  ['TYO', 'Tokyo', 'Japan', ['HND', 'NRT']],
+  ['OSA', 'Osaka', 'Japan', ['KIX', 'ITM']],
+  ['SEL', 'Seoul', 'South Korea', ['ICN', 'GMP']],
+  ['BJS', 'Beijing', 'China', ['PEK', 'PKX']],
+  ['SHA', 'Shanghai', 'China', ['PVG', 'SHA']],
+  ['CHI', 'Chicago', 'United States', ['ORD', 'MDW']],
+  ['WAS', 'Washington', 'United States', ['IAD', 'DCA', 'BWI']],
+  ['HOU', 'Houston', 'United States', ['IAH', 'HOU']],
+  ['DFW', 'Dallas', 'United States', ['DFW', 'DAL']],
+  ['ORL', 'Orlando', 'United States', ['MCO', 'SFB']],
+  ['YTO', 'Toronto', 'Canada', ['YYZ', 'YTZ']],
+  ['MOW', 'Moscow', 'Russia', ['SVO', 'DME', 'VKO']],
+  ['STO', 'Stockholm', 'Sweden', ['ARN', 'BMA']],
+  ['IST', 'Istanbul', 'Turkey', ['IST', 'SAW']],
+  ['DXB', 'Dubai', 'United Arab Emirates', ['DXB', 'DWC']],
+  ['BKK', 'Bangkok', 'Thailand', ['BKK', 'DMK']],
+  ['JKT', 'Jakarta', 'Indonesia', ['CGK', 'HLP']],
+  ['BUE', 'Buenos Aires', 'Argentina', ['EZE', 'AEP']],
+  ['RIO', 'Rio de Janeiro', 'Brazil', ['GIG', 'SDU']],
+  ['SAO', 'São Paulo', 'Brazil', ['GRU', 'CGH', 'VCP']],
+  ['TCI', 'Tenerife', 'Spain', ['TFS', 'TFN']],
+  ['REK', 'Reykjavik', 'Iceland', ['KEF', 'RKV']],
+];
+
+let data: Promise<Map<string, Entry>> | null = null;
 const load = () =>
   (data ??= fetch('/data/airports.json')
     .then((r) => r.json() as Promise<Row[]>)
-    .then((rows) => rows.map((row) => {
+    .then((rows) => new Map(rows.map((row) => {
       const name = fold(row[2]);
-      return { row, code: row[0].toLowerCase(), city: fold(row[1]), name, words: name.split(/[\s\-/().]+/).filter(Boolean), country: fold(row[3]) };
-    }))
-    .catch(() => { data = null; return []; }));
+      return [row[0], { row, code: row[0].toLowerCase(), city: fold(row[1]), name, words: name.split(/[\s\-/().]+/).filter(Boolean), country: fold(row[3]) }];
+    })))
+    .catch(() => { data = null; return new Map(); }));
 
-function search(list: Entry[], q: string, max = 8): Row[] {
-  const t = fold(q.trim());
-  if (t.length < 2) return [];
-  const scored: [number, Entry][] = [];
-  for (const e of list) {
-    let s = 0;
-    if (e.code === t) s = 100;
-    else if (e.city.startsWith(t)) s = 60;
-    else if (e.name.startsWith(t)) s = 55;
-    else if (e.words.some((w) => w.startsWith(t))) s = 40;
-    else if (t.length >= 3 && e.code.startsWith(t)) s = 35;
-    else if (e.country.startsWith(t)) s = 15;
-    else if (t.length >= 4 && (e.name.includes(t) || e.city.includes(t))) s = 10;
-    if (s) scored.push([s + e.row[4] * 8, e]);
-  }
-  scored.sort((a, b) => b[0] - a[0]);
-  return scored.slice(0, max).map(([, e]) => e.row);
+function scoreAirport(e: Entry, t: string) {
+  if (e.code === t) return 100;
+  if (e.city.startsWith(t)) return 60;
+  if (e.name.startsWith(t)) return 55;
+  if (e.words.some((w) => w.startsWith(t))) return 40;
+  if (t.length >= 3 && e.code.startsWith(t)) return 35;
+  if (e.country.startsWith(t)) return 15;
+  if (t.length >= 4 && (e.name.includes(t) || e.city.includes(t))) return 10;
+  return 0;
+}
+function scoreMetro([code, city, , , aliases = []]: (typeof METROS)[number], t: string) {
+  if (code.toLowerCase() === t) return 101;   // just above an airport with the same code (IST, DXB...)
+  const names = [fold(city), ...aliases];
+  if (names.some((n) => n.startsWith(t))) return 70;   // a big city outranks a lone airport whose town matches
+  if (names.some((n) => n.split(/\s+/).some((w) => w.startsWith(t)))) return 50;
+  return 0;
 }
 
-const label = (r: Row) => `${r[2].replace(/\s+(International\s+)?Airport$/i, '')} (${r[0]})`;
+const cityOf = (r: Row) => r[1].split(/[(,]/)[0].trim();
+const airportItem = (r: Row, child = false): Item =>
+  ({ kind: 'airport', code: r[0], title: r[2], sub: child ? r[3] : `${cityOf(r)}, ${r[3]}`, child, value: `${r[2].replace(/\s+(International\s+)?Airport$/i, '')} (${r[0]})` });
+
+function search(all: Map<string, Entry>, q: string, max = 9): Item[] {
+  const t = fold(q.trim());
+  if (t.length < 2) return [];
+  // each result is a block: a city with its airports, or a single airport; blocks are ranked by their best score
+  const blocks: { score: number; items: Item[] }[] = [];
+  const used = new Set<string>();
+  for (const m of METROS) {
+    const s = scoreMetro(m, t);
+    if (!s) continue;
+    const members = m[3].map((c) => all.get(c)).filter((e): e is Entry => !!e);
+    if (!members.length) continue;
+    members.forEach((e) => used.add(e.row[0]));
+    blocks.push({ score: s, items: [
+      { kind: 'city', code: m[0], title: m[1], sub: m[2], value: `${m[1]}, all airports (${m[0]})` },
+      ...members.map((e) => airportItem(e.row, true)),
+    ] });
+  }
+  for (const e of all.values()) {
+    if (used.has(e.row[0])) continue;
+    const s = scoreAirport(e, t);
+    if (s) blocks.push({ score: s + e.row[4] * 8, items: [airportItem(e.row)] });
+  }
+  blocks.sort((a, b) => b.score - a.score);
+  const out: Item[] = [];
+  for (const b of blocks) { if (out.length >= max) break; out.push(...b.items.slice(0, max - out.length)); }
+  return out;
+}
+
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+const ICON = {
+  city: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 10v7h3v-7H4Zm6 0v7h3v-7h-3ZM2 22h19v-3H2v3Zm14-12v7h3v-7h-3Zm-4.5-9L2 6v2h19V6l-9.5-5Z"/></svg>',
+  airport: '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z"/></svg>',
+  chev: '<svg viewBox="0 0 8 12" width="7" height="11" aria-hidden="true"><path d="M1.5 1 6.5 6l-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+};
 
 let uid = 0;
 export function initAirportSuggest(root: HTMLElement) {
@@ -60,7 +133,7 @@ export function initAirportSuggest(root: HTMLElement) {
   (root.closest('dialog') ?? document.body).append(list);
 
   let input: HTMLInputElement | null = null;
-  let rows: Row[] = [];
+  let rows: Item[] = [];
   let active = -1;
   let seq = 0;
 
@@ -78,15 +151,15 @@ export function initAirportSuggest(root: HTMLElement) {
     if (on) place();
   };
   const paint = () => {
-    list.innerHTML = rows.map((r, i) => `<li role="option" id="${list.id}-${i}" aria-selected="${i === active}" data-i="${i}">
-      <span class="ap-code">${r[0]}</span><span class="ap-txt"><span class="ap-name">${esc(r[2])}</span><span class="ap-sub">${esc(r[1])}, ${esc(r[3])}</span></span></li>`).join('');
+    list.innerHTML = rows.map((r, i) => `<li role="option" id="${list.id}-${i}" aria-selected="${i === active}" data-i="${i}" class="ap-row ap-row--${r.kind}${r.child ? ' ap-row--child' : ''}">
+      ${r.child ? '<span class="ap-branch" aria-hidden="true">↳</span>' : ''}<span class="ap-ic">${ICON[r.kind]}</span><span class="ap-txt"><span class="ap-name">${esc(r.title)}</span><span class="ap-sub">${esc(r.sub)}</span></span><span class="ap-code">${r.code}</span>${ICON.chev}</li>`).join('');
     if (active >= 0) input?.setAttribute('aria-activedescendant', `${list.id}-${active}`); else input?.removeAttribute('aria-activedescendant');
     list.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' });
   };
   const pick = (i: number) => {
     const r = rows[i];
     if (!r || !input) return;
-    input.value = label(r);
+    input.value = r.value;
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.dispatchEvent(new Event('change', { bubbles: true }));
     rows = []; show(false);

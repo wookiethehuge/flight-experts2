@@ -104,18 +104,24 @@ html { scroll-behavior: smooth; }
 
 /* ---- airport autosuggest (components/form/airports.ts): a light card under the From / To field ---- */
 .ap-list {
-  position: fixed; inset: auto; z-index: 70; margin: 0; padding: 6px; max-height: min(22rem, 50vh); overflow-y: auto;
-  border: 0; border-radius: var(--r-7); background: var(--c-sky); color: var(--c-navy);
+  position: fixed; inset: auto; z-index: 70; margin: 0; padding: 6px; max-height: min(26rem, 60vh); overflow-y: auto;
+  border: 0; border-radius: var(--r-7); background: var(--c-white); color: var(--c-navy);
   box-shadow: 0 18px 40px -18px rgba(15, 21, 36, 0.55); list-style: none; overscroll-behavior: contain;
 }
 .ap-list--page { position: absolute; }   /* page coordinates: rides along with the scroll */
 .ap-list[hidden] { display: none; }
-.ap-list li { display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.625rem; border-radius: var(--r-3); cursor: pointer; }
-.ap-list li[aria-selected='true'], .ap-list li:hover { background: color-mix(in srgb, var(--c-navy) 8%, transparent); }
-.ap-code { flex: none; min-width: 2.75rem; font-weight: var(--fw-semibold); font-size: var(--fs-14); letter-spacing: 0.04em; }
-.ap-txt { display: grid; min-width: 0; }
-.ap-name { font-size: var(--fs-14); font-weight: var(--fw-medium); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ap-sub { font-size: var(--fs-12); opacity: 0.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* rows (client reference): city with its metro code, its airports indented under it with a branch arrow */
+.ap-row { display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.75rem; border-radius: var(--r-3); cursor: pointer; }
+.ap-row[aria-selected='true'], .ap-row:hover { background: color-mix(in srgb, var(--c-sky) 55%, transparent); }
+.ap-row--child { padding-left: 0.5rem; }
+.ap-branch { flex: none; width: 1rem; color: color-mix(in srgb, var(--c-navy) 45%, transparent); font-size: var(--fs-14); }
+.ap-ic { flex: none; display: grid; place-items: center; width: 1.875rem; height: 1.875rem; color: var(--c-navy); }
+.ap-row--airport .ap-ic { border-radius: 50%; background: color-mix(in srgb, var(--c-navy) 7%, transparent); }
+.ap-txt { flex: 1; display: grid; min-width: 0; }
+.ap-name { font-size: var(--fs-14); font-weight: var(--fw-semibold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ap-sub { font-size: var(--fs-12); opacity: 0.65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ap-code { flex: none; font-size: var(--fs-14); font-weight: var(--fw-semibold); letter-spacing: 0.04em; color: var(--c-burgundy); }
+.ap-row > svg { flex: none; color: var(--c-navy); opacity: 0.6; }
 @media (prefers-reduced-motion: no-preference) { .ap-list:not([hidden]) { animation: ap-in 220ms var(--motion-ease-out); } }
 @keyframes ap-in { from { opacity: 0; translate: 0 -4px; } }
 
