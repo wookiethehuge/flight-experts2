@@ -244,12 +244,12 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     list-style: none;
     font-size: var(--fs-12);
     font-weight: var(--fw-light);
-    letter-spacing: 0.24px;
     line-height: 1.35;
     color: var(--c-cream);
     white-space: nowrap;
+    letter-spacing: -0.02em;                                  /* client: -2 (Figma %) */
   }
-  .hero__steps b { font-weight: var(--fw-semibold); letter-spacing: 0.32px; }
+  .hero__steps b { font-weight: var(--fw-semibold); letter-spacing: -0.02em; }
 
   @media (min-width: 30rem) {
     .hero__form { margin-inline: 0; }
@@ -283,7 +283,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     }
     .hero__inner {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) clamp(25rem, calc(25rem + 74 * (100vw - 64rem) / 416), 29.625rem);  /* form 474 at x 896 */
+      grid-template-columns: minmax(0, 1fr) clamp(24rem, calc(24rem + 40 * (100vw - 64rem) / 416), 26.5rem);  /* compact form: 424 (client; was 474) */
       column-gap: 2rem;
       align-items: start;
       padding-top: 10.25rem;                                  /* steps y 164 */

@@ -650,4 +650,44 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     .qf__chev :global(svg) { width: 11px; }
     .qf__pill--cabin .qf__chev { right: 23px; }
   }
+
+  /* ---------------------------------------------------------------- desktop hero: compact search box (client)
+     narrower, 44px fields and tighter spacing, so the box sits snug beside the headline column (HomeHero narrows
+     its form column to match). The mobile form and the booking modal keep the designed sizes. */
+  @media (min-width: 64rem) {
+    .qf--hero {
+      --qf-w: 26.5rem;              /* 424 (was 474) */
+      --qf-pt: 1.125rem;
+      --qf-pl: 1.25rem;
+      --qf-pr: 1.25rem;
+      --qf-pb: 1.25rem;
+      --qf-gap-date: 1.125rem;
+      --qf-gap-compare: 0.875rem;
+      --qf-btn-in: 1.25rem;
+      --qf-pill-in: 1.25rem;
+      --qf-or-l: 1.5rem;
+      --qf-or-r: 1.5rem;
+      --qf-or-mt: 1.125rem;
+      --qf-or-pill: 1.125rem;
+      --qf-c-gap: 1.125rem;
+      --qf-c-btn: 1.125rem;
+      --qf-c-or: 1.25rem;
+      --qf-c-or-pill: 1.25rem;
+      --qf-c-pb: 1.25rem;
+    }
+    .qf--hero .qf__pills { gap: 10px; }
+    .qf--hero .qf__route { margin-top: 10px; }
+    .qf--hero .qf__pill,
+    .qf--hero .qf__row,
+    .qf--hero .qf__row + .qf__row,
+    .qf--hero .qf__dates,
+    .qf--hero .qf__btn { height: 44px; }
+  }
+  @media (min-width: 80rem) {
+    /* side-by-side pills in the narrower box: more of the width to the longer cabin label, so it clears its chevron */
+    .qf--hero .qf__pills { grid-template-columns: 170fr 236fr; }
+    .qf--hero .qf__pill--trip { padding: 0 40px 0 20px; }
+    .qf--hero .qf__pill--cabin { padding: 0 30px 0 0; }
+    .qf--hero .qf__pill--cabin .qf__chev { right: 16px; }
+  }
 </style>

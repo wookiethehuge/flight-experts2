@@ -3,8 +3,8 @@
  * "24/7 PHONE DEALS / (888) 855-2389" pill (Figma: 223 x 52, radius 26, 1px #c7e8ff).
  *   outline: transparent with a sky border and cream text (dark header, menu panel)
  *   filled : sky fill with navy text (light header)
- * A button: it opens the "Phone numbers Drop down" (Figma 223 wide frame, panel right-aligned under the pill): a sky
- * card listing the phone-deals line and the customer-service line as tel: links. The chevron flips while open.
+ * A button: it opens the "Phone numbers Drop down" (Figma 223 wide frame, panel right-aligned under the pill): a
+ * see-through frosted card (client: no solid sky fill) listing the phone-deals line and the customer-service line as tel: links. The chevron flips while open.
  * Closes on outside click, Escape (focus returns to the pill) or when focus leaves.
  * Without JS the pill falls back to calling the main number (the panel stays in the DOM, hidden).
  */
@@ -24,7 +24,7 @@ const lines = [{ label, ...phone }, ...(support ? [{ label: supportLabel, ...sup
 const uid = `pill-${Math.random().toString(36).slice(2, 8)}`;
 const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
 ---
-<div class:list={['pill-wrap', cls]} data-phone-pill>
+<div class:list={['pill-wrap', `pill-wrap--${variant}`, cls]} data-phone-pill>
   <a class:list={['pill', `pill--${variant}`]} href={phone.href} role="button" aria-expanded="false" aria-controls={uid}
      aria-label={`${spoken(label)}, ${phone.display}. Show phone numbers`} data-pill-toggle>
     <span class="pill__text">
@@ -91,7 +91,11 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
     margin: 0;
     padding: 1rem 1rem 1.0625rem;
     border-radius: var(--r-7);
-    background: var(--c-sky);
+    /* frosted glass instead of the solid sky card (client); tint + text colour follow the header variant below */
+    background: rgba(15, 21, 36, 0.38);
+    border: 1px solid color-mix(in srgb, var(--c-sky) 45%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
     box-shadow: 0 10px 28px -14px rgba(15, 21, 36, 0.45);
     list-style: none;
     text-align: center;
@@ -110,9 +114,20 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
     clip-path: inset(0 0 0 0 round var(--r-7));
     transition: clip-path 520ms var(--motion-ease-out), translate 520ms var(--motion-ease-out), opacity 220ms ease, visibility 0s;
   }
-  .pill__menu a { display: grid; justify-items: center; color: var(--c-navy); text-decoration: none; }
+  .pill__menu a { display: grid; justify-items: center; color: var(--c-cream); text-decoration: none; }
+  .pill__menu .pill__label { color: var(--c-sky); }
+  .pill__menu a:focus-visible { outline-color: var(--c-sky); }
+  /* light header: pale glass, navy text */
+  .pill-wrap--filled .pill__menu { background: rgba(247, 246, 242, 0.55); border-color: color-mix(in srgb, var(--c-navy) 14%, transparent); }
+  .pill-wrap--filled .pill__menu a, .pill-wrap--filled .pill__menu .pill__label { color: var(--c-navy); }
+  .pill-wrap--filled .pill__menu a:focus-visible { outline-color: var(--c-navy); }
+  /* no backdrop blur support: fall back to a near-solid tint so the numbers stay readable */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .pill__menu { background: rgba(15, 21, 36, 0.92); }
+    .pill-wrap--filled .pill__menu { background: rgba(247, 246, 242, 0.96); }
+  }
   .pill__menu a:hover .pill__num { text-decoration: underline; text-underline-offset: 2px; }
-  .pill__menu a:focus-visible { outline-color: var(--c-navy); outline-offset: 3px; border-radius: 2px; }
+  .pill__menu a:focus-visible { outline-offset: 3px; border-radius: 2px; }
   .pill__menu .pill__num { margin-top: 2px; }
   @media (prefers-reduced-motion: reduce) { .pill__menu, .pill__menu[data-open] { transition: none; translate: none; } }
 </style>
