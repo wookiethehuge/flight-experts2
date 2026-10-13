@@ -99,10 +99,10 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
             <li>
               {a.url ? (
                 <a href={a.url} rel="noopener" target="_blank">
-                  <AccredLogo media={a.logo} alt={a.logo.alt || a.name} class={`hero__logo${/fdacs|seal/i.test(a.name) ? ' hero__logo--seal' : ''}`} />
+                  <AccredLogo media={a.logo} alt={a.logo.alt || a.name} class={`hero__logo${/fdacs|seal/i.test(`${a.name} ${a.logo?.alt ?? ''}`) ? ' hero__logo--seal' : ''}`} />
                 </a>
               ) : (
-                <AccredLogo media={a.logo} alt={a.logo.alt || a.name} class={`hero__logo${/fdacs|seal/i.test(a.name) ? ' hero__logo--seal' : ''}`} />
+                <AccredLogo media={a.logo} alt={a.logo.alt || a.name} class={`hero__logo${/fdacs|seal/i.test(`${a.name} ${a.logo?.alt ?? ''}`) ? ' hero__logo--seal' : ''}`} />
               )}
             </li>
           ))}

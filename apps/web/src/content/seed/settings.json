@@ -55,10 +55,10 @@
       }
     },
     {
-      "name": "USDA",
+      "name": "U.S. Department of State",
       "logo": {
-        "file": "accreditation-usda.svg",
-        "alt": "USDA, United States Department of Agriculture"
+        "file": "accreditation-state-dept-seal.jpg",
+        "alt": "Seal of the U.S. Department of State"
       }
     }
   ],
