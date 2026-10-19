@@ -204,10 +204,14 @@ const mail = `mailto:${settings.email}`;
     gap: 1.5rem;
     margin-top: clamp(0.4625rem, calc(0.4625rem + 6.9 * (100vw - 24.375rem) / 1050), 0.894rem);   /* 7.4 -> 14.3 */
   }
-  .sf__pay { flex: none; width: clamp(5.875rem, calc(5.875rem + 106 * (100vw - 24.375rem) / 1050), 12.5rem); }
+  .sf__accept { --pay-w: clamp(5.875rem, calc(5.875rem + 106 * (100vw - 24.375rem) / 1050), 12.5rem); }
+  .sf__pay { flex: none; width: var(--pay-w); }
   .sf__pay :global(img) { display: block; width: 100%; height: auto; }
   .sf__social { display: flex; align-items: center; gap: 1.4rem; margin: 3px 0.375rem 0 0; }
-  .sf__social a, .sf__social span { display: grid; place-items: center; min-width: 44px; min-height: 44px; margin: -11px; }
+  /* the icon box is the glyph itself (so the row's edges are the icons' edges); the 44px tap area is an invisible
+     overlay that does not take space */
+  .sf__social a, .sf__social span { position: relative; display: grid; place-items: center; }
+  .sf__social a::after { content: ''; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; translate: -50% -50%; }
   .sf__social :global(svg) { height: clamp(1.3125rem, calc(1.3125rem + 14 * (100vw - 24.375rem) / 1050), 2.1875rem); width: auto; } /* 21 -> 35 */
 
   .sf__copy {
@@ -244,8 +248,9 @@ const mail = `mailto:${settings.email}`;
     .sf__cols { grid-template-columns: 1fr 1fr 12.5rem; margin-top: 82px; }
     .sf__col--accept { grid-column: auto; }
     .sf__col--links .sf__list { color: var(--c-cream); }
-    .sf__accept { flex-direction: column; gap: 39px; }
-    .sf__social { align-self: stretch; justify-content: space-between; margin: 0; }
+    .sf__accept { flex-direction: column; gap: 32.5px; }   /* icons 32.5 under the cards, as before */
+    /* exactly the card logos' width: first icon starts where the cards start, last ends where they end (client) */
+    .sf__social { align-self: flex-start; width: var(--pay-w); justify-content: space-between; margin: 0; }
     .sf__copy { margin-top: 56.4px; line-height: 24.3px; }
     .sf__legal { margin-top: 32.7px; }
   }
