@@ -55,10 +55,10 @@
       }
     },
     {
-      "name": "U.S. Department of State",
+      "name": "FDACS",
       "logo": {
-        "file": "accreditation-state-dept-seal.jpg",
-        "alt": "Seal of the U.S. Department of State"
+        "file": "accreditation-fdacs-seal.png",
+        "alt": "Seal of the Florida Department of Agriculture and Consumer Services"
       }
     }
   ],
