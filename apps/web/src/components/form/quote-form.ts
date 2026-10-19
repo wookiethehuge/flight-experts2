@@ -40,6 +40,7 @@ function init(root: HTMLElement) {
   let trip: Trip = 'round';
   let step: 'trip' | 'contact' = 'trip';
   let attempted = false;
+  let contactTried = false;   // contact fields are only flagged after "Get your Booking" was pressed
   let busy = false;
   let pax: Pax = { adults: 1, children: 0, infants: 0 };
   let cabin = 'business';
@@ -177,6 +178,7 @@ function init(root: HTMLElement) {
     if (t === 'multi' && !mlegs().length) addLeg(false);
     if (t !== 'round') setErr(ret1, null);
     if (attempted) validate(tripControls());
+    maybeContact();
   }
 
   // ------------------------------------------------------------------ dates
@@ -188,6 +190,7 @@ function init(root: HTMLElement) {
     // visible short date stays in the accessible name (label in name); the full date follows for screen readers
     q('[data-date-val]', b).innerHTML = iso ? `${fmtShort(iso)}<span class="sr-only"> (${fmtLong(iso)})</span>` : placeholderHtml;
     if (attempted || b.getAttribute('aria-invalid')) check(b);
+    maybeContact();
   }
   const departBtns = () => [dep1, ...mlegs().map((l) => q<HTMLButtonElement>('[data-date-btn]', l))];
   function openPicker(btn: HTMLButtonElement) {
@@ -346,7 +349,12 @@ function init(root: HTMLElement) {
   });
   form.addEventListener('focusout', (e) => {
     const el = e.target as HTMLElement;
-    if (attempted && el instanceof HTMLInputElement && el.dataset.field && el.type !== 'checkbox' && (step === 'contact' || !contactControls().includes(el))) check(el);
+    if (attempted && el instanceof HTMLInputElement && el.dataset.field && el.type !== 'checkbox' && (contactTried || !contactControls().includes(el))) check(el);
+  });
+  // route picked or typed (change = airport chosen from the list, or the field left): the trip may now be complete
+  form.addEventListener('change', (e) => {
+    const f = (e.target as HTMLElement).dataset.field;
+    if (f === 'from' || f === 'to') maybeContact();
   });
 
   // ------------------------------------------------------------------ steps + submit
@@ -361,14 +369,21 @@ function init(root: HTMLElement) {
   });
   const ensureTurnstile = () => ts?.ensure();
 
-  function goContact() {
+  function goContact(focus = true) {
     step = 'contact';
     root.dataset.step = 'contact';
     footBtn.textContent = footBtn.dataset.label = 'Get your Booking';
-    field(root, 'name').focus();
+    if (focus) field(root, 'name').focus();
     say('Almost done. Let us know where we can send your flight options.');
     emit('quote:step', { step });
     ensureTurnstile();
+  }
+
+  /** Client: once route + dates are complete, the contact fields open in the same flow (no extra button press, no
+   *  errors shown), so the visitor fills them in before "Get your Booking". Silent check: nothing is flagged here. */
+  function maybeContact() {
+    if (step !== 'trip' || busy) return;
+    if (tripControls().every((el) => !message(el))) goContact(false);
   }
 
   /** Server field error path (enquiry contract, e.g. `legs.1.date`, `returnDate`, `email`) -> the control showing it. */
@@ -405,6 +420,7 @@ function init(root: HTMLElement) {
       goContact();
       return;
     }
+    contactTried = true;
     const bad = [...tripBad, ...validate(contactControls())];
     if (bad.length) { bad[0].focus(); say(`Please check ${bad.length === 1 ? '1 field' : `${bad.length} fields`}.`); return; }
     if (ts && !ts.token()) {
