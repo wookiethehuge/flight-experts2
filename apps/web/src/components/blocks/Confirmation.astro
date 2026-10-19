@@ -6,7 +6,10 @@
  *   heading     Inline  "Request Confirmed" (page H1, IBM Plex Serif medium)
  *   subheading  string  bold line under the heading
  *   body        string  short paragraph
- *   button      Link    { label: "Return to Homepage", href: "/" } (burgundy primary button)
+ *   button      Link    { label: "Return to Homepage", href: "/" } (outline button, under the call button)
+ *
+ * Above it, always: "Phone Exclusive Deals" call button (client), burgundy primary, dialling Site Settings > phone,
+ * so the strongest next step after sending a request is to call.
  *
  * Values: ThankYou (1440: centred, H1 80/104, button 379 x 50) and ThankYouMobile (390: left aligned, H1 40/36 on two
  * lines, full-width button).
@@ -14,15 +17,25 @@
 import type { ConfirmationBlock, SiteSettings } from '../../lib/types';
 import { inline } from '../../lib/inline';
 import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
 
 interface Props { block: ConfirmationBlock; settings: SiteSettings; page: string; index: number }
-const { block } = Astro.props;
+const { block, settings } = Astro.props;
 ---
 <section class="confirm container on-light" aria-labelledby={`confirm-h-${Astro.props.index}`}>
   <h1 id={`confirm-h-${Astro.props.index}`} class="confirm__title" set:html={inline(block.heading)} />
   {block.subheading && <p class="confirm__sub">{block.subheading}</p>}
   {block.body && <p class="confirm__body">{block.body}</p>}
-  {block.button?.href && <Button href={block.button.href} variant="primary" width="23.6875rem" class="confirm__btn">{block.button.label}</Button>}
+  <div class="confirm__actions">
+    {settings.phone?.href && (
+      <Button href={settings.phone.href} variant="primary" width="23.6875rem" class="confirm__btn confirm__call" aria-label={`Phone exclusive deals: call ${settings.phone.display}`}>
+        <Icon name="phone" width={16} height={16} class="confirm__call-icon" />
+        <span>Phone Exclusive Deals</span>
+        <span class="confirm__call-num">{settings.phone.display}</span>
+      </Button>
+    )}
+    {block.button?.href && <Button href={block.button.href} variant="outline" width="23.6875rem" class="confirm__btn">{block.button.label}</Button>}
+  </div>
 </section>
 
 <style>
@@ -53,11 +66,18 @@ const { block } = Astro.props;
     font-size: var(--fs-body);                                                                    /* 14 -> 16 */
     line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);          /* 20 -> 24 */
   }
-  .confirm :global(.confirm__btn) {
-    display: flex;
-    width: 100%;
+  .confirm__actions {
+    display: grid;
+    gap: 0.75rem;
     margin-top: clamp(1.8125rem, calc(1.8125rem + 15 * (100vw - 24.375rem) / 1050), 2.75rem);     /* 29 -> 44 */
   }
+  .confirm :global(.confirm__btn) { display: flex; width: 100%; }
+  .confirm :global(.confirm__call) { gap: 0.5rem; }
+  .confirm :global(.confirm__call-icon) { flex: none; }
+  .confirm :global(.confirm__call-num) { font-weight: var(--fw-regular); opacity: 0.9; }
+  .confirm :global(.confirm__call-num)::before { content: '·'; margin-right: 0.5rem; }
+  /* phones: label + icon only (the number does not fit on one line; the button still dials it) */
+  @media (max-width: 29.9988rem) { .confirm :global(.confirm__call-num) { display: none; } }
 
   @media (min-width: 48rem) {
     .confirm { text-align: center; }
