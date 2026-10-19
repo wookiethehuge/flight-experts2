@@ -1,5 +1,10 @@
 ---
-/** Spam trap: hidden from people and assistive tech; bots that fill it are rejected server-side. */
+/**
+ * Spam trap: hidden from people and assistive tech; bots that fill it are rejected server-side.
+ * Name and label must not look like anything a browser or password manager autofills: it used to be
+ * "Company website" / company_website, and Chrome autofill (which ignores autocomplete="off") filled it with the
+ * visitor's saved company site, so real people were rejected as bots. Password managers are told to skip it too.
+ */
 ---
-<div class="hp" aria-hidden="true"><label>Company website<input type="text" name="company_website" tabindex="-1" autocomplete="off" /></label></div>
+<div class="hp" aria-hidden="true"><label>Leave this empty<input type="text" name="fe_trap_x" tabindex="-1" autocomplete="off" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other" /></label></div>
 <style>.hp { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }</style>

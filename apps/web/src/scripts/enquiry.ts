@@ -3,7 +3,7 @@
  *   import { submitEnquiry, startTimer } from '../../scripts/enquiry';
  *   const t0 = startTimer(); ... const res = await submitEnquiry(form, payload, t0);
  * The form element must carry data-endpoint (set from FORMS_ENDPOINT at build) and contain the honeypot input
- * <input name="company_website" ...> rendered by <Honeypot/>.
+ * <input name="fe_trap_x" ...> rendered by <Honeypot/>.
  */
 import type { EnquiryPayload } from '../lib/forms';
 
@@ -13,7 +13,7 @@ export type SubmitResult = { ok: true } | { ok: false; message: string; fieldErr
 
 export async function submitEnquiry(form: HTMLFormElement, data: Omit<EnquiryPayload, 'pageUrl' | 'hp' | 'elapsedMs'>, t0: number): Promise<SubmitResult> {
   const endpoint = form.dataset.endpoint || '';
-  const hp = (form.querySelector<HTMLInputElement>('input[name="company_website"]')?.value ?? '').trim();
+  const hp = (form.querySelector<HTMLInputElement>('input[name="fe_trap_x"]')?.value ?? '').trim();
   const turnstileToken = form.querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]')?.value;
   const payload: EnquiryPayload = { ...data, pageUrl: location.href, hp, elapsedMs: Math.round(performance.now() - t0), turnstileToken } as EnquiryPayload;
   if (!endpoint) {
