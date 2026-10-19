@@ -38,3 +38,23 @@ export async function submitEnquiry(form: HTMLFormElement, data: Omit<EnquiryPay
 }
 
 export const THANK_YOU_URL = '/thank-you/';
+
+/**
+ * Phone / email exactly as browsers and password managers autofill them can hold look-alike characters the checks
+ * (and the CMS) reject: non-breaking hyphens and dashes (Apple Contacts saves 555-0132 with U+2011), full-width digits, "/" separators,
+ * zero-width marks. Rewrites tel / email inputs to plain characters when they change (autofill fires change) and
+ * right before the form's own submit handler. Call once per form, before adding the submit listener.
+ */
+export const cleanPhone = (v: string) =>
+  v.normalize('NFKC').replace(/[\u2010-\u2015\u2212\ufe58\ufe63\uff0d]/g, '-').replace(/[\u200b-\u200d\u2060\ufeff]/g, '')
+    .replace(/\//g, ' ').replace(/\s+/g, ' ').trim();
+export const cleanEmail = (v: string) => v.normalize('NFKC').replace(/[\s\u200b-\u200d\u2060\ufeff]/g, '');
+export function tidyContactFields(form: HTMLFormElement) {
+  const tidy = (el: Element | null) => {
+    if (!(el instanceof HTMLInputElement)) return;
+    const v = el.type === 'tel' ? cleanPhone(el.value) : el.type === 'email' ? cleanEmail(el.value) : el.value;
+    if (v !== el.value) el.value = v;
+  };
+  form.addEventListener('change', (e) => tidy(e.target as Element), true);
+  form.addEventListener('submit', () => form.querySelectorAll('input[type="tel"], input[type="email"]').forEach(tidy), true);
+}

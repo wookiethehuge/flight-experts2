@@ -100,7 +100,7 @@ const fields: F[] = [
 </section>
 
 <script>
-  import { submitEnquiry, startTimer, THANK_YOU_URL } from '../../scripts/enquiry';
+  import { submitEnquiry, startTimer, tidyContactFields, THANK_YOU_URL } from '../../scripts/enquiry';
   import { renderWhenNear, turnstileFor } from '../../scripts/turnstile';
 
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -190,6 +190,7 @@ const fields: F[] = [
       else if (attempted && CHECKED.includes(el.name)) setError(el.name, check(el.name));
     });
 
+    tidyContactFields(form);
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (form.getAttribute('aria-busy') === 'true') return;

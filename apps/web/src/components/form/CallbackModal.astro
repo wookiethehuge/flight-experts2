@@ -36,7 +36,7 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
 </dialog>
 
 <script>
-  import { submitEnquiry, startTimer } from '../../scripts/enquiry';
+  import { submitEnquiry, startTimer, tidyContactFields } from '../../scripts/enquiry';
   import { turnstileFor } from '../../scripts/turnstile';
 
   const dialog = document.querySelector<HTMLDialogElement>('[data-callback-modal]');
@@ -87,6 +87,7 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
     dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
     dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
 
+    tidyContactFields(form);
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (form.getAttribute('aria-busy') === 'true') return;

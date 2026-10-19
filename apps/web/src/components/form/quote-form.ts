@@ -3,7 +3,7 @@
  * validation (trip -> contact, in place) and submission through submitEnquiry. Vanilla, one instance per
  * [data-quote-form] root (hero + booking modal can coexist on a page).
  */
-import { submitEnquiry, startTimer, THANK_YOU_URL } from '../../scripts/enquiry';
+import { submitEnquiry, startTimer, tidyContactFields, THANK_YOU_URL } from '../../scripts/enquiry';
 import { createDatePicker, placeDialog, fmtShort, fmtLong, todayIso } from './datepicker';
 import { turnstileFor } from '../../scripts/turnstile';
 import { initAirportSuggest } from './airports';
@@ -409,6 +409,7 @@ function init(root: HTMLElement) {
     }
   }
 
+  tidyContactFields(form);   // autofilled phone / email -> plain characters before they are checked
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (busy) return;
