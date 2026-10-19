@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * One-off content update on the live CMS (flight-experts-cms.vercel.app):
- *   1. Thank-you page (slug thank-you): the Confirmation block's heading, subheading and body become the client's
- *      new copy ("Your Journey Starts Here" ...). The status line and the call prompt / button are in the site code.
+ *   1. Thank-you page (slug thank-you): the Confirmation block's subheading and body become the client's new copy
+ *      ("We've received your travel enquiry!" ...); the heading stays "Request Confirmed". The "Want better fares
+ *      faster?" lines and the call button are in the site code.
  *   2. Home page (slug home): hero subheading "uncompromised" -> "exceptional".
  * Only those fields change; every other block and field is sent back exactly as it was read.
  *
@@ -20,9 +21,9 @@ const CMS = (process.env.CMS_URL || 'https://flight-experts-cms.vercel.app').rep
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
 const CONFIRMATION = {
-  heading: 'Your Journey Starts Here',
-  subheading: 'Thank you for choosing Flight-Experts!',
-  body: 'One of our travel experts will personally review your request and reach out shortly with flight options tailored to your preferences.',
+  heading: 'Request Confirmed',
+  subheading: "We've received your travel enquiry!",
+  body: 'Our Flight Experts team will contact you shortly with personalised flight and hotel options.',
 };
 const HERO_FROM = 'uncompromised';
 const HERO_TO = 'exceptional';

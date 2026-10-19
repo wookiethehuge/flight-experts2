@@ -11,9 +11,9 @@
   "layout": [
     {
       "blockType": "confirmation",
-      "heading": "Your Journey Starts Here",
-      "subheading": "Thank you for choosing Flight-Experts!",
-      "body": "One of our travel experts will personally review your request and reach out shortly with flight options tailored to your preferences.",
+      "heading": "Request Confirmed",
+      "subheading": "We've received your travel enquiry!",
+      "body": "Our Flight Experts team will contact you shortly with personalised flight and hotel options.",
       "button": { "label": "Return to Homepage", "href": "/" }
     },
     {
