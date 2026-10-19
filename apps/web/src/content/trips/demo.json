@@ -1,7 +1,7 @@
 {
   "id": "demo",
   "currency": "USD",
-  "agent": { "name": "Nate Turner", "phone": "+1(305)851-8945", "email": "email@flight-experts.com" },
+  "agent": { "name": "Nate Turner", "phone": "+1(305)851-8945", "email": "email@flight-experts.com", "photo": "agent-support.jpg" },
   "travellers": { "adults": 1, "children": 0, "infants": 0 },
   "options": [
     {
