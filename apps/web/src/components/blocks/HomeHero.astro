@@ -259,8 +259,12 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   @media (min-width: 30rem) {
     .hero__form { margin-inline: 0; }
   }
-  /* tablet / iPad (stacked layout): the form sits centred under the left-aligned text, with the steps line over it */
+  /* tablet / iPad (stacked layout): everything on the centre line: headline, subheading, rating, logos, then the form
+     with the steps line over it */
   @media (min-width: 48rem) and (max-width: 63.9988rem) {
+    .hero__text { text-align: center; }
+    .hero__h1, .hero__sub { margin-inline: auto; }
+    .hero__rating--d, .hero__accr { justify-content: center; }
     .hero__form { margin-inline: auto; }
   }
 
