@@ -189,15 +189,15 @@ const sparks = [[7.7, 76, 0.4], [9.4, 76.9, 1.9], [50.8, 74.2, 0.8], [55.3, 74.3
   /* the photo's own box (1065 x 1476), height-fitted and centred like object-fit: cover in the 309:439 card */
   .hiw__g-stage { position: absolute; top: 0; left: 50%; height: 100%; aspect-ratio: 1065 / 1476; translate: -50% 0; }
   .hiw__g-sky { position: absolute; inset: 0; width: 100%; height: 100%; }
-  /* globe layer: the disc + a soft band above its rim (y 58.9% to the bottom); turns around the globe's centre,
-     which is below the card (49.28%, 115.04% of the card). The city lights sit in the same turning layer. */
-  .hiw__g-rot { position: absolute; inset: 0; transform-origin: 49.28% 115.04%; }
-  .hiw__g-earth { position: absolute; left: 0; top: 58.875%; width: 100%; height: 41.125%; }
+  /* globe layer: the disc + a soft band above its rim (with the flight-arc tails above it; extended past the photo edges); turns around the globe's centre,
+     which is below the card (49.67%, 106.88% of the card). The city lights sit in the same turning layer. */
+  .hiw__g-rot { position: absolute; inset: 0; transform-origin: 49.67% 106.88%; }
+  .hiw__g-earth { position: absolute; left: -15.023%; top: 48.713%; width: 130.047%; max-width: none; height: 58.74%; }   /* reaches past the photo (filled from the globe itself) so turning never shows an edge */
   .hiw__g-jet { position: absolute; left: 0; top: 18.767%; width: 95.775%; height: 22.222%; }
   .hiw__g-plane { position: absolute; inset: 0; width: 100%; height: 100%; }
   @media (prefers-reduced-motion: no-preference) {
-    /* turns a few degrees each way, slowly enough to read as the earth turning (more would show the unseen part) */
-    .hiw__g-rot { animation: hiw-turn 30s ease-in-out infinite alternate; }
+    /* turns 7deg each way around its centre: the cap visibly slides past, as the earth turning */
+    .hiw__g-rot { animation: hiw-turn 12s ease-in-out infinite alternate; }
     /* waiting below-left, off the card; flies up into place when the card is half in view (data-play), then floats */
     :global(html.js) .hiw__g .hiw__g-jet {
       opacity: 0; translate: -75% 70%; scale: 0.7;
@@ -210,7 +210,7 @@ const sparks = [[7.7, 76, 0.4], [9.4, 76.9, 1.9], [50.8, 74.2, 0.8], [55.3, 74.3
     .hiw__g-plane { animation: hiw-float 5s ease-in-out 2.2s infinite alternate; }
     .hiw__item:not(.is-visible) :is(.hiw__g-rot, .hiw__g-plane) { animation-play-state: paused; }
   }
-  @keyframes hiw-turn { from { rotate: -2.2deg; } to { rotate: 2.2deg; } }
+  @keyframes hiw-turn { from { rotate: -7deg; } to { rotate: 7deg; } }
   @keyframes hiw-float { from { translate: 0 0; } to { translate: 0.8% -4%; } }
   .hiw__card--image::after {
     content: '';
