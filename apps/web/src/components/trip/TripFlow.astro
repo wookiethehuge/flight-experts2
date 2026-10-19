@@ -17,7 +17,9 @@ import { Picture, getImage } from 'astro:assets';
 import Icon from '../ui/Icon.astro';
 import TripSelect from './TripSelect.astro';
 import { money, fmtDay, fmtTime, type TripOffer } from '../../lib/trip';
-import clouds from '../../assets/trip/hero-clouds.png';
+// hero art in two layers so it can move: the clouds (plane painted out) and the plane cut from the same photo
+import clouds from '../../assets/trip/hero-clouds-clear.png';
+import plane from '../../assets/trip/hero-plane.png';
 import icoTakeoff from '../../assets/trip/ico-takeoff.svg';
 import icoLanding from '../../assets/trip/ico-landing.svg';
 import icoTimeCircle from '../../assets/trip/ico-time-circle.svg';
@@ -49,7 +51,8 @@ const steps = [
   { id: 'protection', label: 'Ticket protection' },
   { id: 'payment', label: 'Payment' },
 ];
-const genders = ['Not Selected', 'Female', 'Male', 'Unspecified'];
+const genders = ['Male', 'Female', 'Unspecified'];
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const seats = ['No preference', 'Aisle', 'Window', 'Center'];
 const meals = ['No preference', 'Vegetarian', 'Kosher', 'Muslim', 'Hindu', 'Baby Meal', 'Child Meal', 'Fruit Platter', 'Gluten Free'];
 const countries = ['United States', 'Canada', 'United Kingdom', 'Ireland', 'Australia', 'Germany', 'France', 'Spain', 'Italy', 'Netherlands', 'Slovenia', 'Croatia', 'Mexico', 'Brazil', 'United Arab Emirates', 'Other'];
@@ -64,7 +67,19 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
      data-plans={JSON.stringify(trip.protection.plans)}>
   <!-- ============================================================ hero -->
   <section class="trip__hero" aria-labelledby="trip-title">
-    <Picture src={clouds} formats={['avif', 'webp']} widths={[800, 1440, 2180, 2880]} sizes="100vw" alt="" class="trip__clouds" loading="eager" fetchpriority="high" />
+    <div class="trip__art" aria-hidden="true">
+      <div class="trip__stage">
+        <Picture src={clouds} formats={['avif', 'webp']} widths={[800, 1440, 2180, 2880]} sizes="100vw" alt="" class="trip__sky" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="trip__fly">
+        <div class="trip__jet">
+          <span class="trip__trail"></span>
+          <span class="trip__plume"></span>
+          <Picture src={plane} formats={['avif', 'webp']} widths={[500, 986]} sizes="(min-width: 48rem) 36rem, 85vw" alt="" class="trip__plane" loading="eager" />
+        </div>
+      </div>
+      <span class="trip__mist"></span><span class="trip__mist"></span><span class="trip__mist"></span>
+    </div>
     <div class="trip__hero-in">
       <h1 class="trip__title" id="trip-title">Review details and <em>confirm your trip</em></h1>
       <ol class="trip__tabs" role="list" aria-label="Booking steps" data-tabs>
@@ -170,14 +185,25 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
                 <label class="trip__field"><input type="text" required autocomplete={n === 1 ? 'family-name' : 'off'} placeholder=" " data-f="last" /><span>Last name *</span><em class="trip__err" hidden></em></label>
               </div>
               <div class="trip__fields trip__fields--2">
-                <label class="trip__field trip__field--icon"><input type="text" required inputmode="numeric" autocomplete={n === 1 ? 'bday' : 'off'} placeholder=" " maxlength="10" data-f="dob" /><span>Date of birth: MM/DD/YYYY*</span>
-                  <button type="button" class="trip__cal" aria-label={`Choose passenger ${n}'s date of birth from a calendar`} data-cal>
-                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 16H5V10h14v10ZM5 8V6h14v2H5Z" /></svg>
-                  </button>
-                  {/* the browser's own date picker (year / month navigation, native wheels on phones); filled into the text field */}
-                  <input type="date" class="trip__cal-in" tabindex="-1" aria-hidden="true" min="1900-01-01" data-cal-in />
-                  <em class="trip__err" hidden></em></label>
-                <TripSelect label="Gender" options={genders} f="gender" />
+                {/* split month / day / year (client: the calendar made people pick the wrong year); validated as one date */}
+                <div class="trip__group" role="group" aria-labelledby={`dob-l-${n}`} data-dob>
+                  <p class="trip__group-l" id={`dob-l-${n}`}>Date of birth *</p>
+                  <div class="trip__dob">
+                    <label class="trip__field trip__field--sel"><select required autocomplete={n === 1 ? 'bday-month' : 'off'} data-f="dob-m">
+                        <option value="" selected disabled>Select</option>
+                        {months.map((m, i) => <option value={String(i + 1)}>{m}</option>)}
+                      </select><span>Month</span><Icon name="chevron-down" width={9} class="trip__chev" /></label>
+                    <label class="trip__field"><input type="text" required inputmode="numeric" autocomplete={n === 1 ? 'bday-day' : 'off'} placeholder=" " maxlength="2" data-f="dob-d" /><span>Day</span></label>
+                    <label class="trip__field"><input type="text" required inputmode="numeric" autocomplete={n === 1 ? 'bday-year' : 'off'} placeholder=" " maxlength="4" data-f="dob-y" /><span>Year</span></label>
+                  </div>
+                  <em class="trip__err" hidden></em>
+                </div>
+                <div class="trip__group" role="radiogroup" aria-labelledby={`gen-l-${n}`}>
+                  <p class="trip__group-l" id={`gen-l-${n}`}>Gender</p>
+                  <div class="trip__radios">
+                    {genders.map((g) => <label class="trip__opt"><input type="radio" name={`gender-${n}`} value={g} /><span>{g}</span></label>)}
+                  </div>
+                </div>
               </div>
               <h3 class="trip__h4"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="m12 17.3 6.2 3.7-1.6-7 5.4-4.7-7.1-.6L12 2 9.1 8.7 2 9.3l5.4 4.7-1.6 7z" /></svg>Extras</h3>
               <div class="trip__fields trip__fields--2">
@@ -363,7 +389,85 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
 
   /* ---------------------------------------------------------------- hero (364 tall at 1440) */
   .trip__hero { position: relative; overflow: hidden; min-height: 22.75rem; }
-  .trip__clouds :global(img), .trip__clouds { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 40%; }
+  /* hero art: the clouds fill the hero (a box with the photo's shape, placed like object-fit: cover at 60% 40%) and pan
+     slowly; mist drifts past; the plane is its own layer, kept in the content column between the title and the
+     "Prepared By" card as in Figma (on wide screens it no longer slides under the card). */
+  .trip__art { position: absolute; inset: 0; overflow: hidden; container-type: size; pointer-events: none; }
+  .trip__stage {
+    --ar: 4.307;   /* 4096 x 951 */
+    --sw: max(100cqw, 100cqh * var(--ar));
+    position: absolute;
+    width: var(--sw); height: calc(var(--sw) / var(--ar));
+    left: calc((100cqw - var(--sw)) * 0.6); top: calc((100cqh - var(--sw) / var(--ar)) * 0.4);
+  }
+  /* (Picture puts the class on the <img>; the <picture> around it is unpositioned, so these fill the stage / jet box) */
+  .trip__sky { position: absolute; inset: 0; width: 100%; height: 100%; animation: trip-sky 26s ease-in-out infinite alternate; will-change: transform; }
+  @keyframes trip-sky {
+    from { transform: scale(1.14) translate(5.5%, 1%); }
+    to { transform: scale(1.14) translate(-5.5%, -1%); }
+  }
+  /* the content column (same edges as .trip__hero-in) */
+  .trip__fly { position: absolute; inset: 0 calc(max(0px, (100cqw - var(--page-max)) / 2) + var(--gutter)); }
+  /* the gap between title and card: 576 wide at 1440 (Figma), smaller on narrower screens, never under the card */
+  .trip__jet {
+    position: absolute; top: 44%; translate: 0 -50%;
+    right: 20.5rem;   /* card (up to ~19rem with the e-mail) + breathing room */
+    left: clamp(12rem, calc(100% - 20.5rem - 36rem), 25rem);
+    max-width: 36rem; margin-inline: auto;
+    aspect-ratio: 986 / 402;
+    animation: trip-float 4.5s ease-in-out infinite alternate;
+  }
+  @media (max-width: 47.9988rem) {   /* stacked hero: the plane to the right, behind the title */
+    .trip__jet { left: auto; right: -8%; top: 30%; width: min(85%, 26rem); margin: 0; }
+  }
+  .trip__plane { position: absolute; inset: 0; width: 100%; height: 100%; }
+  @keyframes trip-float {
+    from { transform: translate(-1%, 4%) rotate(0.7deg); }
+    to { transform: translate(1.5%, -5%) rotate(-0.8deg); }
+  }
+  /* exhaust from the engine's rear (48.5%, 86.8% of the plane box), streaming back along the fuselage line */
+  .trip__trail, .trip__plume { position: absolute; left: 48.48%; top: 86.82%; }
+  .trip__trail {
+    width: 80%; height: max(3px, 3.2%);
+    translate: 0 -50%; rotate: 193.6deg; transform-origin: 0 50%;
+    /* white core, cool edges: white on white clouds needs a blue-grey rim and shadow to read */
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #fff 8%, rgba(255, 255, 255, 0.6) 55%, rgba(255, 255, 255, 0) 100%) center / 100% 45% no-repeat,
+      linear-gradient(90deg, rgba(170, 186, 210, 0) 0%, rgba(170, 186, 210, 0.75) 8%, rgba(170, 186, 210, 0.35) 55%, rgba(170, 186, 210, 0) 100%);
+    border-radius: 50%;
+    filter: blur(0.6px) drop-shadow(0 1.5px 2px rgba(50, 70, 105, 0.55));
+    -webkit-mask: repeating-linear-gradient(90deg, #000 0 14%, rgba(0, 0, 0, 0.45) 22%, #000 30%) 0 0 / 200% 100%;
+    mask: repeating-linear-gradient(90deg, #000 0 14%, rgba(0, 0, 0, 0.45) 22%, #000 30%) 0 0 / 200% 100%;
+    animation: trip-trail 1s linear infinite, trip-breathe 2.2s ease-in-out infinite alternate;
+  }
+  @keyframes trip-trail { to { -webkit-mask-position: 60% 0; mask-position: 60% 0; } }
+  @keyframes trip-breathe { from { opacity: 0.6; } to { opacity: 1; } }
+  /* heat haze right behind the engine: the clouds behind it blur and wobble */
+  .trip__plume {
+    width: 22%; height: 12%;
+    translate: -100% -50%; rotate: 13.6deg; transform-origin: 100% 50%;
+    -webkit-backdrop-filter: blur(2.5px) brightness(1.04);
+    backdrop-filter: blur(2.5px) brightness(1.04);
+    -webkit-mask: radial-gradient(farthest-side at 100% 50%, #000 20%, transparent);
+    mask: radial-gradient(farthest-side at 100% 50%, #000 20%, transparent);
+    animation: trip-haze 0.7s ease-in-out infinite alternate;
+  }
+  @keyframes trip-haze { from { transform: skewX(-4deg) scaleY(0.85); } to { transform: skewX(4deg) scaleY(1.1); } }
+  /* soft mist passing in front, right to left (the plane flies right) */
+  .trip__mist {
+    position: absolute; left: 0; top: 58%;
+    width: 55cqw; height: 45%;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+    animation: trip-mist 34s linear infinite;
+  }
+  .trip__mist:nth-of-type(2) { top: 70%; width: 40cqw; opacity: 0.9; animation-duration: 27s; animation-delay: -12s; }
+  .trip__mist:nth-of-type(3) { top: 45%; width: 35cqw; height: 30%; opacity: 0.7; animation-duration: 44s; animation-delay: -26s; }
+  @keyframes trip-mist { from { translate: 100cqw 0; } to { translate: -100% 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .trip__art * { animation: none !important; }
+    .trip__sky { transform: none; }
+    .trip__mist { display: none; }
+  }
   .trip__hero::after {   /* Figma gradient: cream wash on the left, behind the title */
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(86deg, rgba(247, 246, 242, 0.49) 23%, rgba(247, 246, 242, 0) 56%);
@@ -557,7 +661,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   }
   .trip__field { position: relative; display: block; min-width: 0; }
   .trip__field--wide { grid-column: 1 / -1; }
-  .trip__field > input, .trip__phone-in > input {
+  .trip__field > input, .trip__field > select, .trip__phone-in > input {
     width: 100%;
     height: var(--t-field);
     padding: 1.4rem 1.4rem 0.4rem;
@@ -568,7 +672,6 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
     font: inherit;
     font-size: var(--fs-14);
   }
-  .trip__field--icon > input { padding-right: 3rem; }
   .trip__field > span, .trip__phone-in > span {
     position: absolute;
     left: 1.4rem;
@@ -581,20 +684,25 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   }
   /* filled or focused: the label shrinks to the top line, as the Figma select labels (Gender / Seat preferences) */
   .trip__field > input:focus + span, .trip__field > input:not(:placeholder-shown) + span,
-  .trip__phone-in > input:focus + span, .trip__phone-in > input:not(:placeholder-shown) + span {
+  .trip__phone-in > input:focus + span, .trip__phone-in > input:not(:placeholder-shown) + span,
+  .trip__field > select + span {
     top: 0.65rem; translate: 0 0; font-size: var(--fs-12); opacity: 0.6;
   }
-  .trip__field > input:focus-visible, .trip__phone-in > input:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
-  .trip__field > input[aria-invalid='true'], .trip__phone-in > input[aria-invalid='true'] { border-color: var(--c-burgundy); box-shadow: inset 3px 0 0 var(--c-burgundy); }
-  .trip__cal {
-    position: absolute; right: 0.5rem; top: calc(var(--t-field) / 2); translate: 0 -50%;
-    display: grid; place-items: center; width: 2.5rem; height: 2.5rem;
-    border: 0; border-radius: 4px; background: transparent; color: var(--c-navy); cursor: pointer;
-  }
-  .trip__cal:hover { background: rgba(199, 232, 255, 0.6); }
-  .trip__cal:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 0; }
-  /* kept rendered (showPicker needs it) but invisible, under the button so the popup opens there */
-  .trip__cal-in { position: absolute; right: 0.5rem; top: calc(var(--t-field) - 0.5rem); width: 2.5rem; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none; }
+  .trip__field > input:focus-visible, .trip__field > select:focus-visible, .trip__phone-in > input:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
+  .trip__field > input[aria-invalid='true'], .trip__field > select[aria-invalid='true'], .trip__phone-in > input[aria-invalid='true'] { border-color: var(--c-burgundy); box-shadow: inset 3px 0 0 var(--c-burgundy); }
+  .trip__field > select { appearance: none; padding-right: 2.5rem; cursor: pointer; }
+  .trip__field--sel :global(.trip__chev) { position: absolute; right: 1rem; top: calc(var(--t-field) / 2); translate: 0 -50%; pointer-events: none; }
+  /* date of birth + gender: a small label over the row (as the client's example), fields at the usual height */
+  .trip__group { min-width: 0; }
+  .trip__group-l { margin-bottom: 0.4rem; font-size: var(--fs-14); font-weight: var(--fw-semibold); line-height: 1.2; }
+  .trip__dob { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr); gap: 0.5rem; }
+  .trip__dob .trip__field > input, .trip__dob .trip__field > select { padding-left: 1rem; }
+  .trip__dob .trip__field > span { left: 1rem; }
+  .trip__radios { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.75rem; min-height: var(--t-field); }
+  .trip__opt { display: inline-flex; align-items: center; gap: 0.5rem; font-size: var(--fs-14); cursor: pointer; }
+  .trip__opt input { appearance: none; flex: none; width: 1.25rem; height: 1.25rem; margin: 0; border: 1px solid var(--c-navy); border-radius: 50%; background: transparent; cursor: pointer; transition: border var(--dur) var(--ease); }
+  .trip__opt input:checked { border: 6px solid var(--c-burgundy); }
+  .trip__opt input:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 2px; }
   .trip__field--phone { display: grid; grid-template-columns: 6.75rem minmax(0, 1fr); gap: 0; }
   .trip__field--phone :global(.tsel__btn) { border-radius: 5px 0 0 5px; border-right: 0; }
   .trip__phone-in { position: relative; display: block; }

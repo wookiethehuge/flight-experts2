@@ -116,48 +116,39 @@ function init(root: HTMLElement) {
   const digits = (v: string) => v.replace(/\D/g, '');
   const mask = (f: string, fn: (v: string) => string) => qa<HTMLInputElement>(`input[data-f="${f}"]`).forEach((el) =>
     el.addEventListener('input', () => { const v = fn(el.value); if (v !== el.value) el.value = v; }));
-  mask('dob', (v) => { const d = digits(v).slice(0, 8); return [d.slice(0, 2), d.slice(2, 4), d.slice(4)].filter(Boolean).join('/'); });
+  mask('dob-d', (v) => digits(v).slice(0, 2));
+  mask('dob-y', (v) => digits(v).slice(0, 4));
   mask('card', (v) => digits(v).slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 '));
   mask('exp', (v) => { const d = digits(v).slice(0, 4); return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d; });
   mask('cvv', (v) => digits(v).slice(0, 4));
 
-  // ------------------------------------------------------------------ date of birth calendar (native picker)
-  const isoToday = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  qa<HTMLButtonElement>('[data-cal]').forEach((btn) => {
-    const field = btn.closest('.trip__field')!;
-    const text = q<HTMLInputElement>('input[data-f="dob"]', field);
-    const cal = q<HTMLInputElement>('[data-cal-in]', field);
-    cal.max = isoToday;
-    btn.addEventListener('click', () => {
-      const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text.value.trim());
-      cal.value = m ? `${m[3]}-${m[1]}-${m[2]}` : '';
-      try { cal.showPicker(); } catch { text.focus(); }   // no picker support: typing still works
-    });
-    cal.addEventListener('change', () => {
-      const [y, mo, d] = cal.value.split('-');
-      if (!y) return;
-      text.value = `${mo}/${d}/${y}`;
-      text.dispatchEvent(new Event('input', { bubbles: true }));
-      check(text);
-      text.focus();
-    });
-  });
-
   // ------------------------------------------------------------------ validation
+  type Field = HTMLInputElement | HTMLSelectElement;
+  const FIELDS = 'input[data-f], select[data-f]';
   const today = new Date();
+  // date of birth: three fields, one message for the group; returns the message and which parts are at fault
+  function dobCheck(group: Element): { msg: string; bad: Field[] } {
+    const [m, d, y] = ['m', 'd', 'y'].map((k) => group.querySelector<Field>(`[data-f="dob-${k}"]`)!);
+    const mo = Number(m.value), day = Number(d.value), yr = Number(y.value);
+    const missing: [Field, string][] = [];
+    if (!mo) missing.push([m, 'month']);
+    if (!(day >= 1 && day <= 31)) missing.push([d, 'day']);
+    if (!(y.value.length === 4 && yr >= 1900 && yr <= today.getFullYear())) missing.push([y, 'year']);
+    if (missing.length) {
+      const names = missing.map(([, n]) => n);
+      return { msg: `Enter the ${names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0]} of birth.`, bad: missing.map(([f]) => f) };
+    }
+    const date = new Date(yr, mo - 1, day);
+    if (date.getMonth() !== mo - 1) return { msg: `${(m as HTMLSelectElement).selectedOptions[0].text} ${yr} has no day ${day}.`, bad: [d] };
+    if (date > today) return { msg: 'The date of birth can’t be in the future.', bad: [m, d, y] };
+    return { msg: '', bad: [] };
+  }
   const luhn = (n: string) => { let s = 0; for (let i = 0; i < n.length; i++) { let x = Number(n[n.length - 1 - i]); if (i % 2) { x *= 2; if (x > 9) x -= 9; } s += x; } return s % 10 === 0; };
-  function message(el: HTMLInputElement): string {
+  function message(el: Field): string {
     const v = el.value.trim();
     switch (el.dataset.f) {
       case 'first': return v ? '' : 'Enter the first name as in the passport.';
       case 'last': return v ? '' : 'Enter the last name as in the passport.';
-      case 'dob': {
-        const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(v);
-        if (!m) return 'Enter the date of birth as MM/DD/YYYY.';
-        const d = new Date(Number(m[3]), Number(m[1]) - 1, Number(m[2]));
-        if (d.getMonth() !== Number(m[1]) - 1 || d > today || Number(m[3]) < 1900) return 'Enter a real date of birth.';
-        return '';
-      }
       case 'card': { const n = digits(v); return n.length >= 13 && n.length <= 19 && luhn(n) ? '' : 'Enter a valid card number.'; }
       case 'holder': return v ? '' : 'Enter the name on the card.';
       case 'exp': {
@@ -176,8 +167,20 @@ function init(root: HTMLElement) {
       default: return '';
     }
   }
-  const errOf = (el: HTMLElement) => el.closest('.trip__field')?.querySelector<HTMLElement>('.trip__err') ?? null;
-  function check(el: HTMLInputElement) {
+  const errOf = (el: HTMLElement) => (el.closest('[data-dob]') ?? el.closest('.trip__field'))?.querySelector<HTMLElement>('.trip__err') ?? null;
+  function check(el: Field) {
+    const group = el.closest('[data-dob]');
+    if (group) {
+      const { msg, bad } = dobCheck(group);
+      const err = errOf(el)!;
+      err.id ||= `dob-err-${Math.random().toString(36).slice(2, 7)}`;
+      group.querySelectorAll<Field>(FIELDS).forEach((f) => {
+        if (bad.includes(f)) f.setAttribute('aria-invalid', 'true'); else f.removeAttribute('aria-invalid');
+        f.setAttribute('aria-describedby', err.id);
+      });
+      err.textContent = msg; err.hidden = !msg;
+      return !bad.includes(el);
+    }
     const m = message(el);
     const err = errOf(el);
     if (m) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
@@ -188,12 +191,14 @@ function init(root: HTMLElement) {
     }
     return !m;
   }
-  root.addEventListener('input', (e) => { const el = e.target as HTMLInputElement; if (el.matches('input[data-f]') && el.getAttribute('aria-invalid')) check(el); });
-  root.addEventListener('focusout', (e) => { const el = e.target as HTMLInputElement; if (el.matches('input[data-f]') && el.closest('[data-step]')?.hasAttribute('data-tried')) check(el); });
+  // re-check while fixing; a date-of-birth part re-checks whenever its group shows an error (changing the month can fix the day)
+  const showing = (el: Field) => el.getAttribute('aria-invalid') || (el.closest('[data-dob]') && errOf(el)?.hidden === false);
+  root.addEventListener('input', (e) => { const el = e.target as Field; if (el.matches(FIELDS) && showing(el)) check(el); });
+  root.addEventListener('focusout', (e) => { const el = e.target as Field; if (el.matches(FIELDS) && el.closest('[data-step]')?.hasAttribute('data-tried')) check(el); });
   function validStep(s: Step) {
     const sec = q(`[data-step="${s}"]`);
     sec.setAttribute('data-tried', '');
-    const bad = qa<HTMLInputElement>('input[data-f]', sec).filter((el) => !check(el));
+    const bad = qa<Field>(FIELDS, sec).filter((el) => !check(el));
     if (bad.length) { bad[0].focus(); say(`Please check ${bad.length === 1 ? '1 field' : `${bad.length} fields`}.`); return false; }
     return true;
   }
@@ -210,15 +215,25 @@ function init(root: HTMLElement) {
     qa('[data-prot] [data-col]').forEach((c) => c.classList.toggle('is-col', c.dataset.col === id));
     paintSummary();
   }
-  picks.forEach((b) => b.addEventListener('click', () => choosePlan(b.dataset.plan!)));
   const modal = q<HTMLDialogElement>('[data-noprot]');
+  let skipThenNext = false;                 // opened from Next Step: skipping also advances
+  function askNoProt(fromNext: boolean) { skipThenNext = fromNext; modal.showModal(); }
+  // "No protection" asks first; the choice only lands on "Continue Without Protection"
+  picks.forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.plan === 'none') { if (plan !== 'none') askNoProt(false); return; }
+    choosePlan(b.dataset.plan!);
+  }));
   q('[data-modal-close]', modal).addEventListener('click', () => modal.close());
   q('[data-modal-add]', modal).addEventListener('click', () => {
     modal.close();
     const pop = plans.find((p) => p.popular) ?? plans[0];
     if (pop) { choosePlan(pop.id); picks.find((b) => b.dataset.plan === pop.id)?.focus(); }
   });
-  q('[data-modal-skip]', modal).addEventListener('click', () => { modal.close(); choosePlan('none'); show('payment'); });
+  q('[data-modal-skip]', modal).addEventListener('click', () => {
+    modal.close(); choosePlan('none');
+    if (skipThenNext) show('payment');
+    else picks.find((b) => b.dataset.plan === 'none')?.focus();
+  });
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
 
   // ------------------------------------------------------------------ 4. tip
@@ -240,7 +255,7 @@ function init(root: HTMLElement) {
     if (step === 'passengers' && !validStep('passengers')) return;
     if (step === 'payment' && !validStep('payment')) return;
     if (!confirmBox.checked) { confirmErr.hidden = false; confirmBox.focus(); say('Please confirm to continue.'); return; }
-    if (step === 'protection' && (plan === null || plan === 'none')) { modal.showModal(); return; }
+    if (step === 'protection' && plan === null) { askNoProt(true); return; }   // 'none' was already confirmed
     show(STEPS[STEPS.indexOf(step) + 1]);
   });
 

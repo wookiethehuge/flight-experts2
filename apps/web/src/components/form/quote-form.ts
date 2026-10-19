@@ -330,7 +330,22 @@ function init(root: HTMLElement) {
     const id = el.getAttribute('aria-describedby')?.split(' ')[0];
     const p = id ? document.getElementById(id) : null;
     if (msg) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
-    if (p) { p.textContent = msg ?? ''; p.hidden = !msg; }
+    if (p) { p.dataset.msg = msg ?? ''; p.textContent = msg ?? ''; p.hidden = !msg; }
+    const f = el.dataset.field;
+    if (p && (f === 'from' || f === 'to')) mergeRoute(p.parentElement!);
+  }
+  /** From and To both empty: one line ("...flying from and to.") instead of two; each field keeps its own red edge. */
+  const MISSING_RE = /^(Flight \d+: )?Enter the city or airport you're flying (from|to)\.$/;
+  function mergeRoute(box: HTMLElement) {
+    const [a, b] = [...box.querySelectorAll<HTMLElement>('.qf__err')];
+    if (!a || !b) return;
+    const ma = MISSING_RE.exec(a.dataset.msg ?? ''), mb = MISSING_RE.exec(b.dataset.msg ?? '');
+    const both = !!(ma && mb);
+    a.textContent = both ? `${ma![1] ?? ''}Enter the cities or airports you're flying from and to.` : a.dataset.msg ?? '';
+    b.hidden = both || !b.dataset.msg;
+    // the To field points at the shared line while it carries both messages
+    const toEl = form.querySelector<HTMLElement>(`[aria-describedby^="${b.id} "], [aria-describedby="${b.id}"]`);
+    toEl?.setAttribute('aria-describedby', both ? `${b.id} ${a.id}` : b.id);
   }
   const check = (el: HTMLElement) => { const m = message(el); setErr(el, m); return !m; };
   function tripControls(): HTMLElement[] {
