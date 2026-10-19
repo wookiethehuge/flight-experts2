@@ -8,8 +8,9 @@
  *   body        string  short paragraph
  *   button      Link    { label: "Return to Homepage", href: "/" } (outline button, under the call button)
  *
- * Above it, always: "Phone Exclusive Deals" call button (client), burgundy primary, dialling Site Settings > phone,
- * so the strongest next step after sending a request is to call.
+ * Fixed around the CMS text (client reference): a green-check "Your request has been received" line above the H1,
+ * and under the body a "Want to get started right away?" prompt with a two-line "Call Now for Exclusive Fares" /
+ * number button (burgundy primary, dials Site Settings > phone), so the strongest next step is to call.
  *
  * Values: ThankYou (1440: centred, H1 80/104, button 379 x 50) and ThankYouMobile (390: left aligned, H1 40/36 on two
  * lines, full-width button).
@@ -23,14 +24,18 @@ interface Props { block: ConfirmationBlock; settings: SiteSettings; page: string
 const { block, settings } = Astro.props;
 ---
 <section class="confirm container on-light" aria-labelledby={`confirm-h-${Astro.props.index}`}>
+  <p class="confirm__status">
+    <svg class="confirm__check" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="8.75" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M6.2 10.3l2.5 2.5 5.1-5.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    Your request has been received
+  </p>
   <h1 id={`confirm-h-${Astro.props.index}`} class="confirm__title" set:html={inline(block.heading)} />
   {block.subheading && <p class="confirm__sub">{block.subheading}</p>}
   {block.body && <p class="confirm__body">{block.body}</p>}
+  {settings.phone?.href && <p class="confirm__prompt">Want to get started right away? Call us to explore exclusive fares and speak directly with a travel expert.</p>}
   <div class="confirm__actions">
     {settings.phone?.href && (
-      <Button href={settings.phone.href} variant="primary" width="23.6875rem" class="confirm__btn confirm__call" aria-label={`Phone exclusive deals: call ${settings.phone.display}`}>
-        <Icon name="phone" width={16} height={16} class="confirm__call-icon" />
-        <span>Phone Exclusive Deals</span>
+      <Button href={settings.phone.href} variant="primary" width="23.6875rem" class="confirm__btn confirm__call" aria-label={`Call now for exclusive fares: ${settings.phone.display}`}>
+        <span class="confirm__call-label"><Icon name="phone" width={15} height={15} class="confirm__call-icon" />Call Now for Exclusive Fares</span>
         <span class="confirm__call-num">{settings.phone.display}</span>
       </Button>
     )}
@@ -66,18 +71,34 @@ const { block, settings } = Astro.props;
     font-size: var(--fs-body);                                                                    /* 14 -> 16 */
     line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);          /* 20 -> 24 */
   }
+  .confirm__status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: clamp(0.75rem, calc(0.75rem + 6 * (100vw - 24.375rem) / 1050), 1.125rem);
+    font-size: var(--fs-16);
+    font-weight: var(--fw-medium);
+    color: var(--c-grey-text);
+  }
+  .confirm__check { flex: none; color: #1e8a4c; }                                                  /* 4.6:1 on cream */
+  .confirm__prompt {
+    max-width: 20.375rem;
+    margin-top: clamp(1.25rem, calc(1.25rem + 8 * (100vw - 24.375rem) / 1050), 1.75rem);
+    font-size: var(--fs-14);
+    line-height: 1.45;
+    color: var(--c-grey-text);
+  }
   .confirm__actions {
     display: grid;
     gap: 0.75rem;
-    margin-top: clamp(1.8125rem, calc(1.8125rem + 15 * (100vw - 24.375rem) / 1050), 2.75rem);     /* 29 -> 44 */
+    margin-top: clamp(1rem, calc(1rem + 6 * (100vw - 24.375rem) / 1050), 1.375rem);
   }
   .confirm :global(.confirm__btn) { display: flex; width: 100%; }
-  .confirm :global(.confirm__call) { gap: 0.5rem; }
+  /* two lines: label, then the number (fits on every phone) */
+  .confirm :global(.confirm__call) { flex-direction: column; gap: 0.25rem; padding-block: 0.75rem; }
+  .confirm :global(.confirm__call-label) { display: inline-flex; align-items: center; gap: 0.5rem; }
   .confirm :global(.confirm__call-icon) { flex: none; }
-  .confirm :global(.confirm__call-num) { font-weight: var(--fw-regular); opacity: 0.9; }
-  .confirm :global(.confirm__call-num)::before { content: '·'; margin-right: 0.5rem; }
-  /* phones: label + icon only (the number does not fit on one line; the button still dials it) */
-  @media (max-width: 29.9988rem) { .confirm :global(.confirm__call-num) { display: none; } }
+  .confirm :global(.confirm__call-num) { font-size: 1.1875rem; font-weight: var(--fw-semibold); letter-spacing: 0.01em; }
 
   @media (min-width: 48rem) {
     .confirm { text-align: center; }
@@ -88,6 +109,8 @@ const { block, settings } = Astro.props;
     }
     .confirm__sub { max-width: none; }
     .confirm__body { max-width: 33.125rem; margin-inline: auto; }                                  /* 530 */
+    .confirm__status { justify-content: center; }
+    .confirm__prompt { max-width: 46rem; margin-inline: auto; text-wrap: balance; }
     .confirm :global(.confirm__btn) { width: var(--btn-w); margin-inline: auto; }
   }
 </style>
