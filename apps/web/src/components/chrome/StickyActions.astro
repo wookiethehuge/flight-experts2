@@ -84,20 +84,24 @@ const showBadge = plane;
   .sticky__btn:focus-visible, .sticky__circles :global(.sticky__btn:focus-visible) { box-shadow: var(--sh-float), 0 0 0 4px color-mix(in srgb, var(--c-sky) 35%, transparent); }
 
   /* home: hidden until the hero has scrolled away, then fade in */
+  /* in: a slow fade while it rises and grows into place; out: quicker. Shared with the badge's step-aside below, so
+     whichever reason shows it, it arrives the same way (it used to pop in with a short plain fade). */
   :global(html.js) [data-await-anchor] {
     opacity: 0;
     visibility: hidden;
-    transform: scale(0.85);
-    transition: opacity 500ms var(--motion-ease-out), transform 500ms var(--motion-ease-out), visibility 0s linear 500ms;
+    translate: 0 1.25rem;
+    scale: 0.88;
+    transition: opacity 350ms ease, translate 350ms ease, scale 350ms ease, visibility 0s linear 350ms;
   }
   :global(html.js) [data-await-anchor][data-shown] {
     opacity: 1;
     visibility: visible;
-    transform: none;
-    transition: opacity 500ms var(--motion-ease-out), transform 500ms var(--motion-ease-out), visibility 0s;
+    translate: none;
+    scale: none;
+    transition: opacity 800ms var(--motion-ease-out), translate 800ms var(--motion-ease-out), scale 800ms var(--motion-ease-out), visibility 0s;
   }
   @media (prefers-reduced-motion: reduce) {
-    :global(html.js) .sticky__circles[data-await-anchor], :global(html.js) [data-await-anchor][data-shown] { transform: none; transition: none; }
+    :global(html.js) [data-await-anchor], :global(html.js) [data-await-anchor][data-shown] { translate: none; scale: none; transition: none; }
   }
 
   /* phone tab (client: it was too small, a clipped 37px stub): a full 44px-tall pill against the right edge with the
@@ -138,11 +142,20 @@ const showBadge = plane;
       /* docked in the bottom-right corner the whole way down (client: it jumped when it moved for the footer) */
       bottom: calc(2rem + env(safe-area-inset-bottom));
       right: calc(max(0px, (100vw - var(--page-max)) / 2) + 2rem);
-      transition: opacity var(--dur) var(--ease), visibility 0s linear 0s;
     }
     .sticky__badgewrap { transform-origin: 50% 50%; }
-    /* step aside while an on-page form is on screen */
-    .sticky[data-away] :global(.sticky__badge) { opacity: 0; visibility: hidden; transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur); }
+    /* step aside while an on-page form is on screen; comes back with the same entrance as above
+       (translate / scale, so the badge's own hover transform is untouched) */
+    .sticky :global(.sticky__badge) {
+      transition: opacity 800ms var(--motion-ease-out), translate 800ms var(--motion-ease-out), scale 800ms var(--motion-ease-out), visibility 0s;
+    }
+    .sticky[data-away] :global(.sticky__badge) {
+      opacity: 0; visibility: hidden; translate: 0 1.25rem; scale: 0.88;
+      transition: opacity 350ms ease, translate 350ms ease, scale 350ms ease, visibility 0s linear 350ms;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sticky :global(.sticky__badge), .sticky[data-away] :global(.sticky__badge) { translate: none; scale: none; transition: none; }
+    }
   }
 </style>
 
