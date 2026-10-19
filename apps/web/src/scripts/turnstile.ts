@@ -57,6 +57,8 @@ export function turnstileFor(slot: HTMLElement | null, siteKey: string | undefin
             callback: (t: string) => opts.onChange?.(t),
             'expired-callback': () => opts.onChange?.(''),
             'error-callback': () => opts.onChange?.(''),
+            // the widget only takes space when Cloudflare shows a challenge: slots style [data-ts-visible]
+            'before-interactive-callback': () => { slot.dataset.tsVisible = ''; },
           });
         })
         .catch(() => { pending = null; }));

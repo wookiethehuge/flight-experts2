@@ -497,7 +497,8 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   .qf__cbox { margin-top: 14.8px; }
   .qf__cbox .qf__row { height: 51px; grid-template-columns: 60.5px minmax(0, 1fr); padding-left: 14px; }
   .qf__cbox .qf__row + .qf__row { height: 52px; }
-  .qf__turnstile { margin-top: 1rem; min-height: 65px; }
+  /* no reserved space: the check is invisible unless Cloudflare needs a click, then it opens up (scripts/turnstile.ts) */
+  .qf__turnstile[data-ts-visible] { margin-top: 1rem; min-height: 65px; }
   .qf__alert { margin: 0; color: var(--qf-error); font-size: var(--fs-14); line-height: 1.35; }
   .qf__alert:not(:empty) { margin-top: 1rem; padding: 0.625rem 0.75rem; border: 1px solid var(--qf-error); border-radius: var(--r-7); }
   .qf__alert :global(a) { color: inherit; font-weight: var(--fw-semibold); }

@@ -153,6 +153,7 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
   .cb__field.is-invalid :is(input, select) { border-color: var(--c-burgundy); }
   .cb__err { font-style: normal; font-size: var(--fs-13); color: var(--c-burgundy); }
   .cb__ts:empty { display: none; }
+  .cb__ts:not([data-ts-visible]) { margin-top: -1rem; }   /* rendered but hidden: cancel its grid gap (kept in the DOM so the check still runs) */
   .cb__alert { font-size: var(--fs-14); color: var(--c-burgundy); }
   .cb__submit {
     height: 3.125rem; border: 0; border-radius: var(--r-3);
