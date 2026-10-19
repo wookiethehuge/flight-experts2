@@ -6,6 +6,8 @@
  *   light: in flow on cream pages; navy logo, burgundy-tinted accreditation logos (>= 80rem, as the Figma), filled phone pill,
  *          navy hamburger. (About / BlogCollection ... artboards)
  * Phone pill from 48rem; below that only logo + hamburger (Mobile artboards).
+ *   minimal: logo only (navy), over the top of the page: the trip checkout flow ("Addition" artboards), where the
+ *            phone pill, menu and accreditations would pull people out of paying.
  * Also defines the shared logo <symbol id="fe-logo"> (used by the menu and footer) and the SVG filters that tint
  * the accreditation logos burgundy, and holds the menu + "open-booking" script.
  */
@@ -17,8 +19,8 @@ import PhonePill from './PhonePill.astro';
 import Menu from './Menu.astro';
 import type { Navigation, SiteSettings } from '../../lib/types';
 
-interface Props { theme: 'dark' | 'light'; settings: SiteSettings; navigation: Navigation }
-const { theme = 'light', settings, navigation } = Astro.props;
+interface Props { theme: 'dark' | 'light'; settings: SiteSettings; navigation: Navigation; minimal?: boolean }
+const { theme = 'light', settings, navigation, minimal = false } = Astro.props;
 const logoPaths = [...logoRaw.matchAll(/<path d="([^"]+)"/g)].map((m) => m[1]);
 const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
 ---
@@ -41,7 +43,7 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
   </defs>
 </svg>
 
-<header class:list={['site-header', `site-header--${theme}`]}>
+<header class:list={['site-header', `site-header--${theme}`, minimal && 'site-header--minimal']}>
   <div class="site-header__bar">
     <a class="site-header__logo" href="/" aria-label="Flight Experts home">
       <svg viewBox="0 0 312 60" aria-hidden="true" focusable="false">
@@ -61,7 +63,7 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
       </svg>
     </a>
 
-    {theme === 'light' && settings.accreditations?.length > 0 && (
+    {!minimal && theme === 'light' && settings.accreditations?.length > 0 && (
       <ul class="site-header__accreds" role="list" aria-label="Accreditations">
         {settings.accreditations.map((a) => (
           <li class:list={[isSeal(a.name, a.logo?.alt) && 'seal']}>
@@ -73,15 +75,15 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
       </ul>
     )}
 
-    <div class="site-header__actions">
+    {!minimal && <div class="site-header__actions">
       <PhonePill class="site-header__pill" phone={settings.phone} label={settings.headerPhoneLabel} support={settings.supportPhone} variant={theme === 'dark' ? 'outline' : 'filled'} />
       <button type="button" class="site-header__burger" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu" data-menu-open>
         <Icon name="hamburger" width={39} height={33} />
       </button>
-    </div>
+    </div>}
   </div>
 </header>
-<Menu settings={settings} navigation={navigation} />
+{!minimal && <Menu settings={settings} navigation={navigation} />}
 
 <style>
   .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
@@ -89,6 +91,7 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
   .site-header { position: relative; z-index: 30; }
   .site-header--dark { position: absolute; inset: 0 0 auto 0; color: var(--c-sky); }
   .site-header--light { color: var(--c-navy); }
+  .site-header--minimal { position: absolute; inset: 0 0 auto 0; }
 
   .site-header__bar {
     --logo-top: clamp(1.625rem, calc(1.625rem + 19 * (100vw - 24.375rem) / 1050), 2.8125rem);    /* 26 -> 45 */

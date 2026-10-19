@@ -1,0 +1,69 @@
+---
+/**
+ * Trip-flow dropdown (Figma "Addition 2.b"): 57px box with a small label over the value and a chevron; opens a white
+ * list with the hovered / selected option on sky. A button + listbox (keyboard: arrows, Home/End, Enter, Escape,
+ * type-ahead); behaviour in trip-flow.ts. The chosen value is on the root as data-value.
+ */
+import Icon from '../ui/Icon.astro';
+
+interface Props { label: string; options: string[]; values?: string[]; f: string; compact?: boolean }
+const { label, options, values = options, f, compact = false } = Astro.props;
+const uid = `tsel-${f}-${Math.random().toString(36).slice(2, 7)}`;
+---
+<div class:list={['tsel', compact && 'tsel--compact']} data-tsel data-f={f} data-value={values[0]}>
+  <button type="button" class="tsel__btn" aria-haspopup="listbox" aria-expanded="false" aria-controls={uid} aria-labelledby={`${uid}-l ${uid}-v`}>
+    <span class="tsel__l" id={`${uid}-l`}>{label}</span>
+    <span class="tsel__v" id={`${uid}-v`} data-tsel-val>{options[0]}</span>
+    <Icon name="chevron-down" width={9} class="tsel__chev" />
+  </button>
+  <ul class="tsel__list" id={uid} role="listbox" tabindex="-1" aria-labelledby={`${uid}-l`} hidden>
+    {options.map((o, i) => <li role="option" id={`${uid}-${i}`} data-value={values[i]} aria-selected={i === 0 ? 'true' : 'false'}>{o}</li>)}
+  </ul>
+</div>
+
+<style>
+  .tsel { position: relative; min-width: 0; }
+  .tsel__btn {
+    position: relative;
+    display: grid;
+    align-content: center;
+    width: 100%;
+    height: var(--t-field, 3.5625rem);
+    padding: 0 3rem 0 1.4rem;
+    border: 1px solid var(--c-navy);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--c-navy);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .tsel__l { font-size: var(--fs-12); opacity: 0.6; line-height: 1.2; }
+  .tsel__v { overflow: hidden; font-size: var(--fs-14); line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+  .tsel :global(.tsel__chev) { position: absolute; right: 1.25rem; top: 50%; translate: 0 -50%; transition: rotate var(--dur) var(--ease); }
+  .tsel__btn[aria-expanded='true'] :global(.tsel__chev) { rotate: 180deg; }
+  .tsel__btn:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
+  .tsel--compact .tsel__btn { padding: 0 2.2rem 0 1rem; }
+  .tsel--compact :global(.tsel__chev) { right: 0.9rem; }
+  .tsel__list {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 3px);
+    left: 0;
+    right: 0;
+    max-height: 18rem;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0.4rem 0;
+    list-style: none;
+    border-radius: 3px;
+    background: var(--c-white);
+    box-shadow: 0 8px 24px rgba(15, 21, 36, 0.14);
+  }
+  .tsel--compact .tsel__list { right: auto; min-width: 9rem; }
+  .tsel__list[hidden] { display: none; }
+  .tsel__list:focus { outline: none; }
+  .tsel__list li { padding: 0.45rem 0.75rem; font-size: var(--fs-14); line-height: 1.2; cursor: pointer; }
+  .tsel__list li:hover, .tsel__list li.is-active, .tsel__list li[aria-selected='true'] { background: var(--c-sky); }
+  .tsel__list:focus-visible li.is-active { box-shadow: inset 3px 0 0 var(--c-navy); }
+</style>

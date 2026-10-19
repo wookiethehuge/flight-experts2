@@ -1,0 +1,18 @@
+---
+/**
+ * /trip/<id>/: the private "Review details and confirm your trip" checkout an agent's email links to.
+ * Phase 1: one static page per demo file in src/content/trips (e.g. /trip/demo/). Never indexed, logo-only header.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TripFlow from '../../components/trip/TripFlow.astro';
+import { getTrips, type TripOffer } from '../../lib/trip';
+
+export function getStaticPaths() {
+  return getTrips().map((trip) => ({ params: { id: trip.id }, props: { trip } }));
+}
+interface Props { trip: TripOffer }
+const { trip } = Astro.props;
+---
+<BaseLayout title="Review and confirm your trip | Flight Experts" description="Review your flight options, add passenger details and confirm your booking." noindex checkout>
+  <TripFlow trip={trip} />
+</BaseLayout>

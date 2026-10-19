@@ -1,0 +1,717 @@
+---
+/**
+ * Trip checkout: "Review details and confirm your trip" (Figma "Addition 1-5", desktop 1440 only; phones and tablets
+ * stack the sidebar under the step). Four steps in one page, switched by trip-flow.ts:
+ *   1 Itinerary         choose one of the agent's flight options (radio cards), its flight details below
+ *   2 Passengers        one panel per traveller: name, date of birth, gender, seat + meal preferences
+ *   3 Ticket protection Basic / Premium / Elite comparison; choosing none asks to confirm (dialog, Addition 5)
+ *   4 Payment           card + billing address, optional tip for the agent, full summary
+ * Sidebar (grey column): step intro, tip card (payment), booking summary, the step's confirm switch, Next Step.
+ *
+ * PHASE 1 DEMO: nothing is sent or stored. Card inputs carry no `name`, so they can never be submitted, and the last
+ * step only shows a confirmation. Real payments must go through a processor's hosted card fields (PCI).
+ *
+ * Data: TripOffer (lib/trip.ts) from src/content/trips/<id>.json.
+ */
+import { Picture, getImage } from 'astro:assets';
+import Icon from '../ui/Icon.astro';
+import TripSelect from './TripSelect.astro';
+import { money, fmtDay, fmtTime, type TripOffer } from '../../lib/trip';
+import clouds from '../../assets/trip/hero-clouds.png';
+import icoTakeoff from '../../assets/trip/ico-takeoff.svg';
+import icoLanding from '../../assets/trip/ico-landing.svg';
+import icoTimeCircle from '../../assets/trip/ico-time-circle.svg';
+import icoTimeHands from '../../assets/trip/ico-time-hands.svg';
+import icoBag from '../../assets/trip/ico-bag.svg';
+import icoPlane from '../../assets/trip/ico-plane.svg';
+import icoPlaneSm from '../../assets/trip/ico-plane-sm.svg';
+
+interface Props { trip: TripOffer }
+const { trip } = Astro.props;
+const logos = import.meta.glob<{ default: ImageMetadata }>('../../assets/trip/*.{png,jpg,jpeg,webp,svg}', { eager: true });
+const logoOf = (f?: string) => (f ? logos[`../../assets/trip/${f}`]?.default : undefined);
+// airline logos / agent photo: small optimised copies (the BA artwork is a 3000px board)
+const small = new Map<string, string>();
+for (const f of new Set([...trip.options.flatMap((o) => o.segments.map((s) => s.airline.logo)), trip.agent.photo].filter(Boolean) as string[])) {
+  const src = logoOf(f);
+  if (src) small.set(f, src.format === 'svg' ? src.src : (await getImage({ src, width: 400, format: 'webp' })).src);
+}
+
+const cur = trip.currency;
+const pax = trip.travellers.adults + trip.travellers.children + trip.travellers.infants;
+const paxList = Array.from({ length: pax }, (_, i) => i + 1);
+const first = trip.options[0];
+const seg0 = first.segments[0];
+const last = first.segments[first.segments.length - 1];
+const steps = [
+  { id: 'itinerary', label: 'Itinerary' },
+  { id: 'passengers', label: 'Passengers' },
+  { id: 'protection', label: 'Ticket protection' },
+  { id: 'payment', label: 'Payment' },
+];
+const genders = ['Not Selected', 'Female', 'Male', 'Unspecified'];
+const seats = ['No preference', 'Aisle', 'Window', 'Center'];
+const meals = ['No preference', 'Vegetarian', 'Kosher', 'Muslim', 'Hindu', 'Baby Meal', 'Child Meal', 'Fruit Platter', 'Gluten Free'];
+const countries = ['United States', 'Canada', 'United Kingdom', 'Ireland', 'Australia', 'Germany', 'France', 'Spain', 'Italy', 'Netherlands', 'Slovenia', 'Croatia', 'Mexico', 'Brazil', 'United Arab Emirates', 'Other'];
+const dials = [{ v: '+1', l: '🇺🇸 +1' }, { v: '+44', l: '🇬🇧 +44' }, { v: '+353', l: '🇮🇪 +353' }, { v: '+61', l: '🇦🇺 +61' }, { v: '+49', l: '🇩🇪 +49' }, { v: '+33', l: '🇫🇷 +33' }, { v: '+386', l: '🇸🇮 +386' }, { v: '+385', l: '🇭🇷 +385' }, { v: '+971', l: '🇦🇪 +971' }];
+const initials = trip.agent.name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2);
+const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
+---
+<div class="trip" data-trip data-currency={cur} data-pax={pax}
+     data-options={JSON.stringify(trip.options.map((o) => ({ id: o.id, price: o.pricePerAdult, cabin: o.cabin, bags: o.segments[0].bags,
+       from: o.segments[0].from.code, to: o.segments[o.segments.length - 1].to.code,
+       when: `${fmtDay(o.segments[0].depart)}, ${fmtTime(o.segments[0].depart)}`, time: o.travelTime.replace(/^0?(\d+)h (\d+)m$/, (_, h, m) => `${String(h).padStart(2, '0')}:${m} h`) })))}
+     data-plans={JSON.stringify(trip.protection.plans)}>
+  <!-- ============================================================ hero -->
+  <section class="trip__hero" aria-labelledby="trip-title">
+    <Picture src={clouds} formats={['avif', 'webp']} widths={[800, 1440, 2180, 2880]} sizes="100vw" alt="" class="trip__clouds" loading="eager" fetchpriority="high" />
+    <div class="trip__hero-in">
+      <h1 class="trip__title" id="trip-title">Review details and <em>confirm your trip</em></h1>
+      <ol class="trip__tabs" role="list" aria-label="Booking steps" data-tabs>
+        {steps.map((s, i) => (
+          <li><button type="button" class="trip__tab" data-tab={s.id} aria-current={i === 0 ? 'step' : undefined} disabled={i > 0}>{s.label}</button></li>
+        ))}
+      </ol>
+      <aside class="trip__agent" aria-label="Your travel expert">
+        <span class="trip__agent-k">Prepared By:</span>
+        <span class="trip__agent-n">{trip.agent.name}</span>
+        <a href={tel(trip.agent.phone)}>{trip.agent.phone}</a>
+        {trip.agent.email && <a href={`mailto:${trip.agent.email}`}>{trip.agent.email}</a>}
+      </aside>
+    </div>
+  </section>
+
+  <div class="trip__body">
+    <div class="trip__grid">
+      <!-- ============================================================ steps -->
+      <div class="trip__main">
+        <p class="trip__demo" role="note"><strong>Demo:</strong> nothing on this page is sent, stored or charged.</p>
+
+        <!-- 1. itinerary -->
+        <section class="trip__step" data-step="itinerary" aria-labelledby="ts-itin">
+          <h2 class="trip__h3" id="ts-itin">Please choose your preferred flight option</h2>
+          <div class="trip__options" role="radiogroup" aria-labelledby="ts-itin" data-options-group>
+            {trip.options.map((o, i) => (
+              <button type="button" class="trip__opt" role="radio" aria-checked={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-option={o.id}
+                      aria-label={`${money(o.pricePerAdult, cur, false)} per adult, ${o.segments[0].from.code} to ${o.segments[o.segments.length - 1].to.code}, ${fmtDay(o.segments[0].depart)} ${fmtTime(o.segments[0].depart)}`}>
+                <span class="trip__opt-p">{money(o.pricePerAdult, cur, false).replace(/,/g, '')}</span>
+                <span class="trip__opt-u">per adult</span>
+              </button>
+            ))}
+          </div>
+
+          <h2 class="trip__h2 trip__h2--details">Flight details</h2>
+          {trip.options.map((o, i) => (
+            <div class="trip__flights" data-details={o.id} hidden={i !== 0}>
+              {o.segments.map((s) => (
+                <article class="trip__flight">
+                  <header class="trip__fl-head">
+                    <p class="trip__fl-route">
+                      <span>{s.from.city}, {s.from.code}</span>
+                      <img src={icoPlane.src} width="17" height="17" alt="to" class="trip__fl-plane" />
+                      <span>{s.to.city}, {s.to.code}</span>
+                    </p>
+                    <p class="trip__fl-kind">Departure</p>
+                    <p class="trip__fl-meta">Travel time: {o.travelTime}&nbsp; · &nbsp;{o.layovers} layover{o.layovers === 1 ? '' : 's'}</p>
+                  </header>
+                  <div class="trip__fl-body">
+                    <div class="trip__fl-cols">
+                      <div class="trip__fl-col">
+                        <p class="trip__fl-time"><img src={icoTakeoff.src} width="17" height="12" alt="" class="trip__fl-ico" />{fmtTime(s.depart)}&nbsp; {s.from.code}</p>
+                        <p class="trip__fl-day">{fmtDay(s.depart)}</p>
+                        <p class="trip__fl-ap">{s.from.name}</p>
+                      </div>
+                      <div class="trip__fl-col">
+                        <p class="trip__fl-time"><img src={icoLanding.src} width="17" height="17" alt="" class="trip__fl-ico" />{fmtTime(s.arrive)}&nbsp; {s.to.code}</p>
+                        <p class="trip__fl-day">{fmtDay(s.arrive)}</p>
+                        <p class="trip__fl-ap">{s.to.name}</p>
+                      </div>
+                      <div class="trip__fl-col trip__fl-col--air">
+                        <p class="trip__fl-time">
+                          <span class="trip__fl-clock" aria-hidden="true"><img src={icoTimeCircle.src} width="15" height="15" alt="" /><img src={icoTimeHands.src} width="12.5" height="12.5" alt="" /></span>
+                          <span class="sr-only">Flight time </span>{s.duration}
+                        </p>
+                        {s.airline.logo && small.get(s.airline.logo)
+                          ? <span class="trip__fl-airline"><img src={small.get(s.airline.logo)} alt={s.airline.name} /></span>
+                          : <span class="trip__fl-airline-t">{s.airline.name}</span>}
+                        <p class="trip__fl-no">Flight no: {s.flightNo}</p>
+                      </div>
+                    </div>
+                    <div class="trip__fl-foot">
+                      <p class="trip__fl-time"><img src={icoBag.src} width="15" height="15" alt="" class="trip__fl-ico" />{s.baggage}</p>
+                      <p class="trip__fl-time"><img src={icoPlaneSm.src} width="15" height="15" alt="" class="trip__fl-ico trip__fl-ico--rot" /><span class="sr-only">Aircraft </span>{s.aircraft}</p>
+                      {s.note && <p class="trip__fl-note">{s.note}</p>}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ))}
+        </section>
+
+        <!-- 2. passengers -->
+        <section class="trip__step" data-step="passengers" aria-labelledby="ts-pax" hidden>
+          <button type="button" class="trip__back" data-back><span class="trip__back-ico"><Icon name="chevron-down" width={8} /></span>Back</button>
+          <h2 class="trip__h2" id="ts-pax">Passenger Details</h2>
+          <p class="trip__warn"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="currentColor" /><path d="M8 4.2v4.6M8 10.9v.9" stroke="#f7f6f2" stroke-width="1.6" stroke-linecap="round" /></svg>Passenger names must be entered exactly as in the passport or a government issued ID. Name changes are not permitted after booking.</p>
+          {paxList.map((n) => (
+            <fieldset class="trip__pax" data-pax-panel={n}>
+              <legend class="trip__pax-bar">Passenger {n}</legend>
+              <h3 class="trip__h4"><Icon name="person" width={15} height={15} />Personal info</h3>
+              <div class="trip__fields trip__fields--3">
+                <label class="trip__field"><input type="text" required autocomplete={n === 1 ? 'given-name' : 'off'} placeholder=" " data-f="first" /><span>First name *</span><em class="trip__err" hidden></em></label>
+                <label class="trip__field"><input type="text" autocomplete={n === 1 ? 'additional-name' : 'off'} placeholder=" " data-f="middle" /><span>Middle name</span></label>
+                <label class="trip__field"><input type="text" required autocomplete={n === 1 ? 'family-name' : 'off'} placeholder=" " data-f="last" /><span>Last name *</span><em class="trip__err" hidden></em></label>
+              </div>
+              <div class="trip__fields trip__fields--2">
+                <label class="trip__field trip__field--icon"><input type="text" required inputmode="numeric" autocomplete={n === 1 ? 'bday' : 'off'} placeholder=" " maxlength="10" data-f="dob" /><span>Date of birth: MM/DD/YYYY*</span>
+                  <svg class="trip__field-ico" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 16H5V10h14v10ZM5 8V6h14v2H5Z" /></svg>
+                  <em class="trip__err" hidden></em></label>
+                <TripSelect label="Gender" options={genders} f="gender" />
+              </div>
+              <h3 class="trip__h4"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="m12 17.3 6.2 3.7-1.6-7 5.4-4.7-7.1-.6L12 2 9.1 8.7 2 9.3l5.4 4.7-1.6 7z" /></svg>Extras</h3>
+              <div class="trip__fields trip__fields--2">
+                <TripSelect label="Seat preferences" options={seats} f="seat" />
+                <TripSelect label="Meal preferences" options={meals} f="meal" />
+              </div>
+            </fieldset>
+          ))}
+        </section>
+
+        <!-- 3. ticket protection -->
+        <section class="trip__step" data-step="protection" aria-labelledby="ts-prot" hidden>
+          <button type="button" class="trip__back" data-back><span class="trip__back-ico"><Icon name="chevron-down" width={8} /></span>Back</button>
+          <h2 class="trip__h2" id="ts-prot">Ticket Protection</h2>
+          <p class="trip__lead">Protect your flight with our ticket protection plan, ensuring flexibility and peace of mind for unexpected changes.</p>
+          <div class="trip__prot-wrap">
+            <table class="trip__prot" data-prot>
+              <caption class="sr-only">Ticket protection plans</caption>
+              <thead>
+                <tr>
+                  <td></td>
+                  {trip.protection.plans.map((p) => (
+                    <th scope="col" data-col={p.id}>{p.popular && <span class="trip__popular">Most popular</span>}{p.name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {trip.protection.features.map((f) => (
+                  <tr>
+                    <th scope="row"><span class="trip__feat">{f.label}</span></th>
+                    {trip.protection.plans.map((p) => {
+                      const v = f.plans[p.id];
+                      return <td data-col={p.id}>{typeof v === 'string' ? v : v ? <><Icon name="check" width={11} /><span class="sr-only">Included</span></> : <><span aria-hidden="true">–</span><span class="sr-only">Not included</span></>}</td>;
+                    })}
+                  </tr>
+                ))}
+                <tr class="trip__prot-price">
+                  <th scope="row"><span class="sr-only">Price</span></th>
+                  {trip.protection.plans.map((p) => <td data-col={p.id}>{money(p.price, cur)}</td>)}
+                </tr>
+                <tr class="trip__prot-pick">
+                  <th scope="row"><button type="button" class="trip__pick trip__pick--none" data-plan="none" aria-pressed="false"><span class="trip__radio" aria-hidden="true"></span>No protection</button></th>
+                  {trip.protection.plans.map((p) => (
+                    <td data-col={p.id}><button type="button" class="trip__pick" data-plan={p.id} aria-pressed="false" aria-label={`${p.name} protection, ${money(p.price, cur)}`}><span class="trip__radio" aria-hidden="true"></span><span data-pick-label>Select</span></button></td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 4. payment -->
+        <section class="trip__step" data-step="payment" aria-labelledby="ts-pay" hidden>
+          <button type="button" class="trip__back" data-back><span class="trip__back-ico"><Icon name="chevron-down" width={8} /></span>Back</button>
+          <h2 class="trip__h2" id="ts-pay">Payment information</h2>
+          <p class="trip__sub">All transactions are secure and encrypted</p>
+          <h3 class="trip__h4 trip__h4--pay">Billing Details</h3>
+          <div class="trip__fields trip__fields--2">
+            <label class="trip__field"><input type="text" required inputmode="numeric" autocomplete="off" placeholder=" " maxlength="23" data-f="card" /><span>Card Number *</span><em class="trip__err" hidden></em></label>
+            <label class="trip__field"><input type="text" required autocomplete="off" placeholder=" " data-f="holder" /><span>Card Holder’s Name *</span><em class="trip__err" hidden></em></label>
+            <label class="trip__field"><input type="text" required inputmode="numeric" autocomplete="off" placeholder=" " maxlength="7" data-f="exp" /><span>Expiration Date * (MM/YY)</span><em class="trip__err" hidden></em></label>
+            <label class="trip__field"><input type="password" required inputmode="numeric" autocomplete="off" placeholder=" " maxlength="4" data-f="cvv" /><span>CVV *</span><em class="trip__err" hidden></em></label>
+          </div>
+          <h3 class="trip__h4 trip__h4--pay">Billing Address</h3>
+          <p class="trip__sub">Your billing address must be entered exactly as it appears on your credit card statement.</p>
+          <div class="trip__fields trip__fields--2">
+            <TripSelect label="Country" options={countries} f="country" />
+            <label class="trip__field"><input type="text" required autocomplete="address-level2" placeholder=" " data-f="city" /><span>City *</span><em class="trip__err" hidden></em></label>
+            <label class="trip__field"><input type="text" required autocomplete="address-level1" placeholder=" " data-f="state" /><span>State *</span><em class="trip__err" hidden></em></label>
+            <label class="trip__field"><input type="text" required autocomplete="street-address" placeholder=" " data-f="street" /><span>Street Address *</span><em class="trip__err" hidden></em></label>
+            <label class="trip__field"><input type="text" required autocomplete="postal-code" placeholder=" " data-f="zip" /><span>ZIP / Postal Code *</span><em class="trip__err" hidden></em></label>
+            <div class="trip__field trip__field--phone">
+              <TripSelect label="Code" options={dials.map((d) => d.l)} values={dials.map((d) => d.v)} f="dial" compact />
+              <label class="trip__phone-in"><input type="tel" required inputmode="tel" autocomplete="tel-national" placeholder=" " data-f="phone" /><span>Phone Number*</span></label>
+              <em class="trip__err" hidden></em>
+            </div>
+            <label class="trip__field trip__field--wide"><input type="email" required autocomplete="email" placeholder=" " spellcheck="false" data-f="email" /><span>E-mail *</span><em class="trip__err" hidden></em></label>
+          </div>
+          <ul class="trip__secure" role="list">
+            <li><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17 9h-1V7a4 4 0 1 0-8 0v2H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2Zm-7-2a2 2 0 1 1 4 0v2h-4V7Zm3 9.7V18h-2v-1.3a2 2 0 1 1 2 0Z" /></svg><span><b>SSL</b> Encrypted</span></li>
+            <li><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#800732" d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z" /><path d="m8.5 12 2.4 2.4 4.6-4.8" fill="none" stroke="#f7f6f2" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg><span><b>100% SAFE</b> Purchase</span></li>
+          </ul>
+        </section>
+
+        <!-- done -->
+        <section class="trip__step trip__done" data-step="done" aria-labelledby="ts-done" hidden tabindex="-1">
+          <h2 class="trip__h2" id="ts-done">Thank you, your booking request is complete</h2>
+          <p class="trip__lead">{trip.agent.name} will confirm your tickets by email shortly. Questions? Call {trip.agent.name.split(' ')[0]} on <a href={tel(trip.agent.phone)}>{trip.agent.phone}</a>.</p>
+          <p class="trip__demo trip__demo--inline"><strong>Demo:</strong> no booking was made and nothing was charged.</p>
+        </section>
+      </div>
+
+      <!-- ============================================================ sidebar -->
+      <aside class="trip__side" aria-label="Booking summary">
+        <div class="trip__side-intro" data-side="itinerary">
+          <h2 class="trip__side-h">Booking almost completed</h2>
+          <p>Double check your itinerary and proceed to the next step.</p>
+        </div>
+        <div class="trip__side-intro" data-side="protection" hidden>
+          <h2 class="trip__side-h">Activate Ticket Protection</h2>
+          <p>Don’t let unpleasant incidents spoil your trip. Let us protect your trip! We are here to protect you from any problems you can encounter during your flight.</p>
+        </div>
+
+        <section class="trip__tip" data-side="payment" hidden aria-labelledby="tip-h">
+          {trip.agent.photo
+            ? <img class="trip__tip-av" src={small.get(trip.agent.photo)} alt="" width="49" height="49" />
+            : <span class="trip__tip-av trip__tip-av--i" aria-hidden="true">{initials}</span>}
+          <h2 class="trip__tip-h" id="tip-h">How was my service?</h2>
+          <p class="trip__tip-p">If you feel that the service provided was exceptional, you can express your gratitude (optional)</p>
+          <p class="trip__tip-k" id="tip-k">Select tip percentage:</p>
+          <div class="trip__tip-chips" role="group" aria-labelledby="tip-k">
+            {trip.tipPercents.map((p) => <button type="button" class="trip__chip" data-tip={p} aria-pressed="false">{p}%</button>)}
+            <button type="button" class="trip__chip" data-tip="custom" aria-pressed="false">Custom</button>
+          </div>
+          <label class="trip__tip-custom" hidden data-tip-custom><span>Tip amount ({cur})</span><input type="text" inputmode="decimal" placeholder="0.00" /></label>
+          <p class="trip__tip-amt" aria-live="polite">Tip amount: <span data-tip-amt>{money(0, cur)}</span></p>
+        </section>
+
+        <div class="trip__sum">
+          <h2 class="trip__sum-h">Booking summary</h2>
+          <div class="trip__sum-trip">
+            <p class="trip__sum-route"><span><img src={icoPlaneSm.src} width="15" height="15" alt="" class="trip__fl-ico--rot" /><span data-sum="from">{seg0.from.code}</span></span><span data-sum="to">{last.to.code}</span></p>
+            <p class="trip__sum-row"><span data-sum="when">{fmtDay(seg0.depart)}, {fmtTime(seg0.depart)}</span><span data-sum="time">{first.travelTime.replace(/^0?(\d+)h (\d+)m$/, (_, h, m) => `${String(h).padStart(2, '0')}:${m} h`)}</span></p>
+            <p class="trip__sum-row"><span data-sum="cabin">{first.cabin}</span><span><span data-sum="bags">{seg0.bags}</span> x <img src={icoBag.src} width="15" height="15" alt="checked bags" /></span></p>
+          </div>
+          <dl class="trip__sum-extra" data-sum-extra hidden>
+            <div class="trip__sum-x"><dt><b>Additional Services</b></dt><dd><b data-sum="extras"></b></dd></div>
+            <div><dt>Ticket protection</dt><dd data-sum="prot"></dd></div>
+            <div><dt>Tip for excellent service</dt><dd data-sum="tip"></dd></div>
+          </dl>
+          <p class="trip__sum-total"><span>Total</span><strong data-sum="total">{money(first.pricePerAdult * (trip.travellers.adults + trip.travellers.children), cur)}</strong></p>
+        </div>
+
+        <div class="trip__confirm">
+          <label class="trip__switch">
+            <input type="checkbox" role="switch" data-confirm />
+            <span class="trip__switch-ui" aria-hidden="true"></span>
+            <span class="trip__switch-l" data-confirm-label="itinerary">I confirm this itinerary</span>
+            <span class="trip__switch-l" data-confirm-label="passengers" hidden>I confirm the passenger details are correct</span>
+            <span class="trip__switch-l" data-confirm-label="protection" hidden>I confirm that I have read and agreed to the <a href="/terms-and-conditions/" target="_blank" rel="noopener">Terms and Conditions</a></span>
+            <span class="trip__switch-l" data-confirm-label="payment" hidden>
+              <ol class="trip__terms">
+                <li>I authorise Flight Experts to charge the total shown to the card above.</li>
+                <li>Fares are non-refundable and cannot be exchanged or transferred unless covered by ticket protection.</li>
+                <li>Passenger names match each traveller’s passport or government issued ID.</li>
+              </ol>
+            </span>
+          </label>
+          <p class="trip__err trip__err--confirm" data-confirm-err hidden>Please confirm to continue.</p>
+        </div>
+
+        <p class="trip__side-total" data-side="protection" hidden>Total: <span data-sum="total2"></span></p>
+        <button type="button" class="trip__next" data-next>Next Step</button>
+        <p class="sr-only" aria-live="polite" data-live></p>
+      </aside>
+    </div>
+  </div>
+
+  <dialog class="trip__modal" aria-labelledby="tm-h" aria-describedby="tm-p" data-noprot>
+    <button type="button" class="trip__modal-x" aria-label="Close" data-modal-close><Icon name="close" width={12} height={12} /></button>
+    <h2 class="trip__modal-h" id="tm-h">Continue without ticket protection?</h2>
+    <p id="tm-p">You’ve selected No Protection for this trip. Without ticket protection, you won’t have coverage for unexpected changes such as cancellations, missed connections or medical issues.</p>
+    <div class="trip__modal-actions">
+      <button type="button" class="trip__btn trip__btn--primary" data-modal-add>Add Ticket Protection</button>
+      <button type="button" class="trip__btn trip__btn--outline" data-modal-skip>Continue Without Protection</button>
+    </div>
+  </dialog>
+</div>
+
+<style>
+  /* hidden parts of the flow (other steps, other options' details) stay hidden whatever their display */
+  .trip [hidden] { display: none !important; }
+
+  /* ---------------------------------------------------------------- tokens for this flow (Figma Addition 1-5) */
+  .trip {
+    --t-side: #d9d9d9;
+    --t-line: rgba(15, 21, 36, 0.16);
+    --t-field: 3.5625rem;   /* 57 */
+    --t-side-w: 23.75rem;   /* 380: sidebar column, content 267 inside */
+    color: var(--c-navy);
+    background: var(--c-cream);
+  }
+
+  /* ---------------------------------------------------------------- hero (364 tall at 1440) */
+  .trip__hero { position: relative; overflow: hidden; min-height: 22.75rem; }
+  .trip__clouds :global(img), .trip__clouds { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 40%; }
+  .trip__hero::after {   /* Figma gradient: cream wash on the left, behind the title */
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(86deg, rgba(247, 246, 242, 0.49) 23%, rgba(247, 246, 242, 0) 56%);
+  }
+  .trip__hero-in {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'title agent' 'tabs agent';
+    align-items: start;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding: clamp(6.5rem, calc(6.5rem + 30 * (100vw - 24.375rem) / 1050), 8.8125rem) var(--gutter) clamp(2rem, calc(2rem + 24 * (100vw - 24.375rem) / 1050), 3.5rem);
+  }
+  .trip__title {
+    grid-area: title;
+    max-width: 26.25rem;   /* 420 */
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-regular);
+    font-size: clamp(2rem, calc(2rem + 8 * (100vw - 24.375rem) / 1050), 2.5rem);
+    line-height: 1.096;
+    letter-spacing: -0.03em;
+  }
+  .trip__title em { font-style: italic; }
+  .trip__tabs {
+    grid-area: tabs;
+    justify-self: start;
+    display: flex;
+    gap: 0.75rem;
+    margin-top: clamp(1.25rem, calc(1.25rem + 12 * (100vw - 24.375rem) / 1050), 2rem);
+    padding: 2px 3px 2px 4px;
+    list-style: none;
+    border-radius: 6px;
+    background: var(--c-sky);
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .trip__tab {
+    padding: 10px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--c-navy);
+    font: inherit;
+    font-size: var(--fs-16);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .trip__tab[aria-current='step'] { padding: 8px 10px; margin-block: 2px; background: var(--c-white); }
+  .trip__tab:disabled { cursor: default; color: var(--c-navy); }
+  .trip__tab:not(:disabled):not([aria-current]):hover { text-decoration: underline; text-underline-offset: 3px; }
+  .trip__tab:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
+  .trip__agent {
+    grid-area: agent;
+    display: grid;
+    gap: 4px;
+    width: 15.125rem;   /* 242 */
+    margin-top: 0;
+    padding: 11px 15px;
+    border-radius: 5px;
+    background: var(--c-sky);
+    text-align: right;
+    font-size: var(--fs-16);
+    line-height: 1.19;
+  }
+  .trip__agent-k { font-size: var(--fs-14); }
+  .trip__agent a { color: inherit; font-weight: var(--fw-semibold); text-decoration: none; overflow-wrap: anywhere; }
+  .trip__agent a:hover { text-decoration: underline; }
+
+  /* ---------------------------------------------------------------- body: main column + grey sidebar to the right edge */
+  .trip__body { position: relative; overflow: hidden; }
+  .trip__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: var(--page-max);
+    margin-inline: auto;
+  }
+  .trip__main { min-width: 0; padding: 2.5rem var(--gutter) 3rem; }
+  .trip__side { position: relative; padding: 2.5rem var(--gutter) 3.5rem; background: var(--t-side); }
+  @media (min-width: 64rem) {
+    .trip__grid { grid-template-columns: minmax(0, 1fr) var(--t-side-w); column-gap: 1.25rem; }
+    .trip__main { padding: 4rem 0 7rem var(--gutter); }
+    .trip__side { padding: 4rem var(--gutter) 7rem 2.6875rem; }   /* content at +43, 267 wide, 70 to the edge */
+    .trip__side::after { content: ''; position: absolute; top: 0; bottom: 0; left: 100%; width: 50vw; background: var(--t-side); }
+    .trip__next { max-width: 16.6875rem; }
+  }
+
+  .trip__demo {
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 0.75rem;
+    border-left: 3px solid var(--c-burgundy);
+    background: rgba(128, 7, 50, 0.06);
+    font-size: var(--fs-14);
+  }
+  .trip__demo--inline { margin-top: 1.5rem; }
+
+  /* ---------------------------------------------------------------- type */
+  .trip__h3 { font-size: var(--fs-18); font-weight: var(--fw-semibold); line-height: 1.19; }
+  .trip__h2 { font-size: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem); font-weight: var(--fw-semibold); line-height: 1.19; }
+  .trip__h2--details { margin-top: clamp(2.5rem, calc(2.5rem + 24 * (100vw - 24.375rem) / 1050), 4rem); }
+  .trip__h4 { display: flex; align-items: center; gap: 0.75rem; margin: 2.25rem 0 1rem; font-size: var(--fs-18); font-weight: var(--fw-semibold); line-height: 1.19; }
+  .trip__h4--pay { gap: 0; margin-top: 1.875rem; }
+  .trip__lead { margin-top: 0.75rem; font-size: var(--fs-16); line-height: 1.19; }
+  .trip__lead a { color: inherit; font-weight: var(--fw-semibold); }
+  .trip__sub { margin: 0.6875rem 0 0; font-size: var(--fs-14); line-height: 1.19; }
+  .trip__h4--pay + .trip__sub { margin: -0.25rem 0 1rem; }
+
+  .trip__back { display: inline-flex; align-items: center; gap: 0.25rem; margin-bottom: 1.5rem; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-size: var(--fs-14); cursor: pointer; }
+  .trip__back-ico { display: grid; place-items: center; width: 18px; height: 18px; margin-right: 0.25rem; border-radius: 50%; background: var(--c-navy); color: var(--c-cream); }
+  .trip__back-ico :global(svg) { rotate: 90deg; }
+  .trip__back:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------------------------------------------------------------- 1. options + flight card */
+  .trip__options { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr)); gap: 0.75rem 1.25rem; margin-top: 1.75rem; }
+  @media (min-width: 48rem) { .trip__options { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .trip__opt {
+    display: grid;
+    padding: 11px 8px;
+    border: 0;
+    border-radius: 5px;
+    background: var(--c-sky);
+    color: var(--c-navy);
+    font: inherit;
+    line-height: 1.19;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .trip__opt-p { font-size: var(--fs-lead); }
+  .trip__opt-u { font-size: var(--fs-16); }
+  .trip__opt:hover { background: color-mix(in srgb, var(--c-sky) 75%, var(--c-navy)); }
+  .trip__opt[aria-checked='true'] { background: var(--c-navy); color: var(--c-sky); }
+  .trip__opt:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+
+  .trip__flights { display: grid; gap: 1.5rem; margin-top: 1.25rem; }
+  .trip__flight { overflow: hidden; border-radius: 25px; background: var(--c-sky); }
+  .trip__fl-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.6rem 1rem;
+    padding: 2.25rem 2.375rem 1.75rem;
+    background: var(--c-navy);
+    color: var(--c-sky);
+    line-height: 1.19;
+  }
+  .trip__fl-route { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.875rem; font-size: var(--fs-18); font-weight: var(--fw-semibold); }
+  .trip__fl-plane { rotate: 90deg; }
+  .trip__fl-kind { font-size: var(--fs-18); font-weight: var(--fw-semibold); text-align: right; }
+  .trip__fl-meta { grid-column: 1 / -1; font-size: var(--fs-16); }
+  .trip__fl-body { padding: 2.125rem 2.375rem 2.375rem; }
+  .trip__fl-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: 1.5rem 2rem; }
+  @media (min-width: 48rem) { .trip__fl-cols { grid-template-columns: 1fr 1fr 9rem; } }
+  .trip__fl-col { display: grid; align-content: start; gap: 0.75rem; line-height: 1.19; }
+  .trip__fl-col--air { gap: 0.4375rem; }
+  .trip__fl-time { display: flex; align-items: center; gap: 0.625rem; font-size: var(--fs-16); font-weight: var(--fw-medium); white-space: pre; }
+  .trip__fl-day { font-size: var(--fs-16); font-weight: var(--fw-medium); }
+  .trip__fl-ap { font-size: var(--fs-14); }
+  .trip__fl-ico { flex: none; }
+  .trip__fl-ico--rot { rotate: 90deg; }
+  .trip__fl-clock { position: relative; flex: none; width: 15px; height: 15px; }
+  .trip__fl-clock img { position: absolute; }
+  .trip__fl-clock img + img { inset: 8.33%; }
+  /* the BA artwork is a 3000x2000 board; the Figma frame (120 x 26) shows the logo strip out of it */
+  .trip__fl-airline { position: relative; display: block; width: 120px; height: 26px; overflow: hidden; }
+  .trip__fl-airline img { position: absolute; left: -9.66%; top: -132.29%; width: 119.32%; height: 364.58%; max-width: none; }
+  .trip__fl-airline-t { font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+  .trip__fl-no { font-size: var(--fs-16); font-weight: var(--fw-medium); }
+  .trip__fl-foot { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: 1rem 2rem; margin-top: 1.9rem; padding-top: 1.9rem; border-top: 1px solid var(--t-line); }
+  @media (min-width: 48rem) { .trip__fl-foot { grid-template-columns: 1fr 1fr 9rem; } }
+  .trip__fl-note { font-size: var(--fs-14); line-height: 1.19; }
+
+  /* ---------------------------------------------------------------- 2. passengers + fields */
+  .trip__warn { display: flex; gap: 0.375rem; align-items: flex-start; margin-top: 0.75rem; color: var(--c-burgundy); font-size: var(--fs-12); line-height: 1.2; }
+  .trip__warn svg { flex: none; margin-top: 1px; }
+  .trip__pax { margin: 1.75rem 0 0; padding: 0; border: 0; min-width: 0; }
+  .trip__pax + .trip__pax { margin-top: 3rem; }
+  .trip__pax-bar { float: left; width: 100%; padding: 20px 25px; border-radius: 5px; background: var(--c-navy); color: var(--c-sky); font-size: var(--fs-16); line-height: 1.19; }
+  .trip__pax-bar + * { clear: both; }
+  .trip__pax .trip__h4:first-of-type { padding-top: 2.25rem; margin-top: 0; }
+  .trip__fields { display: grid; gap: 0.875rem 1.25rem; }
+  .trip__fields + .trip__fields { margin-top: 0.875rem; }
+  @media (min-width: 48rem) {
+    .trip__fields--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .trip__fields--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.125rem; }
+  }
+  .trip__field { position: relative; display: block; min-width: 0; }
+  .trip__field--wide { grid-column: 1 / -1; }
+  .trip__field > input, .trip__phone-in > input {
+    width: 100%;
+    height: var(--t-field);
+    padding: 1.4rem 1.4rem 0.4rem;
+    border: 1px solid var(--c-navy);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--c-navy);
+    font: inherit;
+    font-size: var(--fs-14);
+  }
+  .trip__field--icon > input { padding-right: 3rem; }
+  .trip__field > span, .trip__phone-in > span {
+    position: absolute;
+    left: 1.4rem;
+    top: calc(var(--t-field) / 2);   /* the input's middle (the error line below must not move it) */
+    translate: 0 -50%;
+    font-size: var(--fs-14);
+    color: var(--c-navy);
+    pointer-events: none;
+    transition: top 160ms ease, font-size 160ms ease, translate 160ms ease, opacity 160ms ease;
+  }
+  /* filled or focused: the label shrinks to the top line, as the Figma select labels (Gender / Seat preferences) */
+  .trip__field > input:focus + span, .trip__field > input:not(:placeholder-shown) + span,
+  .trip__phone-in > input:focus + span, .trip__phone-in > input:not(:placeholder-shown) + span {
+    top: 0.65rem; translate: 0 0; font-size: var(--fs-12); opacity: 0.6;
+  }
+  .trip__field > input:focus-visible, .trip__phone-in > input:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
+  .trip__field > input[aria-invalid='true'], .trip__phone-in > input[aria-invalid='true'] { border-color: var(--c-burgundy); box-shadow: inset 3px 0 0 var(--c-burgundy); }
+  .trip__field-ico { position: absolute; right: 1.25rem; top: calc(var(--t-field) / 2); translate: 0 -50%; pointer-events: none; }
+  .trip__field--phone { display: grid; grid-template-columns: 6.75rem minmax(0, 1fr); gap: 0; }
+  .trip__field--phone :global(.tsel__btn) { border-radius: 5px 0 0 5px; border-right: 0; }
+  .trip__phone-in { position: relative; display: block; }
+  .trip__phone-in > input { border-radius: 0 5px 5px 0; }
+  .trip__field--phone > .trip__err { grid-column: 1 / -1; }
+  .trip__err { display: block; margin-top: 0.3rem; color: var(--c-burgundy); font-size: var(--fs-12); font-style: normal; }
+  .trip__err[hidden] { display: none; }
+
+  /* ---------------------------------------------------------------- 3. ticket protection */
+  .trip__prot-wrap { margin-top: 1.25rem; overflow-x: auto; }
+  .trip__prot { width: 100%; min-width: 40rem; border-collapse: collapse; font-size: var(--fs-14); line-height: 1.19; }
+  .trip__prot th, .trip__prot td { padding: 0.62rem 1rem; text-align: center; font-weight: var(--fw-regular); }
+  .trip__prot thead th { padding-top: 2rem; padding-bottom: 0.9rem; position: relative; }
+  .trip__prot tbody th { text-align: left; }
+  .trip__prot tbody tr:nth-child(odd):not(.trip__prot-price):not(.trip__prot-pick) { background: var(--c-white); }
+  .trip__prot tr > :not(:first-child) { border-left: 1px solid var(--t-line); }
+  .trip__prot td :global(svg) { display: inline-block; vertical-align: middle; }
+  .trip__feat { text-decoration: underline; text-underline-offset: 2px; }
+  .trip__popular {
+    position: absolute; left: 50%; top: 0.35rem; translate: -50% 0;
+    padding: 5px 10px; border-radius: var(--r-pill);
+    background: var(--c-burgundy); color: var(--c-white);
+    font-size: 0.625rem; font-weight: var(--fw-semibold); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+  }
+  .trip__prot-price td { padding-top: 1.1rem; }
+  .trip__prot-pick th, .trip__prot-pick td { padding-top: 0.8rem; padding-bottom: 1rem; }
+  .trip__prot [data-col].is-col { background: rgba(199, 232, 255, 0.45); }
+  .trip__pick {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    padding: 11px 16px;
+    border: 0; border-radius: 3px;
+    background: rgba(199, 232, 255, 0.7);
+    color: var(--c-navy); font: inherit; font-size: var(--fs-14);
+    cursor: pointer;
+  }
+  .trip__pick--none { border: 1px solid var(--c-sky); background: var(--c-white); }
+  .trip__radio { width: 15px; height: 15px; border: 1px solid currentColor; border-radius: 50%; }
+  .trip__pick[aria-pressed='true'] { background: #f1c9d6; color: var(--c-burgundy); }
+  .trip__pick[aria-pressed='true'] .trip__radio { border-width: 4px; }
+  .trip__pick:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+
+  /* ---------------------------------------------------------------- 4. payment */
+  .trip__secure { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; padding: 0; list-style: none; }
+  .trip__secure li { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 3rem; padding: 0 0.875rem; border-radius: 3px; background: var(--t-side); font-size: var(--fs-12); line-height: 1.1; }
+  .trip__secure b { display: block; font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+
+  /* ---------------------------------------------------------------- sidebar */
+  .trip__side-intro { margin-bottom: 2rem; }
+  .trip__side-h { max-width: 16.875rem; font-size: var(--fs-lead); font-weight: var(--fw-semibold); line-height: 1.19; }
+  .trip__side-intro p { max-width: 16.875rem; margin-top: 1rem; font-size: var(--fs-14); line-height: 1.19; }
+  @media (min-width: 64rem) { .trip__side > :not(.trip__next):not(.trip__side-total) { max-width: 16.6875rem; } }
+
+  .trip__tip { display: grid; justify-items: center; margin-bottom: 0.75rem; padding: 2.125rem 1.375rem 1.5rem; border-radius: 5px; background: var(--c-navy); color: var(--c-cream); text-align: center; }
+  .trip__tip[hidden] { display: none; }
+  .trip__tip-av { width: 49px; height: 49px; border-radius: 50%; object-fit: cover; }
+  .trip__tip-av--i { display: grid; place-items: center; background: var(--c-sky); color: var(--c-navy); font-weight: var(--fw-semibold); }
+  .trip__tip-h { margin-top: 0.75rem; font-size: var(--fs-16); font-weight: var(--fw-semibold); line-height: 1.19; }
+  .trip__tip-p { margin-top: 0.7rem; font-size: var(--fs-14); line-height: 1.2; }
+  .trip__tip-k { margin-top: 0.7rem; font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+  .trip__tip-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 0.3rem; max-width: 12.5rem; margin-top: 0.9rem; }
+  .trip__chip { min-width: 2.6rem; padding: 5px 9px; border: 0; border-radius: 3px; background: #4a5568; color: var(--c-cream); font: inherit; font-size: var(--fs-16); line-height: 1.19; cursor: pointer; }
+  .trip__chip[data-tip='custom'] { font-size: var(--fs-14); }
+  .trip__chip[aria-pressed='true'] { background: var(--c-sky); color: var(--c-navy); }
+  .trip__chip:focus-visible { outline: 2px solid var(--c-sky); outline-offset: 2px; }
+  .trip__tip-custom { display: grid; gap: 0.25rem; margin-top: 0.75rem; font-size: var(--fs-12); text-align: left; }
+  .trip__tip-custom[hidden] { display: none; }
+  .trip__tip-custom input { width: 9rem; padding: 0.4rem 0.6rem; border: 1px solid var(--c-sky); border-radius: 3px; background: transparent; color: var(--c-cream); font: inherit; font-size: var(--fs-16); }
+  .trip__tip-amt { margin-top: 1.3rem; font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+
+  .trip__sum { display: grid; gap: 1.625rem; padding: 2.125rem 1.5rem; border-radius: 5px; background: var(--c-cream); line-height: 1.19; }
+  .trip__sum-h { font-size: var(--fs-18); font-weight: var(--fw-semibold); }
+  .trip__sum-trip { display: grid; gap: 0.6875rem; }
+  .trip__sum-route { display: flex; justify-content: space-between; font-size: var(--fs-16); font-weight: var(--fw-medium); }
+  .trip__sum-route > span:first-child { display: inline-flex; align-items: center; gap: 0.625rem; }
+  .trip__sum-row { display: flex; justify-content: space-between; gap: 1rem; font-size: var(--fs-14); }
+  .trip__sum-row > span:last-child { white-space: nowrap; }
+  .trip__sum-row img { display: inline-block; vertical-align: -2px; }
+  .trip__sum-extra { display: grid; gap: 0.6rem; margin: 0; padding-top: 1rem; border-top: 1px solid var(--t-line); font-size: var(--fs-14); }
+  .trip__sum-extra[hidden] { display: none; }
+  .trip__sum-extra > div { display: flex; justify-content: space-between; gap: 1rem; }
+  .trip__sum-extra dd { margin: 0; white-space: nowrap; }
+  .trip__sum-x b { font-weight: var(--fw-semibold); }
+  .trip__sum-total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 1rem; border-top: 1px solid var(--t-line); font-size: var(--fs-16); font-weight: var(--fw-medium); }
+  .trip__sum-extra[hidden] + .trip__sum-total { padding-top: 0; border-top: 0; }
+  .trip__sum-total strong { color: var(--c-burgundy); font-size: var(--fs-18); font-weight: var(--fw-semibold); }
+
+  .trip__confirm { margin-top: 1.25rem; padding-bottom: 1.6rem; border-bottom: 1px solid rgba(15, 21, 36, 0.12); }
+  .trip__switch { display: flex; align-items: flex-start; gap: 0.75rem; font-size: var(--fs-14); line-height: 1.19; cursor: pointer; }
+  .trip__switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .trip__switch-ui { position: relative; flex: none; width: 37px; height: 18px; border-radius: 9px; background: #8b8b8b; transition: background-color var(--dur) var(--ease); }
+  .trip__switch-ui::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--c-white); transition: translate var(--dur) var(--ease); }
+  .trip__switch input:checked + .trip__switch-ui { background: var(--c-burgundy); }
+  .trip__switch input:checked + .trip__switch-ui::after { translate: 19px 0; }
+  .trip__switch input:focus-visible + .trip__switch-ui { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+  .trip__switch-l[hidden] { display: none; }
+  .trip__switch-l a { color: var(--c-burgundy); }
+  .trip__terms { margin: 0; padding-left: 1.1rem; font-size: var(--fs-12); line-height: 1.3; }
+  .trip__terms li + li { margin-top: 0.2rem; }
+  .trip__err--confirm { margin-top: 0.6rem; }
+
+  .trip__side-total { margin-top: 1.6rem; font-size: var(--fs-18); }
+  .trip__side-total[hidden] { display: none; }
+  .trip__side-total span { font-weight: var(--fw-semibold); }
+  .trip__next, .trip__btn {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 3.125rem; padding: 0 1.5rem;
+    border-radius: var(--r-7);
+    font: inherit; font-size: var(--fs-16); font-weight: var(--fw-semibold);
+    cursor: pointer;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .trip__next { width: 100%; margin-top: 1.5rem; border: 0; background: var(--c-burgundy); color: var(--c-cream); }
+  .trip__next:hover { background: var(--c-burgundy-hover); }
+  .trip__next:focus-visible, .trip__btn:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+  .trip__next[hidden] { display: none; }
+
+  /* ---------------------------------------------------------------- dialog (Addition 5) */
+  .trip__modal { width: min(38.1875rem, calc(100vw - 2rem)); padding: 3.3rem 2.125rem 3.3rem; border: 0; border-radius: 5px; background: var(--c-cream); color: var(--c-navy); overflow: visible; }
+  .trip__modal::backdrop { background: rgba(15, 21, 36, 0.45); }
+  .trip__modal-x { position: absolute; top: -0.85rem; right: -0.85rem; display: grid; place-items: center; width: 2rem; height: 2rem; border: 2px solid var(--c-cream); border-radius: 50%; background: var(--c-burgundy); color: var(--c-cream); cursor: pointer; }
+  .trip__modal-h { font-size: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem); font-weight: var(--fw-semibold); line-height: 1.19; }
+  .trip__modal p { margin-top: 1.25rem; font-size: var(--fs-14); line-height: 1.2; }
+  .trip__modal-actions { display: grid; gap: 0.6rem; margin-top: 1.9rem; }
+  @media (min-width: 36rem) { .trip__modal-actions { grid-template-columns: 1fr 1fr; } }
+  .trip__btn--primary { border: 0; background: var(--c-burgundy); color: var(--c-cream); }
+  .trip__btn--primary:hover { background: var(--c-burgundy-hover); }
+  .trip__btn--outline { border: 1px solid var(--c-navy); background: transparent; color: var(--c-navy); font-weight: var(--fw-regular); }
+  .trip__btn--outline:hover { background: var(--c-navy); color: var(--c-cream); }
+
+  /* ---------------------------------------------------------------- phones / tablets (no design: stacked) */
+  @media (max-width: 47.9988rem) {
+    .trip__hero-in { grid-template-columns: 1fr; grid-template-areas: 'title' 'tabs' 'agent'; }
+    .trip__agent { justify-self: stretch; width: auto; margin-top: 1.25rem; text-align: left; }
+    .trip__fl-head { grid-template-columns: 1fr; padding: 1.5rem 1.5rem 1.25rem; }
+    .trip__fl-kind { text-align: left; }
+    .trip__fl-body { padding: 1.5rem; }
+  }
+</style>
+
+<script>
+  import { initTripFlow } from './trip-flow';
+  initTripFlow();
+</script>

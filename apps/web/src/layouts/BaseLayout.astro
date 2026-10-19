@@ -27,8 +27,10 @@ interface Props {
   ogType?: 'website' | 'article';
   /** LCP image preloads (hero photos), emitted first in <head> */
   preload?: ImagePreload[];
+  /** checkout pages (trip flow): logo-only header; no sticky actions, booking or callback modals */
+  checkout?: boolean;
 }
-const { title, description, seo, headerTheme = 'light', jsonLd = [], sticky = { plane: true, chat: true, phoneTab: false }, noindex, ogType = 'website', preload = [] } = Astro.props;
+const { title, description, seo, headerTheme = 'light', jsonLd = [], sticky = { plane: true, chat: true, phoneTab: false }, noindex, ogType = 'website', preload = [], checkout = false } = Astro.props;
 const settings = await getSettings();
 const navigation = await getNavigation();
 
@@ -66,14 +68,14 @@ const site = { '@context': 'https://schema.org', '@type': 'WebSite', '@id': new 
   </head>
   <body class:list={[`header-${headerTheme}`]}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header theme={headerTheme} settings={settings} navigation={navigation} />
+    <Header theme={headerTheme} settings={settings} navigation={navigation} minimal={checkout} />
     <main id="main" tabindex="-1">
       <slot />
     </main>
     <Footer settings={settings} navigation={navigation} />
-    <StickyActions settings={settings} {...sticky} />
-    <BookingModal settings={settings} />
-    <CallbackModal settings={settings} />
+    {!checkout && <StickyActions settings={settings} {...sticky} />}
+    {!checkout && <BookingModal settings={settings} />}
+    {!checkout && <CallbackModal settings={settings} />}
     <script is:inline>
       // Scroll reveals ([data-reveal], global.css): one IntersectionObserver, each element revealed once.
       // Elements already on screen are shown at once without animation (never delays LCP).
