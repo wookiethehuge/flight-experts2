@@ -251,6 +251,11 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
   }
   .hero__steps b { font-weight: var(--fw-semibold); letter-spacing: -0.02em; }
 
+  /* below desktop the form fills its column (capped at 474): its own fluid width is tuned to a 390 viewport, so on
+     wider phones (430 iPhone Pro Max) it sat short of the right gutter */
+  @media (max-width: 63.9988rem) {
+    .hero__form :global(.qf) { width: 100%; }
+  }
   @media (min-width: 30rem) {
     .hero__form { margin-inline: 0; }
   }
