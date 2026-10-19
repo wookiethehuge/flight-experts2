@@ -61,6 +61,7 @@ function init(root: HTMLElement) {
   const nextBtn = q<HTMLButtonElement>('[data-next]');
   function show(s: Step, focus = true) {
     step = s;
+    root.dataset.at = s;   // CSS hooks per step (agent photo hidden on payment)
     const i = STEPS.indexOf(s);
     reached = Math.max(reached, i);
     qa('[data-step]').forEach((el) => { el.hidden = el.dataset.step !== s; });
@@ -119,6 +120,28 @@ function init(root: HTMLElement) {
   mask('card', (v) => digits(v).slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 '));
   mask('exp', (v) => { const d = digits(v).slice(0, 4); return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d; });
   mask('cvv', (v) => digits(v).slice(0, 4));
+
+  // ------------------------------------------------------------------ date of birth calendar (native picker)
+  const isoToday = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  qa<HTMLButtonElement>('[data-cal]').forEach((btn) => {
+    const field = btn.closest('.trip__field')!;
+    const text = q<HTMLInputElement>('input[data-f="dob"]', field);
+    const cal = q<HTMLInputElement>('[data-cal-in]', field);
+    cal.max = isoToday;
+    btn.addEventListener('click', () => {
+      const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text.value.trim());
+      cal.value = m ? `${m[3]}-${m[1]}-${m[2]}` : '';
+      try { cal.showPicker(); } catch { text.focus(); }   // no picker support: typing still works
+    });
+    cal.addEventListener('change', () => {
+      const [y, mo, d] = cal.value.split('-');
+      if (!y) return;
+      text.value = `${mo}/${d}/${y}`;
+      text.dispatchEvent(new Event('input', { bubbles: true }));
+      check(text);
+      text.focus();
+    });
+  });
 
   // ------------------------------------------------------------------ validation
   const today = new Date();

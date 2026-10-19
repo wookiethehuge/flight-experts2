@@ -73,10 +73,16 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
         ))}
       </ol>
       <aside class="trip__agent" aria-label="Your travel expert">
-        <span class="trip__agent-k">Prepared By:</span>
-        <span class="trip__agent-n">{trip.agent.name}</span>
-        <a href={tel(trip.agent.phone)}>{trip.agent.phone}</a>
-        {trip.agent.email && <a href={`mailto:${trip.agent.email}`}>{trip.agent.email}</a>}
+        <div class="trip__agent-txt">
+          <span class="trip__agent-k">Prepared By:</span>
+          <span class="trip__agent-n">{trip.agent.name}</span>
+          <a href={tel(trip.agent.phone)}>{trip.agent.phone}</a>
+          {trip.agent.email && <a href={`mailto:${trip.agent.email}`}>{trip.agent.email}</a>}
+        </div>
+        {/* agent photo (client); hidden on the payment step, where it already heads the "How was my service?" card */}
+        {trip.agent.photo && small.get(trip.agent.photo)
+          ? <img class="trip__agent-ph" src={small.get(trip.agent.photo)} alt="" width="56" height="56" />
+          : <span class="trip__agent-ph trip__agent-ph--i" aria-hidden="true">{initials}</span>}
       </aside>
     </div>
   </section>
@@ -165,7 +171,11 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
               </div>
               <div class="trip__fields trip__fields--2">
                 <label class="trip__field trip__field--icon"><input type="text" required inputmode="numeric" autocomplete={n === 1 ? 'bday' : 'off'} placeholder=" " maxlength="10" data-f="dob" /><span>Date of birth: MM/DD/YYYY*</span>
-                  <svg class="trip__field-ico" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 16H5V10h14v10ZM5 8V6h14v2H5Z" /></svg>
+                  <button type="button" class="trip__cal" aria-label={`Choose passenger ${n}'s date of birth from a calendar`} data-cal>
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 16H5V10h14v10ZM5 8V6h14v2H5Z" /></svg>
+                  </button>
+                  {/* the browser's own date picker (year / month navigation, native wheels on phones); filled into the text field */}
+                  <input type="date" class="trip__cal-in" tabindex="-1" aria-hidden="true" min="1900-01-01" data-cal-in />
                   <em class="trip__err" hidden></em></label>
                 <TripSelect label="Gender" options={genders} f="gender" />
               </div>
@@ -409,9 +419,10 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__tab:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
   .trip__agent {
     grid-area: agent;
-    display: grid;
-    gap: 4px;
-    width: 15.125rem;   /* 242 */
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-width: 15.125rem;   /* 242 */
     margin-top: 0;
     padding: 11px 15px;
     border-radius: 5px;
@@ -420,7 +431,11 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
     font-size: var(--fs-16);
     line-height: 1.19;
   }
+  .trip__agent-txt { display: grid; gap: 4px; flex: 1; min-width: 0; }
   .trip__agent-k { font-size: var(--fs-14); }
+  .trip__agent-ph { flex: none; width: 3.5rem; height: 3.5rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--c-white); }
+  .trip__agent-ph--i { display: grid; place-items: center; background: var(--c-navy); color: var(--c-sky); font-weight: var(--fw-semibold); }
+  .trip[data-at='payment'] .trip__agent-ph, .trip[data-at='done'] .trip__agent-ph { display: none; }
   .trip__agent a { color: inherit; font-weight: var(--fw-semibold); text-decoration: none; overflow-wrap: anywhere; }
   .trip__agent a:hover { text-decoration: underline; }
 
@@ -571,7 +586,15 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   }
   .trip__field > input:focus-visible, .trip__phone-in > input:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
   .trip__field > input[aria-invalid='true'], .trip__phone-in > input[aria-invalid='true'] { border-color: var(--c-burgundy); box-shadow: inset 3px 0 0 var(--c-burgundy); }
-  .trip__field-ico { position: absolute; right: 1.25rem; top: calc(var(--t-field) / 2); translate: 0 -50%; pointer-events: none; }
+  .trip__cal {
+    position: absolute; right: 0.5rem; top: calc(var(--t-field) / 2); translate: 0 -50%;
+    display: grid; place-items: center; width: 2.5rem; height: 2.5rem;
+    border: 0; border-radius: 4px; background: transparent; color: var(--c-navy); cursor: pointer;
+  }
+  .trip__cal:hover { background: rgba(199, 232, 255, 0.6); }
+  .trip__cal:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 0; }
+  /* kept rendered (showPicker needs it) but invisible, under the button so the popup opens there */
+  .trip__cal-in { position: absolute; right: 0.5rem; top: calc(var(--t-field) - 0.5rem); width: 2.5rem; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none; }
   .trip__field--phone { display: grid; grid-template-columns: 6.75rem minmax(0, 1fr); gap: 0; }
   .trip__field--phone :global(.tsel__btn) { border-radius: 5px 0 0 5px; border-right: 0; }
   .trip__phone-in { position: relative; display: block; }
@@ -704,7 +727,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   /* ---------------------------------------------------------------- phones / tablets (no design: stacked) */
   @media (max-width: 47.9988rem) {
     .trip__hero-in { grid-template-columns: 1fr; grid-template-areas: 'title' 'tabs' 'agent'; }
-    .trip__agent { justify-self: stretch; width: auto; margin-top: 1.25rem; text-align: left; }
+    .trip__agent { justify-self: stretch; flex-direction: row-reverse; justify-content: flex-end; width: auto; margin-top: 1.25rem; text-align: left; }
     .trip__fl-head { grid-template-columns: 1fr; padding: 1.5rem 1.5rem 1.25rem; }
     .trip__fl-kind { text-align: left; }
     .trip__fl-body { padding: 1.5rem; }
