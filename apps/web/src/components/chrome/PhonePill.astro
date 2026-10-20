@@ -95,10 +95,10 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
     padding: 1rem 1rem 1.0625rem;
     border-radius: var(--r-15);
     /* frosted glass instead of the solid sky card (client); tint + text colour follow the header variant below */
-    background: rgba(15, 21, 36, 0.19);
+    background: rgba(15, 21, 36, 0.095);   /* client: half the tint (was 0.19) */
     border: 1px solid color-mix(in srgb, var(--c-sky) 45%, transparent);
-    -webkit-backdrop-filter: blur(8px) saturate(140%);
-    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(4px) saturate(140%);
+    backdrop-filter: blur(4px) saturate(140%);   /* half the blur (was 8px) */
     box-shadow: 0 10px 28px -14px rgba(15, 21, 36, 0.45);
     list-style: none;
     text-align: center;
@@ -122,7 +122,7 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
   .pill__menu .pill__num { color: #ede07a; }   /* soft lemon yellow numbers on the dark glass (client; #fff44f was too bright) */
   .pill__menu a:focus-visible { outline-color: var(--c-sky); }
   /* light header: pale glass, navy text */
-  .pill-wrap--filled .pill__menu { background: rgba(247, 246, 242, 0.275); border-color: color-mix(in srgb, var(--c-navy) 14%, transparent); }
+  .pill-wrap--filled .pill__menu { background: rgba(247, 246, 242, 0.14); border-color: color-mix(in srgb, var(--c-navy) 14%, transparent); }
   .pill-wrap--filled .pill__menu a, .pill-wrap--filled .pill__menu .pill__label, .pill-wrap--filled .pill__menu .pill__num { color: var(--c-navy); }
   .pill-wrap--filled .pill__menu a:focus-visible { outline-color: var(--c-navy); }
   /* no backdrop blur support: fall back to a near-solid tint so the numbers stay readable */
