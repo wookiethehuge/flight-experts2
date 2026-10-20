@@ -44,6 +44,7 @@ const uid = `tsel-${f}-${Math.random().toString(36).slice(2, 7)}`;
   .tsel__btn[aria-expanded='true'] :global(.tsel__chev) { rotate: 180deg; }
   .tsel__btn:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
   .tsel--compact .tsel__btn { padding: 0 2.2rem 0 1rem; }
+  @media (max-width: 47.9988rem) { .tsel__btn { padding: 0 2.4rem 0 0.9rem; } .tsel :global(.tsel__chev) { right: 0.9rem; } }
   .tsel--compact :global(.tsel__chev) { right: 0.9rem; }
   .tsel__list {
     position: absolute;

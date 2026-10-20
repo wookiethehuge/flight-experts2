@@ -16,7 +16,7 @@
 import { Picture, getImage } from 'astro:assets';
 import Icon from '../ui/Icon.astro';
 import TripSelect from './TripSelect.astro';
-import { money, fmtDay, fmtTime, type TripOffer } from '../../lib/trip';
+import { money, fmtDay, fmtTime, layover, type TripOffer } from '../../lib/trip';
 import { COUNTRIES as countries } from '../../lib/countries';
 import { getSettings } from '../../lib/cms';
 // hero art in two layers so it can move: the clouds (plane painted out) and the plane cut from the same photo
@@ -93,8 +93,9 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
         <div class="trip__agent-txt">
           <span class="trip__agent-k">Prepared By:</span>
           <span class="trip__agent-n">{trip.agent.name}</span>
-          <a href={tel(trip.agent.phone)}>{trip.agent.phone}</a>
-          {trip.agent.email && <a href={`mailto:${trip.agent.email}`}>{trip.agent.email}</a>}
+          <span class="trip__agent-br" aria-hidden="true"></span>
+          <a href={tel(trip.agent.phone)}><Icon name="phone-small" class="trip__agent-ico" />{trip.agent.phone}</a>
+          {trip.agent.email && <a href={`mailto:${trip.agent.email}`}><Icon name="email-small" class="trip__agent-ico" />{trip.agent.email}</a>}
         </div>
         {/* agent photo (client); hidden on the payment step, where it already heads the "How was my service?" card */}
         {trip.agent.photo && small.get(trip.agent.photo)
@@ -127,48 +128,62 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
           <h2 class="trip__h2 trip__h2--details">Flight details</h2>
           {trip.options.map((o, i) => (
             <div class="trip__flights" data-details={o.id} hidden={i !== 0}>
-              {o.segments.map((s) => (
-                <article class="trip__flight">
-                  <header class="trip__fl-head">
-                    <p class="trip__fl-route">
-                      <span>{s.from.city}, {s.from.code}</span>
-                      <img src={icoPlane.src} width="17" height="17" alt="to" class="trip__fl-plane" />
-                      <span>{s.to.city}, {s.to.code}</span>
-                    </p>
-                    <p class="trip__fl-kind">Departure</p>
-                    <p class="trip__fl-meta">Travel time: {o.travelTime}&nbsp; · &nbsp;{o.layovers} layover{o.layovers === 1 ? '' : 's'}</p>
-                  </header>
-                  <div class="trip__fl-body">
-                    <div class="trip__fl-cols">
-                      <div class="trip__fl-col">
-                        <p class="trip__fl-time"><img src={icoTakeoff.src} width="17" height="12" alt="" class="trip__fl-ico" />{fmtTime(s.depart)}&nbsp; {s.from.code}</p>
-                        <p class="trip__fl-day">{fmtDay(s.depart)}</p>
-                        <p class="trip__fl-ap">{s.from.name}</p>
-                      </div>
-                      <div class="trip__fl-col">
-                        <p class="trip__fl-time"><img src={icoLanding.src} width="17" height="17" alt="" class="trip__fl-ico" />{fmtTime(s.arrive)}&nbsp; {s.to.code}</p>
-                        <p class="trip__fl-day">{fmtDay(s.arrive)}</p>
-                        <p class="trip__fl-ap">{s.to.name}</p>
-                      </div>
-                      <div class="trip__fl-col trip__fl-col--air">
-                        <p class="trip__fl-time">
-                          <span class="trip__fl-clock" aria-hidden="true"><img src={icoTimeCircle.src} width="15" height="15" alt="" /><img src={icoTimeHands.src} width="12.5" height="12.5" alt="" /></span>
-                          <span class="sr-only">Flight time </span>{s.duration}
-                        </p>
-                        {s.airline.logo && small.get(s.airline.logo)
-                          ? <span class="trip__fl-airline"><img src={small.get(s.airline.logo)} alt={s.airline.name} /></span>
-                          : <span class="trip__fl-airline-t">{s.airline.name}</span>}
-                        <p class="trip__fl-no">Flight no: {s.flightNo}</p>
-                      </div>
+              {/* one card per direction (Departure / Return), its flights inside with the layover between them
+                  (Figma "Homepage mobile" 778:1454: a timeline on phones; columns from 48rem as Addition 1) */}
+              {[
+                { kind: 'Departure', segs: o.segments, time: o.travelTime },
+                ...(o.returnSegments?.length ? [{ kind: 'Return', segs: o.returnSegments, time: o.returnTravelTime ?? '' }] : []),
+              ].map((dir) => {
+                const a = dir.segs[0], z = dir.segs[dir.segs.length - 1], stops = dir.segs.length - 1;
+                return (
+                  <article class="trip__flight">
+                    <header class="trip__fl-head">
+                      <p class="trip__fl-top"><span class="trip__fl-kind">{dir.kind}</span><span class="trip__fl-date">{fmtDay(a.depart)}</span></p>
+                      <p class="trip__fl-route">
+                        <span>{a.from.city}, {a.from.code}</span>
+                        <img src={icoPlane.src} width="17" height="17" alt="to" class="trip__fl-plane" />
+                        <span>{z.to.city}, {z.to.code}</span>
+                      </p>
+                      <p class="trip__fl-meta">Travel time: {dir.time}&nbsp; · &nbsp;{stops} layover{stops === 1 ? '' : 's'}</p>
+                    </header>
+                    <div class="trip__fl-body">
+                      {dir.segs.map((s, j) => (
+                        <>
+                          {j > 0 && <p class="trip__lay"><strong>{layover(dir.segs[j - 1].arrive, s.depart)}</strong> Layover in {s.from.city}</p>}
+                          <div class="trip__seg">
+                            <span class="trip__seg-cabin">{o.cabin.replace(/ class$/i, '')}</span>
+                            <div class="trip__fl-col trip__seg-dep">
+                              <p class="trip__fl-time"><img src={icoTakeoff.src} width="17" height="12" alt="" class="trip__fl-ico" />{fmtTime(s.depart)}&nbsp; {s.from.code}</p>
+                              <p class="trip__fl-day">{fmtDay(s.depart)}</p>
+                              <p class="trip__fl-ap">{s.from.name}</p>
+                            </div>
+                            <div class="trip__fl-col trip__seg-arr">
+                              <p class="trip__fl-time"><img src={icoLanding.src} width="17" height="17" alt="" class="trip__fl-ico" />{fmtTime(s.arrive)}&nbsp; {s.to.code}</p>
+                              <p class="trip__fl-day">{fmtDay(s.arrive)}</p>
+                              <p class="trip__fl-ap">{s.to.name}</p>
+                            </div>
+                            <div class="trip__fl-col trip__fl-col--air trip__seg-air">
+                              <p class="trip__fl-time trip__seg-dur">
+                                <span class="trip__fl-clock" aria-hidden="true"><img src={icoTimeCircle.src} width="15" height="15" alt="" /><img src={icoTimeHands.src} width="12.5" height="12.5" alt="" /></span>
+                                <span class="sr-only">Flight time </span>{s.duration}
+                              </p>
+                              {s.airline.logo && small.get(s.airline.logo)
+                                ? <span class="trip__fl-airline trip__seg-logo"><img src={small.get(s.airline.logo)} alt={s.airline.name} /></span>
+                                : <span class="trip__fl-airline-t trip__seg-logo">{s.airline.name}</span>}
+                              <p class="trip__fl-no trip__seg-no">Flight no: {s.flightNo}{s.note && <small class="trip__seg-note">{s.note}</small>}</p>
+                            </div>
+                            <div class="trip__fl-foot trip__seg-foot">
+                              <p class="trip__fl-time trip__seg-bag"><img src={icoBag.src} width="15" height="15" alt="" class="trip__fl-ico" /><span>{s.baggage}{s.baggageNote && <small> {s.baggageNote}</small>}</span></p>
+                              <p class="trip__fl-time trip__seg-acft"><img src={icoPlaneSm.src} width="15" height="15" alt="" class="trip__fl-ico trip__fl-ico--rot" /><span class="sr-only">Aircraft </span>{s.aircraft}</p>
+                              {s.note && <p class="trip__fl-note">{s.note}</p>}
+                            </div>
+                          </div>
+                        </>
+                      ))}
                     </div>
-                    <div class="trip__fl-foot">
-                      <p class="trip__fl-time"><img src={icoBag.src} width="15" height="15" alt="" class="trip__fl-ico" />{s.baggage}</p>
-                      <p class="trip__fl-time"><img src={icoPlaneSm.src} width="15" height="15" alt="" class="trip__fl-ico trip__fl-ico--rot" /><span class="sr-only">Aircraft </span>{s.aircraft}</p>
-                      {s.note && <p class="trip__fl-note">{s.note}</p>}
-                    </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           ))}
         </section>
@@ -668,6 +683,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__fl-head {
     display: grid;
     grid-template-columns: 1fr auto;
+    grid-template-areas: 'route top' 'meta meta';
     gap: 0.6rem 1rem;
     padding: 2.25rem 2.375rem 1.75rem;
     background: var(--c-navy);
@@ -676,8 +692,11 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   }
   .trip__fl-route { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.875rem; font-size: var(--fs-18); font-weight: var(--fw-semibold); }
   .trip__fl-plane { rotate: 90deg; }
+  .trip__fl-route { grid-area: route; }
+  .trip__fl-top { grid-area: top; display: flex; align-items: baseline; gap: 0.75rem; justify-content: flex-end; }
   .trip__fl-kind { font-size: var(--fs-18); font-weight: var(--fw-semibold); text-align: right; }
-  .trip__fl-meta { grid-column: 1 / -1; font-size: var(--fs-16); }
+  .trip__fl-date { font-size: var(--fs-14); opacity: 0.8; }
+  .trip__fl-meta { grid-area: meta; font-size: var(--fs-16); }
   .trip__fl-body { padding: 2.125rem 2.375rem 2.375rem; }
   .trip__fl-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: 1.5rem 2rem; }
   @media (min-width: 48rem) { .trip__fl-cols { grid-template-columns: 1fr 1fr 9rem; } }
@@ -699,6 +718,16 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__fl-foot { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: 1rem 2rem; margin-top: 1.9rem; padding-top: 1.9rem; border-top: 1px solid var(--t-line); }
   @media (min-width: 48rem) { .trip__fl-foot { grid-template-columns: 1fr 1fr 9rem; } }
   .trip__fl-note { font-size: var(--fs-14); line-height: 1.19; }
+
+  /* one flight inside a direction card; desktop: the Addition 1 columns, flights stacked with the layover between */
+  .trip__seg { position: relative; display: grid; grid-template-columns: 1fr 1fr 9rem; grid-template-areas: 'dep arr air' 'foot foot foot'; column-gap: 2rem; }
+  .trip__seg-dep { grid-area: dep; } .trip__seg-arr { grid-area: arr; } .trip__seg-air { grid-area: air; }
+  .trip__seg-foot { grid-area: foot; grid-template-columns: 1fr 1fr 9rem; }
+  .trip__seg-cabin, .trip__seg-note { display: none; }
+  .trip__seg-bag small { font: inherit; }
+  .trip__lay { display: inline-flex; gap: 0.35rem; margin: 1.6rem 0; padding: 0.5rem 0.8rem; border-radius: 6px; background: var(--c-navy); color: var(--c-cream); font-size: var(--fs-14); line-height: 1.35; }
+  .trip__lay strong { font-weight: var(--fw-semibold); }
+  .trip__agent-ico, .trip__agent-br { display: none; }
 
   /* ---------------------------------------------------------------- 2. passengers + fields */
   .trip__warn { display: flex; gap: 0.375rem; align-items: flex-start; margin-top: 0.75rem; color: var(--c-burgundy); font-size: var(--fs-12); line-height: 1.2; }
@@ -902,12 +931,70 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__btn--outline:hover { background: var(--c-navy); color: var(--c-cream); }
 
   /* ---------------------------------------------------------------- phones / tablets (no design: stacked) */
+  /* ---------------------------------------------------------------- phones (Figma "Homepage mobile" 778:1454) */
   @media (max-width: 47.9988rem) {
-    .trip__hero-in { grid-template-columns: 1fr; grid-template-areas: 'title' 'tabs' 'agent'; }
-    .trip__agent { justify-self: stretch; flex-direction: row-reverse; justify-content: flex-end; width: auto; margin-top: 1.25rem; text-align: left; }
-    .trip__fl-head { grid-template-columns: 1fr; padding: 1.5rem 1.5rem 1.25rem; }
-    .trip__fl-kind { text-align: left; }
-    .trip__fl-body { padding: 1.5rem; }
+    .trip__hero-in { grid-template-columns: 1fr; grid-template-areas: 'title' 'agent' 'tabs'; }
+    .trip__title { font-size: 1.75rem; }
+    .trip__title em { display: block; }
+    /* agent: one strip under the title: photo, "Prepared By: name", then phone and e-mail with small icons */
+    .trip__agent { justify-self: stretch; flex-direction: row-reverse; justify-content: flex-end; gap: 0.75rem; width: auto; min-width: 0; margin-top: 1rem; padding: 0.7rem 0.75rem; text-align: left; }
+    /* line 1 "Prepared By: Nate Turner", line 2 phone + e-mail */
+    .trip__agent-txt { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.35rem; row-gap: 3px; font-size: var(--fs-12); }
+    .trip__agent-br { display: block; flex-basis: 100%; height: 0; }
+    .trip__agent-txt a + a { margin-left: 0.6rem; }
+    .trip__agent-k { font-size: var(--fs-12); }
+    .trip__agent-n { font-weight: var(--fw-semibold); }
+    .trip__agent a { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: var(--fw-regular); overflow-wrap: normal; white-space: nowrap; }
+    .trip__agent :global(.trip__agent-ico) { display: block; flex: none; width: 10px; height: auto; }
+    .trip__agent-ph { width: 2rem; height: 2rem; border-width: 1px; font-size: var(--fs-12); }
+    .trip__tabs { margin-top: 0.875rem; }
+
+    /* options: two columns with a radio circle (the selected one filled) */
+    .trip__options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+    .trip__opt { position: relative; }
+    .trip__opt::before { content: ''; position: absolute; left: 11px; top: 50%; translate: 0 -50%; width: 17px; height: 17px; box-sizing: border-box; border: 1.5px solid currentColor; border-radius: 50%; opacity: 0.8; }
+    .trip__opt[aria-checked='true']::before { border-color: var(--c-sky); background: radial-gradient(circle, #e88aa9 0 5.5px, transparent 6px); opacity: 1; }
+    .trip__h2--details { text-align: center; }
+
+    /* direction card: head (Departure / date, route, travel time), then a timeline of the flights */
+    .trip__flight { border-radius: 18px; }
+    .trip__fl-head { grid-template-columns: 1fr; grid-template-areas: 'top' 'route' 'meta'; gap: 0.5rem; padding: 1.6rem 1.125rem 1.35rem; }
+    .trip__fl-top { justify-content: space-between; }
+    .trip__fl-kind { font-size: var(--fs-12); font-weight: var(--fw-semibold); }
+    .trip__fl-date { font-size: var(--fs-12); }
+    .trip__fl-route { gap: 0.25rem 0.6rem; font-size: var(--fs-14); }
+    .trip__fl-route .trip__fl-plane { width: 11px; height: 11px; }
+    .trip__fl-meta { font-size: var(--fs-12); }
+    .trip__fl-body { position: relative; padding: 1.9rem 1.2rem 1.9rem 2.625rem; }
+    .trip__fl-body::before { content: ''; position: absolute; left: 21px; top: 2.25rem; bottom: 2.5rem; border-left: 1.5px dashed color-mix(in srgb, var(--c-navy) 55%, transparent); }
+    .trip__seg { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: 'dep dep' 'arr arr' 'bag no' 'dur acft' 'logo logo'; gap: 1.1rem 0.75rem; }
+    .trip__seg-air, .trip__seg-foot { display: contents; }
+    .trip__seg-dep, .trip__seg-arr { position: relative; gap: 0.6rem; }
+    .trip__seg-dep::before, .trip__seg-arr::before, .trip__lay::before { content: ''; position: absolute; left: -28px; top: 2px; width: 13px; height: 13px; box-sizing: border-box; border: 2px solid var(--c-navy); border-radius: 50%; background: var(--c-sky); }
+    .trip__seg-arr { padding-bottom: 1.25rem; border-bottom: 1px solid var(--t-line); }
+    .trip__seg-bag { grid-area: bag; } .trip__seg-no { grid-area: no; } .trip__seg-dur { grid-area: dur; } .trip__seg-acft { grid-area: acft; } .trip__seg-logo { grid-area: logo; }
+    .trip__seg-foot > .trip__fl-note { display: none; }
+    .trip__seg-bag, .trip__seg-no { align-items: flex-start; font-size: var(--fs-14); white-space: normal; }
+    .trip__seg-bag small, .trip__seg-note { display: block; font-size: var(--fs-12); font-weight: var(--fw-regular); }
+    .trip__seg-no { display: grid; }
+    .trip__seg-dur, .trip__seg-acft { font-size: var(--fs-14); }
+    .trip__fl-time { font-size: var(--fs-14); }
+    .trip__fl-day { font-size: var(--fs-14); }
+    .trip__fl-ap { font-size: var(--fs-12); }
+    .trip__seg-cabin { display: block; position: absolute; top: -0.35rem; right: -1.2rem; padding: 0.55rem 1rem; border-radius: 6px 0 0 6px; background: var(--c-burgundy); color: var(--c-cream); font-size: var(--fs-14); line-height: 1.35; }
+    .trip__lay { position: relative; display: flex; width: fit-content; margin: 1.5rem 0; font-size: var(--fs-12); }
+    .trip__lay::before { left: -28px; top: 50%; translate: 0 -50%; background: var(--c-navy); }
+
+    /* passengers (Figma mobile "Addition 7"): compact 44px fields, smaller headings and passenger bar */
+    .trip { --t-field: 2.75rem; }
+    .trip__field > input, .trip__field > select, .trip__phone-in > input { padding-top: 1.1rem; padding-bottom: 0.3rem; padding-left: 0.9rem; }
+    .trip__field > input, .trip__phone-in > input { padding-right: 0.9rem; }
+    .trip__field > span, .trip__phone-in > span { left: 0.9rem; }
+    .trip__pax-bar { padding: 0.85rem 1rem; font-size: var(--fs-14); }
+    .trip__h4 { margin: 1.5rem 0 0.75rem; font-size: var(--fs-16); }
+    .trip__pax .trip__h4:first-of-type { padding-top: 1.5rem; }
+    .trip__fields { gap: 0.6rem; }
+    .trip__fields + .trip__fields { margin-top: 0.6rem; }
   }
 </style>
 
