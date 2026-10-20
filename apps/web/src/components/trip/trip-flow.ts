@@ -122,6 +122,9 @@ function init(root: HTMLElement) {
   mask('exp', (v) => { const d = digits(v).slice(0, 4); return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d; });
   mask('cvv', (v) => digits(v).slice(0, 4));
 
+  // ------------------------------------------------------------------ city: search the chosen country's towns
+  initCity(root);
+
   // ------------------------------------------------------------------ validation
   type Field = HTMLInputElement | HTMLSelectElement;
   const FIELDS = 'input[data-f], select[data-f]';
@@ -282,8 +285,10 @@ function initSelect(wrap: HTMLElement) {
   };
   const choose = (i: number) => {
     items.forEach((li, j) => li.setAttribute('aria-selected', String(j === i)));
+    const changed = wrap.dataset.value !== items[i].dataset.value;
     wrap.dataset.value = items[i].dataset.value;
     val.textContent = items[i].textContent;
+    if (changed) wrap.dispatchEvent(new CustomEvent('tsel:change', { bubbles: true, detail: { value: wrap.dataset.value } }));
   };
   const onOutside = (e: Event) => { if (!wrap.contains(e.target as Node)) close(false); };
   function open() {
@@ -319,4 +324,86 @@ function initSelect(wrap: HTMLElement) {
       if (i >= 0) setActive(i);
     }
   });
+}
+
+// ------------------------------------------------------------------ city combobox (payment step)
+// Suggestions from /data/cities/<country>.json (GeoNames, places over 1,000 people, largest first; [name, region]),
+// loaded when needed. Any town can still be typed. Picking a city fills State when it is empty, for countries whose
+// first-level regions are states / provinces.
+const STATE_COUNTRIES = new Set(['US', 'CA', 'AU', 'MX', 'BR', 'IN', 'AR', 'MY', 'NG', 'ZA']);
+const fold = (v: string) => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+function initCity(root: HTMLElement) {
+  const box = root.querySelector<HTMLElement>('[data-city]');
+  const country = root.querySelector<HTMLElement>('[data-tsel][data-f="country"]');
+  if (!box || !country) return;
+  const input = box.querySelector<HTMLInputElement>('input')!;
+  const list = box.querySelector<HTMLElement>('[data-city-list]')!;
+  const state = root.querySelector<HTMLInputElement>('input[data-f="state"]');
+  const cache = new Map<string, Promise<string[][]>>();
+  const load = (cc: string) => {
+    if (!cache.has(cc)) cache.set(cc, fetch(`/data/cities/${cc}.json`).then((r) => (r.ok ? r.json() : [])).catch(() => []));
+    return cache.get(cc)!;
+  };
+  let rows: string[][] = [];
+  let shown: string[][] = [];
+  let active = -1;
+  const cc = () => country.dataset.value || 'US';
+  const close = () => { list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; };
+  const setActive = (i: number) => {
+    const lis = [...list.children] as HTMLElement[];
+    active = lis.length ? (i + lis.length) % lis.length : -1;
+    lis.forEach((li, j) => li.classList.toggle('is-active', j === active));
+    if (active >= 0) {
+      const li = lis[active];
+      input.setAttribute('aria-activedescendant', li.id);
+      if (li.offsetTop < list.scrollTop) list.scrollTop = li.offsetTop;
+      else if (li.offsetTop + li.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = li.offsetTop + li.offsetHeight - list.clientHeight;
+    }
+  };
+  async function suggest() {
+    rows = await load(cc());
+    const q = fold(input.value);
+    if (!q) { close(); return; }
+    const starts: string[][] = [], has: string[][] = [];
+    for (const r of rows) {
+      const n = fold(r[0]);
+      if (n.startsWith(q)) starts.push(r); else if (q.length >= 3 && n.includes(q)) has.push(r);   // "contains" from 3 letters
+      if (starts.length >= 8) break;
+    }
+    shown = [...starts, ...has].slice(0, 8);
+    list.replaceChildren(...shown.map((r, i) => {
+      const li = document.createElement('li');
+      li.id = `trip-city-${i}`; li.setAttribute('role', 'option');
+      li.append(r[0]);
+      if (r[1] && r[1] !== r[0]) { const sm = document.createElement('small'); sm.textContent = r[1]; li.append(sm); }
+      return li;
+    }));
+    list.hidden = !shown.length;
+    input.setAttribute('aria-expanded', String(!!shown.length));
+    active = -1;
+  }
+  function pick(i: number) {
+    const r = shown[i]; if (!r) return;
+    input.value = r[0];
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    if (state && !state.value.trim() && r[1] && STATE_COUNTRIES.has(cc())) { state.value = r[1]; state.dispatchEvent(new Event('input', { bubbles: true })); }
+    close();
+  }
+  input.addEventListener('focus', () => { load(cc()); });
+  input.addEventListener('input', (e) => { if (e.isTrusted) suggest(); });
+  input.addEventListener('keydown', (e) => {
+    if (list.hidden) { if (e.key === 'ArrowDown' && input.value) { e.preventDefault(); suggest(); } return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+    else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); pick(active); }
+    else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'Tab') close();
+  });
+  list.addEventListener('pointerdown', (e) => e.preventDefault());   // keep focus in the input
+  list.addEventListener('click', (e) => {
+    const li = (e.target as HTMLElement).closest('li');
+    if (li) pick([...list.children].indexOf(li));
+  });
+  input.addEventListener('blur', close);
+  country.addEventListener('tsel:change', () => { close(); load(cc()); });
 }

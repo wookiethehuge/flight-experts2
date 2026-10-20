@@ -17,6 +17,7 @@ import { Picture, getImage } from 'astro:assets';
 import Icon from '../ui/Icon.astro';
 import TripSelect from './TripSelect.astro';
 import { money, fmtDay, fmtTime, type TripOffer } from '../../lib/trip';
+import { COUNTRIES as countries } from '../../lib/countries';
 // hero art in two layers so it can move: the clouds (plane painted out) and the plane cut from the same photo
 import clouds from '../../assets/trip/hero-clouds-clear.png';
 import plane from '../../assets/trip/hero-plane.png';
@@ -55,7 +56,6 @@ const genders = ['Male', 'Female', 'Unspecified'];
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const seats = ['No preference', 'Aisle', 'Window', 'Center'];
 const meals = ['No preference', 'Vegetarian', 'Kosher', 'Muslim', 'Hindu', 'Baby Meal', 'Child Meal', 'Fruit Platter', 'Gluten Free'];
-const countries = ['United States', 'Canada', 'United Kingdom', 'Ireland', 'Australia', 'Germany', 'France', 'Spain', 'Italy', 'Netherlands', 'Slovenia', 'Croatia', 'Mexico', 'Brazil', 'United Arab Emirates', 'Other'];
 const dials = [{ v: '+1', l: '🇺🇸 +1' }, { v: '+44', l: '🇬🇧 +44' }, { v: '+353', l: '🇮🇪 +353' }, { v: '+61', l: '🇦🇺 +61' }, { v: '+49', l: '🇩🇪 +49' }, { v: '+33', l: '🇫🇷 +33' }, { v: '+386', l: '🇸🇮 +386' }, { v: '+385', l: '🇭🇷 +385' }, { v: '+971', l: '🇦🇪 +971' }];
 const initials = trip.agent.name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2);
 const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
@@ -271,8 +271,14 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
           <h3 class="trip__h4 trip__h4--pay">Billing Address</h3>
           <p class="trip__sub">Your billing address must be entered exactly as it appears on your credit card statement.</p>
           <div class="trip__fields trip__fields--2">
-            <TripSelect label="Country" options={countries} f="country" />
-            <label class="trip__field"><input type="text" required autocomplete="address-level2" placeholder=" " data-f="city" /><span>City *</span><em class="trip__err" hidden></em></label>
+            <TripSelect label="Country" options={countries.map((c) => c.name)} values={countries.map((c) => c.code)} f="country" />
+            {/* searchable: suggestions from the chosen country (GeoNames, places over 1,000 people), any town can still be typed */}
+            <div class="trip__field trip__city" data-city>
+              <input type="text" required autocomplete="address-level2" placeholder=" " data-f="city" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="trip-city-list" />
+              <span>City *</span>
+              <ul class="trip__sugg" id="trip-city-list" role="listbox" aria-label="Cities" hidden data-city-list></ul>
+              <em class="trip__err" hidden></em>
+            </div>
             <label class="trip__field"><input type="text" required autocomplete="address-level1" placeholder=" " data-f="state" /><span>State *</span><em class="trip__err" hidden></em></label>
             <label class="trip__field"><input type="text" required autocomplete="street-address" placeholder=" " data-f="street" /><span>Street Address *</span><em class="trip__err" hidden></em></label>
             <label class="trip__field"><input type="text" required autocomplete="postal-code" placeholder=" " data-f="zip" /><span>ZIP / Postal Code *</span><em class="trip__err" hidden></em></label>
@@ -714,6 +720,17 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__phone-in { position: relative; display: block; }
   .trip__phone-in > input { border-radius: 0 5px 5px 0; }
   .trip__field--phone > .trip__err { grid-column: 1 / -1; }
+  /* city suggestions (same look as the dropdown lists) */
+  .trip__city { position: relative; }
+  .trip__sugg {
+    position: absolute; z-index: 40; top: calc(var(--t-field) + 3px); left: 0; right: 0;
+    max-height: 18rem; overflow-y: auto; margin: 0; padding: 0.4rem 0; list-style: none;
+    border-radius: 3px; background: var(--c-white); box-shadow: 0 8px 24px rgba(15, 21, 36, 0.14);
+  }
+  /* the items are created by the script, so the scoped styles reach them with :global */
+  .trip__sugg :global(li) { display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem 0.75rem; font-size: var(--fs-14); line-height: 1.2; cursor: pointer; }
+  .trip__sugg :global(li small) { overflow: hidden; color: var(--c-grey-text); font-size: var(--fs-12); text-overflow: ellipsis; white-space: nowrap; }
+  .trip__sugg :global(li:hover), .trip__sugg :global(li.is-active) { background: var(--c-sky); }
   .trip__err { display: block; margin-top: 0.3rem; color: var(--c-burgundy); font-size: var(--fs-12); font-style: normal; }
   .trip__err[hidden] { display: none; }
 
