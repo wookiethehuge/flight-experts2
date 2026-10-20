@@ -249,8 +249,8 @@ const mail = `mailto:${settings.email}`;
     .sf__col--accept { grid-column: auto; }
     .sf__col--links .sf__list { color: var(--c-cream); }
     .sf__accept { flex-direction: column; gap: 32.5px; }   /* icons 32.5 under the cards, as before */
-    /* one tight group, starting where the card logos start (client: spread to the logos' width they read as separate) */
-    .sf__social { align-self: flex-start; margin: 0; }
+    /* one tight group (client: spread out they read as separate), centred under the card logos */
+    .sf__social { align-self: flex-start; width: var(--pay-w); justify-content: center; margin: 0; }
     .sf__copy { margin-top: 56.4px; line-height: 24.3px; }
     .sf__legal { margin-top: 32.7px; }
   }
