@@ -14,7 +14,7 @@ export interface TripSegment {
   duration: string;          // "7h 55m"
   airline: { name: string; logo?: string };   // logo: file in src/assets/trip/
   flightNo: string;
-  aircraft: string;          // "777"
+  aircraft: string;          // "Boeing 777", "Airbus A319"
   baggage: string;           // "2 x 70lbs"
   baggageNote?: string;      // "Checked luggage" (second line on phones)
   bags: number;              // checked bags per passenger (summary: "2 x [bag]")
@@ -29,7 +29,19 @@ export interface TripOption {
   segments: TripSegment[];   // outbound flights in order; a layover is shown between consecutive ones
   returnTravelTime?: string;
   returnSegments?: TripSegment[];   // round trips: the way back
+  /** multi-city: the journeys in order (shown as Flight 1, Flight 2 ...); replaces segments / returnSegments for display */
+  legs?: TripLeg[];
 }
+export interface TripLeg { label?: string; travelTime: string; segments: TripSegment[] }
+
+/** The journeys of an option as cards: multi-city legs, or Departure (+ Return). */
+export const journeysOf = (o: TripOption): { label: string; time: string; segs: TripSegment[] }[] =>
+  o.legs?.length
+    ? o.legs.map((l, i) => ({ label: l.label ?? `Flight ${i + 1}`, time: l.travelTime, segs: l.segments }))
+    : [
+        { label: 'Departure', time: o.travelTime, segs: o.segments },
+        ...(o.returnSegments?.length ? [{ label: 'Return', time: o.returnTravelTime ?? '', segs: o.returnSegments }] : []),
+      ];
 export interface ProtectionPlan { id: string; name: string; price: number; popular?: boolean }
 export interface ProtectionFeature {
   label: string;

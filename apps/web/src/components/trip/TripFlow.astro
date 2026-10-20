@@ -16,7 +16,7 @@
 import { Picture, getImage } from 'astro:assets';
 import Icon from '../ui/Icon.astro';
 import TripSelect from './TripSelect.astro';
-import { money, fmtDay, fmtTime, layover, type TripOffer } from '../../lib/trip';
+import { money, fmtDay, fmtTime, layover, journeysOf, type TripOffer } from '../../lib/trip';
 import { COUNTRIES as countries } from '../../lib/countries';
 import { getSettings } from '../../lib/cms';
 // hero art in two layers so it can move: the clouds (plane painted out) and the plane cut from the same photo
@@ -130,15 +130,12 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
             <div class="trip__flights" data-details={o.id} hidden={i !== 0}>
               {/* one card per direction (Departure / Return), its flights inside with the layover between them
                   (Figma "Homepage mobile" 778:1454: a timeline on phones; columns from 48rem as Addition 1) */}
-              {[
-                { kind: 'Departure', segs: o.segments, time: o.travelTime },
-                ...(o.returnSegments?.length ? [{ kind: 'Return', segs: o.returnSegments, time: o.returnTravelTime ?? '' }] : []),
-              ].map((dir) => {
+              {journeysOf(o).map((dir) => {
                 const a = dir.segs[0], z = dir.segs[dir.segs.length - 1], stops = dir.segs.length - 1;
                 return (
                   <article class="trip__flight">
                     <header class="trip__fl-head">
-                      <p class="trip__fl-top"><span class="trip__fl-kind">{dir.kind}</span><span class="trip__fl-date">{fmtDay(a.depart)}</span></p>
+                      <p class="trip__fl-top"><span class="trip__fl-kind">{dir.label}</span><span class="trip__fl-date">{fmtDay(a.depart)}</span></p>
                       <p class="trip__fl-route">
                         <span>{a.from.city}, {a.from.code}</span>
                         <img src={icoPlane.src} width="17" height="17" alt="to" class="trip__fl-plane" />

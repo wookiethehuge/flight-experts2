@@ -151,11 +151,39 @@
             "logo": "airline-ba.png"
           },
           "flightNo": "BA117",
-          "aircraft": "A380",
+          "aircraft": "Airbus A380",
           "baggage": "2 x 70lbs",
+          "baggageNote": "Checked luggage",
           "bags": 2,
-          "note": "Check-in Required",
-          "baggageNote": "Checked luggage"
+          "note": "Check-in Required"
+        }
+      ],
+      "returnTravelTime": "07h 10m",
+      "returnSegments": [
+        {
+          "from": {
+            "code": "JFK",
+            "name": "John F. Kennedy",
+            "city": "New York"
+          },
+          "to": {
+            "code": "LHR",
+            "name": "London Heathrow",
+            "city": "London Heathrow"
+          },
+          "depart": "2026-09-03T18:30",
+          "arrive": "2026-09-04T06:40",
+          "duration": "7h 10m",
+          "airline": {
+            "name": "British Airways",
+            "logo": "airline-ba.png"
+          },
+          "flightNo": "BA112",
+          "aircraft": "Airbus A380",
+          "baggage": "2 x 70lbs",
+          "baggageNote": "Checked luggage",
+          "bags": 2,
+          "note": "Check-in Required"
         }
       ]
     },
@@ -163,8 +191,8 @@
       "id": "opt-3",
       "pricePerAdult": 2671,
       "cabin": "Business Class",
-      "layovers": 0,
-      "travelTime": "08h 10m",
+      "layovers": 1,
+      "travelTime": "11h 55m",
       "segments": [
         {
           "from": {
@@ -173,23 +201,48 @@
             "city": "London Heathrow"
           },
           "to": {
-            "code": "JFK",
-            "name": "John F. Kennedy",
-            "city": "New York"
+            "code": "BOS",
+            "name": "Boston Logan",
+            "city": "Boston"
           },
-          "depart": "2026-08-27T15:10",
-          "arrive": "2026-08-27T18:20",
-          "duration": "8h 10m",
+          "depart": "2026-08-27T09:40",
+          "arrive": "2026-08-27T12:05",
+          "duration": "7h 25m",
           "airline": {
             "name": "British Airways",
             "logo": "airline-ba.png"
           },
-          "flightNo": "BA173",
-          "aircraft": "787",
+          "flightNo": "BA213",
+          "aircraft": "Boeing 787",
           "baggage": "2 x 70lbs",
+          "baggageNote": "Checked luggage",
           "bags": 2,
-          "note": "Check-in Required",
-          "baggageNote": "Checked luggage"
+          "note": "Check-in Required"
+        },
+        {
+          "from": {
+            "code": "BOS",
+            "name": "Boston Logan",
+            "city": "Boston"
+          },
+          "to": {
+            "code": "MIA",
+            "name": "Miami International",
+            "city": "Miami"
+          },
+          "depart": "2026-08-27T13:50",
+          "arrive": "2026-08-27T17:35",
+          "duration": "3h 45m",
+          "airline": {
+            "name": "British Airways",
+            "logo": "airline-ba.png"
+          },
+          "flightNo": "BA6152",
+          "aircraft": "Airbus A321",
+          "baggage": "2 x 70lbs",
+          "baggageNote": "Checked luggage",
+          "bags": 2,
+          "note": "Check-in Required"
         }
       ]
     },
@@ -219,11 +272,128 @@
             "logo": "airline-ba.png"
           },
           "flightNo": "BA185",
-          "aircraft": "777",
+          "aircraft": "Boeing 777",
           "baggage": "2 x 70lbs",
+          "baggageNote": "Checked luggage",
           "bags": 2,
-          "note": "Check-in Required",
-          "baggageNote": "Checked luggage"
+          "note": "Check-in Required"
+        }
+      ],
+      "legs": [
+        {
+          "travelTime": "07h 55m",
+          "segments": [
+            {
+              "from": {
+                "code": "LHR",
+                "name": "London Heathrow",
+                "city": "London Heathrow"
+              },
+              "to": {
+                "code": "EWR",
+                "name": "Newark Liberty",
+                "city": "New York"
+              },
+              "depart": "2026-08-28T11:00",
+              "arrive": "2026-08-28T13:55",
+              "duration": "7h 55m",
+              "airline": {
+                "name": "British Airways",
+                "logo": "airline-ba.png"
+              },
+              "flightNo": "BA185",
+              "aircraft": "Boeing 777",
+              "baggage": "2 x 70lbs",
+              "baggageNote": "Checked luggage",
+              "bags": 2,
+              "note": "Check-in Required"
+            }
+          ]
+        },
+        {
+          "travelTime": "03h 10m",
+          "segments": [
+            {
+              "from": {
+                "code": "JFK",
+                "name": "John F. Kennedy",
+                "city": "New York"
+              },
+              "to": {
+                "code": "MIA",
+                "name": "Miami International",
+                "city": "Miami"
+              },
+              "depart": "2026-08-31T08:00",
+              "arrive": "2026-08-31T11:10",
+              "duration": "3h 10m",
+              "airline": {
+                "name": "British Airways",
+                "logo": "airline-ba.png"
+              },
+              "flightNo": "BA4562",
+              "aircraft": "Airbus A319",
+              "baggage": "2 x 70lbs",
+              "baggageNote": "Checked luggage",
+              "bags": 2,
+              "note": "Check-in Required"
+            }
+          ]
+        },
+        {
+          "travelTime": "12h 35m",
+          "segments": [
+            {
+              "from": {
+                "code": "MIA",
+                "name": "Miami International",
+                "city": "Miami"
+              },
+              "to": {
+                "code": "JFK",
+                "name": "John F. Kennedy",
+                "city": "New York"
+              },
+              "depart": "2026-09-05T07:30",
+              "arrive": "2026-09-05T10:25",
+              "duration": "2h 55m",
+              "airline": {
+                "name": "British Airways",
+                "logo": "airline-ba.png"
+              },
+              "flightNo": "BA4569",
+              "aircraft": "Airbus A319",
+              "baggage": "2 x 70lbs",
+              "baggageNote": "Checked luggage",
+              "bags": 2,
+              "note": "Check-in Required"
+            },
+            {
+              "from": {
+                "code": "JFK",
+                "name": "John F. Kennedy",
+                "city": "New York"
+              },
+              "to": {
+                "code": "LHR",
+                "name": "London Heathrow",
+                "city": "London Heathrow"
+              },
+              "depart": "2026-09-05T12:15",
+              "arrive": "2026-09-06T00:05",
+              "duration": "6h 50m",
+              "airline": {
+                "name": "British Airways",
+                "logo": "airline-ba.png"
+              },
+              "flightNo": "BA176",
+              "aircraft": "Boeing 777",
+              "baggage": "2 x 70lbs",
+              "baggageNote": "Checked luggage",
+              "bags": 2,
+              "note": "Check-in Required"
+            }
+          ]
         }
       ]
     },
@@ -253,7 +423,7 @@
             "logo": "airline-ba.png"
           },
           "flightNo": "BA117",
-          "aircraft": "A380",
+          "aircraft": "Airbus A380",
           "baggage": "2 x 70lbs",
           "bags": 2,
           "note": "Check-in Required",
@@ -287,7 +457,7 @@
             "logo": "airline-ba.png"
           },
           "flightNo": "BA173",
-          "aircraft": "787",
+          "aircraft": "Boeing 787",
           "baggage": "2 x 70lbs",
           "bags": 2,
           "note": "Check-in Required",
