@@ -415,15 +415,25 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
     left: clamp(12rem, calc(100% - 20.5rem - 36rem), 25rem);
     max-width: 36rem; margin-inline: auto;
     aspect-ratio: 986 / 402;
-    animation: trip-float 4.5s ease-in-out infinite alternate;
+    /* float (bigger drift, transform) + a quicker, uneven rocking (rotate): reads as light turbulence (client: "more
+       wobbly"); the two never line up the same way twice, and the exhaust rocks with the jet */
+    animation: trip-float 4.5s ease-in-out infinite alternate, trip-wobble 3.7s ease-in-out infinite;
   }
   @media (max-width: 47.9988rem) {   /* stacked hero: the plane to the right, behind the title */
     .trip__jet { left: auto; right: -8%; top: 30%; width: min(85%, 26rem); margin: 0; }
   }
   .trip__plane { position: absolute; inset: 0; width: 100%; height: 100%; }
   @keyframes trip-float {
-    from { transform: translate(-1%, 4%) rotate(0.7deg); }
-    to { transform: translate(1.5%, -5%) rotate(-0.8deg); }
+    from { transform: translate(-1.5%, 6%) rotate(1deg); }
+    to { transform: translate(2%, -7%) rotate(-1.1deg); }
+  }
+  @keyframes trip-wobble {
+    0%, 100% { rotate: 0deg; }
+    18% { rotate: -1.5deg; }
+    37% { rotate: 1.1deg; }
+    52% { rotate: -0.6deg; }
+    74% { rotate: 1.6deg; }
+    88% { rotate: -0.4deg; }
   }
   /* exhaust from the engine's rear (48.5%, 86.8% of the plane box), streaming back along the fuselage line */
   .trip__trail, .trip__plume { position: absolute; left: 48.48%; top: 86.82%; }
