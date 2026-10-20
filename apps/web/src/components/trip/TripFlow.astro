@@ -45,6 +45,8 @@ for (const f of new Set([...trip.options.flatMap((o) => o.segments.map((s) => s.
 const cur = trip.currency;
 const pax = trip.travellers.adults + trip.travellers.children + trip.travellers.infants;
 const paxList = Array.from({ length: pax }, (_, i) => i + 1);
+// "(Child)" / "(Infant)" after the adults, in the order adults, children, infants
+const paxType = (n: number) => (n > trip.travellers.adults + trip.travellers.children ? ' (Infant)' : n > trip.travellers.adults ? ' (Child)' : '');
 const first = trip.options[0];
 const seg0 = first.segments[0];
 const last = first.segments[first.segments.length - 1];
@@ -192,7 +194,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
           <p class="trip__warn"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="currentColor" /><path d="M8 4.2v4.6M8 10.9v.9" stroke="#f7f6f2" stroke-width="1.6" stroke-linecap="round" /></svg>Passenger names must be entered exactly as in the passport or a government issued ID. Name changes are not permitted after booking.</p>
           {paxList.map((n) => (
             <fieldset class="trip__pax" data-pax-panel={n}>
-              <legend class="trip__pax-bar">Passenger {n}</legend>
+              <legend class="trip__pax-bar">Passenger {n}{paxType(n)}</legend>
               <h3 class="trip__h4"><Icon name="person" width={15} height={15} />Personal info</h3>
               <div class="trip__fields trip__fields--3">
                 <label class="trip__field"><input type="text" required autocomplete={n === 1 ? 'given-name' : 'off'} placeholder=" " data-f="first" /><span>First name *</span><em class="trip__err" hidden></em></label>

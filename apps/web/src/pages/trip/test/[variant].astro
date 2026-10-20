@@ -1,0 +1,56 @@
+---
+/**
+ * /trip/test/<variant>/: testing only. The trip checkout for one combination of trip type, stops, travellers and
+ * cabin (lib/trip-variants.ts), with a panel to switch to any other combination. Never indexed.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TripFlow from '../../../components/trip/TripFlow.astro';
+import { KINDS, STOPS, PAX, CABINS, allPicks, slugOf, variant, type Pick } from '../../../lib/trip-variants';
+
+export function getStaticPaths() {
+  return allPicks().map((pick) => ({ params: { variant: slugOf(pick) }, props: { pick } }));
+}
+interface Props { pick: Pick }
+const { pick } = Astro.props;
+const trip = variant(pick);
+const groups = [
+  { key: 'kind', label: 'Trip', items: KINDS },
+  { key: 'stops', label: 'Stops', items: STOPS },
+  { key: 'pax', label: 'Travellers', items: PAX },
+  { key: 'cabin', label: 'Cabin', items: CABINS },
+] as const;
+const href = (key: keyof Pick, id: string) => `/trip/test/${slugOf({ ...pick, [key]: id })}/`;
+---
+<BaseLayout title="Trip checkout test variations | Flight Experts" noindex checkout>
+  <details class="tv" open data-tv>
+    <summary>Test variations</summary>
+    {groups.map((g) => (
+      <div class="tv__g" role="group" aria-label={g.label}>
+        <span class="tv__k">{g.label}</span>
+        {g.items.map((it) => (
+          <a href={href(g.key, it.id)} class:list={['tv__c', pick[g.key] === it.id && 'is-on']} aria-current={pick[g.key] === it.id ? 'true' : undefined}>{it.label}</a>
+        ))}
+      </div>
+    ))}
+    <p class="tv__n">3 flight options per case. Times and fares are made up.</p>
+  </details>
+  <TripFlow trip={trip} />
+  <script is:inline>if (matchMedia('(max-width: 47.99rem)').matches) document.querySelector('[data-tv]')?.removeAttribute('open');</script>
+</BaseLayout>
+
+<style>
+  .tv {
+    position: fixed; z-index: 90; left: 0.75rem; bottom: 0.75rem;
+    width: min(23rem, calc(100vw - 1.5rem)); max-height: calc(100vh - 1.5rem); overflow: auto;
+    padding: 0.75rem 0.9rem; border-radius: 10px;
+    background: var(--c-navy); color: var(--c-cream); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    font-size: var(--fs-12);
+  }
+  .tv summary { cursor: pointer; font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+  .tv__g { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin-top: 0.65rem; }
+  .tv__k { flex-basis: 100%; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.6875rem; }
+  .tv__c { padding: 0.3rem 0.6rem; border: 1px solid rgba(199, 232, 255, 0.4); border-radius: 99px; color: inherit; text-decoration: none; white-space: nowrap; }
+  .tv__c:hover { border-color: var(--c-sky); }
+  .tv__c.is-on { border-color: var(--c-sky); background: var(--c-sky); color: var(--c-navy); font-weight: var(--fw-semibold); }
+  .tv__n { margin-top: 0.65rem; opacity: 0.6; }
+</style>
