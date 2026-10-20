@@ -119,9 +119,7 @@ const { settings } = Astro.props;
   @media (min-width: 48rem) {
     .bm__wrap { align-items: center; padding-block: 3.5rem; }
   }
-  @media (min-width: 64rem) {
-    /* desktop: the panel sits where the hero form sits, right-aligned in the 1440 container */
-    .bm__wrap { justify-content: flex-end; max-width: var(--page-max); margin-inline: auto; padding-inline: var(--gutter); }
-  }
+  /* desktop too: centred in the window (client; it used to sit right-aligned where the hero form is, which looked
+     off when opened from further down the page) */
   :global(html.bm-lock) { overflow: hidden; }
 </style>
