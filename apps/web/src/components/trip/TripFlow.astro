@@ -18,6 +18,7 @@ import Icon from '../ui/Icon.astro';
 import TripSelect from './TripSelect.astro';
 import { money, fmtDay, fmtTime, type TripOffer } from '../../lib/trip';
 import { COUNTRIES as countries } from '../../lib/countries';
+import { getSettings } from '../../lib/cms';
 // hero art in two layers so it can move: the clouds (plane painted out) and the plane cut from the same photo
 import clouds from '../../assets/trip/hero-clouds-clear.png';
 import plane from '../../assets/trip/hero-plane.png';
@@ -31,6 +32,7 @@ import icoPlaneSm from '../../assets/trip/ico-plane-sm.svg';
 
 interface Props { trip: TripOffer }
 const { trip } = Astro.props;
+const settings = await getSettings();   // the general line on the confirmation
 const logos = import.meta.glob<{ default: ImageMetadata }>('../../assets/trip/*.{png,jpg,jpeg,webp,svg}', { eager: true });
 const logoOf = (f?: string) => (f ? logos[`../../assets/trip/${f}`]?.default : undefined);
 // airline logos / agent photo: small optimised copies (the BA artwork is a 3000px board)
@@ -297,8 +299,23 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
 
         <!-- done -->
         <section class="trip__step trip__done" data-step="done" aria-labelledby="ts-done" hidden tabindex="-1">
-          <h2 class="trip__h2" id="ts-done">Thank you, your booking request is complete</h2>
-          <p class="trip__lead">{trip.agent.name} will confirm your tickets by email shortly. Questions? Call {trip.agent.name.split(' ')[0]} on <a href={tel(trip.agent.phone)}>{trip.agent.phone}</a>.</p>
+          {/* confirmation after payment (client copy) */}
+          <svg class="trip__done-ico" viewBox="0 0 24 24" width="40" height="40" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="m7.5 12.3 3 3 6-6.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <h2 class="trip__h2 trip__done-h" id="ts-done">Your Booking Request Has Been Received!</h2>
+          <p class="trip__done-thanks">Thank you for choosing <strong>Flight-Experts</strong>.</p>
+          <p class="trip__done-p">Your booking request has been successfully submitted and is now being reviewed by our ticketing team.</p>
+          <div class="trip__done-box">
+            <h3 class="trip__done-h3"><Icon name="card" width={16} height={16} />Payment &amp; Ticket Confirmation</h3>
+            <p>Your payment details have been securely received. <strong>Your card will only be charged once your booking is confirmed.</strong></p>
+            <p>Once confirmed, we'll email you your booking confirmation and e-ticket within <strong>2–48 hours</strong>, depending on processing times, business hours, and weekends.</p>
+          </div>
+          <h3 class="trip__done-h3 trip__done-h3--c">Need Assistance?</h3>
+          <p class="trip__done-sub">Your dedicated travel expert is here to help with any questions about your booking.</p>
+          <div class="trip__done-lines">
+            <a class="trip__done-line" href={tel(trip.agent.phone)}><span>Your Travel Expert's Direct Line</span><strong>{trip.agent.phone}</strong></a>
+            <a class="trip__done-line trip__done-line--main" href={settings.phone.href}><span>Flight-Experts Customer Support</span><strong><Icon name="phone" width={15} height={15} />{settings.phone.display}</strong></a>
+          </div>
+          <p class="trip__done-note"><em>Please note: Your reservation is not yet confirmed. Your booking will be finalized once your e-ticket has been issued.</em></p>
           <p class="trip__demo trip__demo--inline"><strong>Demo:</strong> no booking was made and nothing was charged.</p>
         </section>
       </div>
@@ -584,6 +601,28 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
     font-size: var(--fs-14);
   }
   .trip__demo--inline { margin-top: 1.5rem; }
+
+  /* ---------------------------------------------------------------- done: booking received */
+  .trip__done { display: grid; justify-items: center; max-width: 42rem; margin-inline: auto; text-align: center; }
+  .trip__done-ico { color: #1d7340; }
+  .trip__done-h { margin-top: 0.9rem; }
+  .trip__done-thanks { margin-top: 0.75rem; font-size: var(--fs-16); font-weight: var(--fw-semibold); }
+  .trip__done-p { margin-top: 0.75rem; font-size: var(--fs-16); line-height: 1.45; }
+  .trip__done strong { font-weight: var(--fw-semibold); }
+  .trip__done-box { width: 100%; margin-top: 1.5rem; padding: 1.25rem 1.4rem; border-radius: 7px; background: rgba(15, 21, 36, 0.05); text-align: left; font-size: var(--fs-16); line-height: 1.5; }
+  .trip__done-box p + p { margin-top: 0.6rem; }
+  .trip__done-h3 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; font-size: var(--fs-18); font-weight: var(--fw-semibold); }
+  .trip__done-h3--c { justify-content: center; margin: 1.9rem 0 0; }
+  .trip__done-sub { margin-top: 0.5rem; font-size: var(--fs-14); color: var(--c-grey-text); }
+  .trip__done-lines { display: grid; gap: 0.75rem; width: min(100%, 30rem); margin-top: 1.25rem; }
+  .trip__done-line { display: grid; gap: 0.3rem; padding: 0.95rem 1rem; border: 1px solid var(--t-line); border-radius: 7px; background: var(--c-white); color: var(--c-navy); text-decoration: none; }
+  .trip__done-line span { font-size: var(--fs-12); letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.75; }
+  .trip__done-line strong { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1.25rem; }
+  .trip__done-line--main { border-color: transparent; background: var(--c-burgundy); color: var(--c-cream); }
+  .trip__done-line:hover { box-shadow: inset 0 0 0 1px var(--c-navy); }
+  .trip__done-line--main:hover { background: var(--c-burgundy-hover); box-shadow: none; }
+  .trip__done-line:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+  .trip__done-note { margin-top: 1.25rem; font-size: var(--fs-12); color: var(--c-grey-text); }
 
   /* ---------------------------------------------------------------- type */
   .trip__h3 { font-size: var(--fs-18); font-weight: var(--fw-semibold); line-height: 1.19; }
