@@ -114,7 +114,8 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
           <div class="trip__options" role="radiogroup" aria-labelledby="ts-itin" data-options-group>
             {trip.options.map((o, i) => (
               <button type="button" class="trip__opt" role="radio" aria-checked={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-option={o.id}
-                      aria-label={`${money(o.pricePerAdult, cur, false)} per adult, ${o.segments[0].from.code} to ${o.segments[o.segments.length - 1].to.code}, ${fmtDay(o.segments[0].depart)} ${fmtTime(o.segments[0].depart)}`}>
+                      aria-label={`Option ${i + 1}: ${money(o.pricePerAdult, cur, false)} per adult, ${o.segments[0].from.code} to ${o.segments[o.segments.length - 1].to.code}, ${fmtDay(o.segments[0].depart)} ${fmtTime(o.segments[0].depart)}`}>
+                <span class="trip__opt-n">Option {i + 1}</span>
                 <span class="trip__opt-p">{money(o.pricePerAdult, cur, false).replace(/,/g, '')}</span>
                 <span class="trip__opt-u">per adult</span>
               </button>
@@ -201,7 +202,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
                 <div class="trip__group" role="radiogroup" aria-labelledby={`gen-l-${n}`}>
                   <p class="trip__group-l" id={`gen-l-${n}`}>Gender</p>
                   <div class="trip__radios">
-                    {genders.map((g) => <label class="trip__opt"><input type="radio" name={`gender-${n}`} value={g} /><span>{g}</span></label>)}
+                    {genders.map((g) => <label class="trip__ropt"><input type="radio" name={`gender-${n}`} value={g} /><span>{g}</span></label>)}
                   </div>
                 </div>
               </div>
@@ -605,6 +606,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
     cursor: pointer;
     transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
   }
+  .trip__opt-n { margin-bottom: 0.2rem; font-size: var(--fs-12); font-weight: var(--fw-semibold); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; }
   .trip__opt-p { font-size: var(--fs-lead); }
   .trip__opt-u { font-size: var(--fs-16); }
   .trip__opt:hover { background: color-mix(in srgb, var(--c-sky) 75%, var(--c-navy)); }
@@ -702,10 +704,11 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__dob .trip__field > input, .trip__dob .trip__field > select { padding-left: 1rem; }
   .trip__dob .trip__field > span { left: 1rem; }
   .trip__radios { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.75rem; min-height: var(--t-field); }
-  .trip__opt { display: inline-flex; align-items: center; gap: 0.5rem; font-size: var(--fs-14); cursor: pointer; }
-  .trip__opt input { appearance: none; flex: none; width: 1.25rem; height: 1.25rem; margin: 0; border: 1px solid var(--c-navy); border-radius: 50%; background: transparent; cursor: pointer; transition: border var(--dur) var(--ease); }
-  .trip__opt input:checked { border: 6px solid var(--c-burgundy); }
-  .trip__opt input:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+  /* gender radios (own class: .trip__opt is the flight option cards) */
+  .trip__ropt { display: inline-flex; align-items: center; gap: 0.5rem; font-size: var(--fs-14); cursor: pointer; }
+  .trip__ropt input { appearance: none; flex: none; width: 1.25rem; height: 1.25rem; margin: 0; border: 1px solid var(--c-navy); border-radius: 50%; background: transparent; cursor: pointer; transition: border var(--dur) var(--ease); }
+  .trip__ropt input:checked { border: 6px solid var(--c-burgundy); }
+  .trip__ropt input:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 2px; }
   .trip__field--phone { display: grid; grid-template-columns: 6.75rem minmax(0, 1fr); gap: 0; }
   .trip__field--phone :global(.tsel__btn) { border-radius: 5px 0 0 5px; border-right: 0; }
   .trip__phone-in { position: relative; display: block; }
