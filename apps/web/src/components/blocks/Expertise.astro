@@ -78,6 +78,8 @@ const id = `expertise-${index}`;
     fill-opacity: 0.05;
     pointer-events: none;
   }
+  /* phones / tablets: removed (client: too small, looked stuck to the left edge); desktop keeps the large mark */
+  @media (max-width: 63.9988rem) { .expertise__mark { display: none; } }
 
   /* ---- content ---- */
   .expertise__inner {
