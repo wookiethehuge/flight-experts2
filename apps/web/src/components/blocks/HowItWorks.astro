@@ -28,6 +28,16 @@ const isGlobe = (m: { filename?: string; url: string }) => /plane-over-globe/.te
 const hid = `hiw-h-${index}`;
 const rows = [0, 64, 130, 196];
 const rules = [48, 113, 179, 247];
+// "Review your options" card: example fares (client), one set of four shown at a time; the script swaps to the next set
+// each time the card replays, so it never looks stale. [from, to, was, now] in USD; the saving is worked out here.
+const fareSets: [string, string, number, number][][] = [
+  [['New York', 'London', 4850, 3290], ['Boston', 'Paris', 4620, 3180], ['Chicago', 'Frankfurt', 4475, 3095], ['Washington', 'Zurich', 5340, 3710]],
+  [['Los Angeles', 'Tokyo', 7260, 4190], ['San Francisco', 'Singapore', 7580, 4580], ['New York', 'Hong Kong', 7120, 4325], ['Chicago', 'Bangkok', 6840, 3975]],
+  [['Los Angeles', 'Sydney', 9280, 4990], ['San Francisco', 'Melbourne', 9040, 5185], ['Dallas', 'Brisbane', 9510, 5475], ['Seattle', 'Perth', 10260, 5890]],
+  [['New York', 'Johannesburg', 6510, 4485], ['Miami', 'Cape Town', 7240, 4860], ['Washington', 'Cairo', 5175, 3465], ['Chicago', 'Nairobi', 6280, 4215]],
+];
+const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
+const fares = fareSets.map((set) => set.map(([from, to, was, now]) => ({ route: `${from} → ${to}`, was: usd(was), now: usd(now), off: `Save ${Math.round((1 - now / was) * 100)}%` })));
 // city lights on the globe card: [x %, y %, delay s]
 const cities = [[10.6, 75.9, 0], [53.2, 75, 1.1], [65.3, 70.6, 2.3], [70.7, 78.9, 0.6], [90.5, 86.5, 1.7], [83.2, 89.6, 2.9]];
 // smaller, fainter twinkles around the big hubs (New York, Europe), each on a real bright spot of the photo
@@ -74,15 +84,14 @@ const sparks = [[7.7, 76, 0.4], [9.4, 76.9, 1.9], [50.8, 74.2, 0.8], [55.3, 74.3
               )}
               {c.visual === 'options' && (
                 <div class="hiw__art" aria-hidden="true" data-hiw-anim="options">
-                  <div class="opt">
+                  <div class="opt" data-fares={JSON.stringify(fares)}>
                     {rows.map((y, k) => (
                       <div class="opt__row" style={`--y: ${y}; --k: ${k}`}>
                         <Icon name="flight" class="opt__plane" />
-                        <span class="opt__route">New York &gt; London</span>
-                        <span class="opt__cabin">Business</span>
-                        <s class="opt__was">$6,420</s>
-                        <span class="opt__now">$6,420</span>
-                        <span class="opt__off">-35%</span>
+                        <span class="opt__route" data-f="route">{fares[0][k].route}</span>
+                        <span class="opt__cabin">Business Class</span>
+                        <span class="opt__now" data-f="now">{fares[0][k].now}</span>
+                        <span class="opt__sub"><s class="opt__was" data-f="was">{fares[0][k].was}</s> <span class="opt__off" data-f="off">{fares[0][k].off}</span></span>
                       </div>
                     ))}
                     {rules.map((y, k) => <span class="opt__rule" style={`--y: ${y}; --k: ${k}`} />)}
@@ -310,9 +319,11 @@ const sparks = [[7.7, 76, 0.4], [9.4, 76.9, 1.9], [50.8, 74.2, 0.8], [55.3, 74.3
   .opt__row :global(.opt__plane) { left: 0; top: calc(6 * var(--u)); width: calc(20 * var(--u)); height: calc(20 * var(--u)); }
   .opt__route { left: calc(31 * var(--u)); top: 0; font-weight: var(--fw-semibold); }
   .opt__cabin { left: calc(31 * var(--u)); top: calc(16 * var(--u)); }
-  .opt__was { left: calc(157 * var(--u)); top: 0; color: var(--c-navy-60); }
-  .opt__now { left: calc(196 * var(--u)); top: 0; }
-  .opt__off { left: calc(157 * var(--u)); top: calc(16 * var(--u)); font-weight: var(--fw-semibold); }
+  /* right column: the fare on top, the old fare struck through + the saving under it (fits the longest routes) */
+  .opt__now { right: 0; top: 0; font-weight: var(--fw-semibold); }
+  .opt__sub { right: 0; top: calc(16 * var(--u)); }
+  .opt__was { color: var(--c-navy-60); }
+  .opt__off { margin-left: calc(3 * var(--u)); color: #1d7340; font-weight: var(--fw-semibold); }   /* green, 5.3:1 on cream */
   .opt__rule { position: absolute; left: 0; width: 100%; top: calc(var(--y) * var(--u)); height: 1px; background: var(--c-sky); }
 
   .chk { left: calc(34 * var(--u)); width: calc(241 * var(--u)); height: calc(265 * var(--u)); }
@@ -409,9 +420,20 @@ const sparks = [[7.7, 76, 0.4], [9.4, 76.9, 1.9], [50.8, 74.2, 0.8], [55.3, 74.3
         later(art, 2150, () => (chk.dataset.state = 'busy'));
         later(art, 4000, () => (chk.dataset.state = 'done'));
       }
-      // every 10s: back to the start state (fade out), then play again
+      // every 10s: back to the start state (fade out), then play again; the options card shows the next fares
       later(art, 9400, () => { art.removeAttribute('data-play'); if (chk) delete chk.dataset.state; });
+      later(art, 9900, () => nextFares(art));
       later(art, 10000, () => play(art));
+    };
+    const nextFares = (art: HTMLElement) => {
+      const opt = art.querySelector<HTMLElement>('[data-fares]');
+      if (!opt) return;
+      const sets = JSON.parse(opt.dataset.fares!) as Record<string, string>[][];
+      const n = (Number(opt.dataset.set ?? 0) + 1) % sets.length;
+      opt.dataset.set = String(n);
+      opt.querySelectorAll('.opt__row').forEach((row, k) => {
+        row.querySelectorAll<HTMLElement>('[data-f]').forEach((el) => { el.textContent = sets[n][k][el.dataset.f!]; });
+      });
     };
     const reset = (art: HTMLElement) => {
       clear(art);
