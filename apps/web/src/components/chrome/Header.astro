@@ -92,6 +92,11 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
   .site-header--dark { position: absolute; inset: 0 0 auto 0; color: var(--c-sky); }
   .site-header--light { color: var(--c-navy); }
   .site-header--minimal { position: absolute; inset: 0 0 auto 0; }
+  /* checkout on phones (Figma "Homepage mobile"): the orbit mark only, 49px wide (the wordmark is cropped off) */
+  @media (max-width: 47.9988rem) {
+    .site-header--minimal .site-header__logo { width: 3.0625rem; overflow: hidden; margin-top: 0.875rem; margin-left: -0.5rem; }
+    .site-header--minimal .site-header__logo svg { width: 18.375rem; max-width: none; }
+  }
 
   .site-header__bar {
     --logo-top: clamp(1.625rem, calc(1.625rem + 19 * (100vw - 24.375rem) / 1050), 2.8125rem);    /* 26 -> 45 */
