@@ -116,10 +116,11 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
   }
   .pill__menu a { display: grid; justify-items: center; color: var(--c-cream); text-decoration: none; }
   .pill__menu .pill__label { color: var(--c-sky); }
+  .pill__menu .pill__num { color: #fff44f; }   /* lemon yellow numbers on the dark glass (client) */
   .pill__menu a:focus-visible { outline-color: var(--c-sky); }
   /* light header: pale glass, navy text */
   .pill-wrap--filled .pill__menu { background: rgba(247, 246, 242, 0.275); border-color: color-mix(in srgb, var(--c-navy) 14%, transparent); }
-  .pill-wrap--filled .pill__menu a, .pill-wrap--filled .pill__menu .pill__label { color: var(--c-navy); }
+  .pill-wrap--filled .pill__menu a, .pill-wrap--filled .pill__menu .pill__label, .pill-wrap--filled .pill__menu .pill__num { color: var(--c-navy); }
   .pill-wrap--filled .pill__menu a:focus-visible { outline-color: var(--c-navy); }
   /* no backdrop blur support: fall back to a near-solid tint so the numbers stay readable */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
