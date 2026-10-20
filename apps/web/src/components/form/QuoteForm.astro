@@ -87,6 +87,10 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
             <label for={`${p}-to`}>Going to</label>
             <input class="qf__input" id={`${p}-to`} name="to" type="text" autocomplete="off" placeholder="Airport or city" required aria-describedby={`${p}-to-err`} data-field="to" />
           </div>
+          {/* swap From / Going to (client), on the line between the two rows */}
+          <button type="button" class="qf__swap" aria-label="Swap departure and destination" data-swap>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </button>
         </div>
         <div class="qf__errs"><p class="qf__err" id={`${p}-from-err`} hidden></p><p class="qf__err" id={`${p}-to-err`} hidden></p></div>
         <div class="qf__box qf__dates">
@@ -313,7 +317,18 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
 
   /* ---------------------------------------------------------------- field boxes */
   .qf__box { border: 1px solid var(--c-sky); border-radius: var(--r-7); }
-  .qf__route { margin-top: 13px; }
+  .qf__route { position: relative; margin-top: 13px; }
+  .qf__route .qf__input { padding-right: 46px; }   /* clear of the swap button */
+  .qf__swap {
+    position: absolute; right: 14px; top: 50%; translate: 0 -50%; z-index: 2;
+    display: grid; place-items: center; width: 36px; height: 36px; padding: 0;
+    border: 1px solid var(--c-sky); border-radius: 50%;
+    background: var(--c-navy); color: var(--c-sky); cursor: pointer;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), rotate 320ms var(--ease);
+  }
+  .qf__swap:hover { background: var(--c-sky); color: var(--c-navy); }
+  .qf__swap.is-flip { rotate: 180deg; }
+  .qf__swap:focus-visible { outline: 2px solid var(--c-sky); outline-offset: 2px; }
   .qf__row {
     display: grid;
     grid-template-columns: 82px minmax(0, 1fr);

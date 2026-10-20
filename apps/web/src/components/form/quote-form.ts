@@ -424,6 +424,17 @@ function init(root: HTMLElement) {
     }
   }
 
+  // swap From / Going to
+  root.querySelectorAll<HTMLButtonElement>('[data-swap]').forEach((btn) => btn.addEventListener('click', () => {
+    const leg = btn.closest('[data-leg]') ?? root;
+    const from = leg.querySelector<HTMLInputElement>('[data-field="from"]')!;
+    const to = leg.querySelector<HTMLInputElement>('[data-field="to"]')!;
+    [from.value, to.value] = [to.value, from.value];
+    for (const el of [from, to]) { el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }
+    btn.classList.toggle('is-flip');
+    say(from.value || to.value ? `Swapped. From ${from.value || 'empty'}, going to ${to.value || 'empty'}.` : 'Swapped.');
+  }));
+
   tidyContactFields(form);   // autofilled phone / email -> plain characters before they are checked
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
