@@ -371,12 +371,17 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
 
   <dialog class="trip__modal" aria-labelledby="tm-h" aria-describedby="tm-p" data-noprot>
     <button type="button" class="trip__modal-x" aria-label="Close" data-modal-close><Icon name="close" width={12} height={12} /></button>
-    <h2 class="trip__modal-h" id="tm-h">Continue without ticket protection?</h2>
-    <p id="tm-p">You’ve selected No Protection for this trip. Without ticket protection, you won’t have coverage for unexpected changes such as cancellations, missed connections or medical issues.</p>
+    <h2 class="trip__modal-h" id="tm-h">Are You Sure You Want to Travel Without Protection?</h2>
+    <div id="tm-p">
+      <p>Travel plans can change unexpectedly. With <strong>Basic Ticket Protection</strong>, you get greater flexibility and can avoid certain additional fees if you need to change your itinerary or face unexpected airline disruptions.</p>
+      <p>Without protection, cancellations, missed connections, or changes to your booking could result in extra costs.</p>
+      <p><strong>Protect your trip today and travel with greater peace of mind.</strong></p>
+    </div>
     <div class="trip__modal-actions">
-      <button type="button" class="trip__btn trip__btn--primary" data-modal-add>Add Ticket Protection</button>
+      <button type="button" class="trip__btn trip__btn--primary" data-modal-add>Add Basic Protection</button>
       <button type="button" class="trip__btn trip__btn--outline" data-modal-skip>Continue Without Protection</button>
     </div>
+    <p class="trip__modal-note">Protection benefits and fee waivers are subject to plan terms and conditions.</p>
   </dialog>
 </div>
 
@@ -847,9 +852,11 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__modal::backdrop { background: rgba(15, 21, 36, 0.45); }
   .trip__modal-x { position: absolute; top: -0.85rem; right: -0.85rem; display: grid; place-items: center; width: 2rem; height: 2rem; border: 2px solid var(--c-cream); border-radius: 50%; background: var(--c-burgundy); color: var(--c-cream); cursor: pointer; }
   .trip__modal-h { font-size: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem); font-weight: var(--fw-semibold); line-height: 1.19; }
-  .trip__modal p { margin-top: 1.25rem; font-size: var(--fs-14); line-height: 1.2; }
+  .trip__modal p { margin-top: 1rem; font-size: var(--fs-14); line-height: 1.35; }
+  .trip__modal-h + div > p:first-child { margin-top: 1.25rem; }
+  .trip__modal strong { font-weight: var(--fw-semibold); }
+  .trip__modal .trip__modal-note { margin-top: 0.9rem; font-size: var(--fs-12); color: var(--c-grey-text); }
   .trip__modal-actions { display: grid; gap: 0.6rem; margin-top: 1.9rem; }
-  @media (min-width: 36rem) { .trip__modal-actions { grid-template-columns: 1fr 1fr; } }
   .trip__btn--primary { border: 0; background: var(--c-burgundy); color: var(--c-cream); }
   .trip__btn--primary:hover { background: var(--c-burgundy-hover); }
   .trip__btn--outline { border: 1px solid var(--c-navy); background: transparent; color: var(--c-navy); font-weight: var(--fw-regular); }

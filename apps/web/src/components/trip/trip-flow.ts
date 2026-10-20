@@ -229,7 +229,7 @@ function init(root: HTMLElement) {
   q('[data-modal-close]', modal).addEventListener('click', () => modal.close());
   q('[data-modal-add]', modal).addEventListener('click', () => {
     modal.close();
-    const pop = plans.find((p) => p.popular) ?? plans[0];
+    const pop = plans.find((p) => p.id === 'basic') ?? plans[0];   // the dialog offers Basic Protection (client copy)
     if (pop) { choosePlan(pop.id); picks.find((b) => b.dataset.plan === pop.id)?.focus(); }
   });
   q('[data-modal-skip]', modal).addEventListener('click', () => {
