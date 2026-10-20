@@ -274,7 +274,11 @@ function initSelect(wrap: HTMLElement) {
     active = Math.max(0, Math.min(items.length - 1, i));
     items.forEach((li, j) => li.classList.toggle('is-active', j === active));
     list.setAttribute('aria-activedescendant', items[active].id);
-    items[active].scrollIntoView({ block: 'nearest' });
+    // keep the active option visible by scrolling the list only (scrollIntoView also scrolled the page, and the
+    // footer plane, which moves with the page, looked like it jumped)
+    const li = items[active];
+    if (li.offsetTop < list.scrollTop) list.scrollTop = li.offsetTop;
+    else if (li.offsetTop + li.offsetHeight > list.scrollTop + list.clientHeight) list.scrollTop = li.offsetTop + li.offsetHeight - list.clientHeight;
   };
   const choose = (i: number) => {
     items.forEach((li, j) => li.setAttribute('aria-selected', String(j === i)));
@@ -286,7 +290,7 @@ function initSelect(wrap: HTMLElement) {
     list.hidden = false;
     btn.setAttribute('aria-expanded', 'true');
     setActive(Math.max(0, items.findIndex((li) => li.getAttribute('aria-selected') === 'true')));
-    list.focus();
+    list.focus({ preventScroll: true });
     document.addEventListener('pointerdown', onOutside);
   }
   function close(refocus = true) {
