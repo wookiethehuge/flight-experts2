@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     pages: Page;
+    'landing-pages': LandingPage;
     testimonials: Testimonial;
     media: Media;
     posts: Post;
@@ -82,6 +83,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
+    'landing-pages': LandingPagesSelect<false> | LandingPagesSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
@@ -792,6 +794,99 @@ export interface RichTextBlock {
   blockType: 'richText';
 }
 /**
+ * Ad campaign pages at /lp/<slug>/. Hidden from Google; send ad traffic here. Leads show the page (with its ad tracking) under "Submitted from".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "landing-pages".
+ */
+export interface LandingPage {
+  id: number;
+  /**
+   * Campaign name (admin only), e.g. "Europe, Google Ads".
+   */
+  name: string;
+  /**
+   * Line above the heading, e.g. "Flying Business Class to Europe?"
+   */
+  eyebrow?: string | null;
+  /**
+   * Main heading. A new line forces a line break; *italic*. Inline formatting: *italic*, **bold**, [link label](https://example.com or /path). Press Enter for a line break.
+   */
+  heading: string;
+  intro?: string | null;
+  /**
+   * Short ticked points under the intro.
+   */
+  bullets?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional desktop photo. Empty: the home page hero photo.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Optional portrait crop for phones.
+   */
+  mobileImage?: (number | null) | Media;
+  /**
+   * Trust strip heading. Empty: "Trusted by **business class** travelers *worldwide*". Inline formatting: *italic*, **bold**, [link label](https://example.com or /path). Press Enter for a line break.
+   */
+  trustHeading?: string | null;
+  /**
+   * The burgundy band (4 items). Empty: the standard four.
+   */
+  benefits?:
+    | {
+        title: string;
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  cta?: {
+    /**
+     * Empty: "Ready to See Your Business-Class Options?" Inline formatting: *italic*, **bold**, [link label](https://example.com or /path). Press Enter for a line break.
+     */
+    heading?: string | null;
+    body?: string | null;
+    /**
+     * Empty: "Get My Flight Options".
+     */
+    buttonLabel?: string | null;
+  };
+  /**
+   * Search and social sharing. Leave blank to use sensible defaults from the page content.
+   */
+  seo?: {
+    /**
+     * Shown in search results and browser tabs. Aim for 50 to 60 characters.
+     */
+    title?: string | null;
+    /**
+     * Aim for 140 to 160 characters.
+     */
+    description?: string | null;
+    /**
+     * Open Graph / Twitter image. 1200 x 630 recommended.
+     */
+    image?: (number | null) | Media;
+    /**
+     * Only set when this content lives primarily at another URL.
+     */
+    canonical?: string | null;
+    noindex?: boolean | null;
+  };
+  /**
+   * The URL: /lp/<slug>/, e.g. "europe".
+   */
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
@@ -1051,6 +1146,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'landing-pages';
+        value: number | LandingPage;
       } | null)
     | ({
         relationTo: 'testimonials';
@@ -1467,6 +1566,52 @@ export interface RichTextBlockSelect<T extends boolean = true> {
   content?: T;
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "landing-pages_select".
+ */
+export interface LandingPagesSelect<T extends boolean = true> {
+  name?: T;
+  eyebrow?: T;
+  heading?: T;
+  intro?: T;
+  bullets?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  image?: T;
+  mobileImage?: T;
+  trustHeading?: T;
+  benefits?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+        buttonLabel?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        canonical?: T;
+        noindex?: T;
+      };
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

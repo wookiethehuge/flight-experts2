@@ -1,0 +1,46 @@
+---
+/**
+ * Landing page trust strip (Figma "Landing page Desktop", under the hero): serif heading, then the Trustpilot rating
+ * ("Excellent | Rated 4.9/5.0", one link to the profile). The airline logo row in the design is left out until the
+ * client supplies logo files and confirms they may be shown.
+ */
+import Img from '../ui/Img.astro';
+import { inline } from '../../lib/inline';
+import type { Media, SiteSettings } from '../../lib/types';
+
+interface Props { heading: string; settings: SiteSettings }
+const { heading, settings } = Astro.props;
+const stars = { url: '/seed/trustpilot-stars.webp', alt: 'Rated five stars' } as Media;
+const tp = { url: '/seed/trustpilot-logo.webp', alt: 'Trustpilot' } as Media;
+const url = settings.trustpilot?.url;
+const rating = settings.trustpilot?.rating ?? '4.9/5.0';
+const R = url ? 'a' : 'div';
+---
+<section class="lt" aria-labelledby="lt-h">
+  <div class="container">
+    <h2 class="lt__h" id="lt-h" set:html={inline(heading)} />
+    <R class="lt__rating" {...(url ? { href: url, target: '_blank', rel: 'noopener', 'aria-label': `Excellent, rated ${rating} on Trustpilot (opens in a new tab)` } : {})}>
+      <Img media={tp} sizes="128px" widths={[128, 256]} class="lt__tp" />
+      <Img media={stars} sizes="132px" widths={[132, 264]} class="lt__stars" />
+      <span>Excellent <span aria-hidden="true">|</span> Rated {rating}</span>
+    </R>
+  </div>
+</section>
+
+<style>
+  .lt { padding: clamp(2.5rem, calc(2.5rem + 40 * (100vw - 24.375rem) / 1050), 5rem) 0; background: var(--c-navy); color: var(--c-cream); text-align: center; }
+  .lt__h {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-light);
+    font-size: clamp(1.5rem, calc(1.5rem + 16 * (100vw - 24.375rem) / 1050), 2.5rem);
+    line-height: 1.25;
+    color: var(--c-sky-hero);
+  }
+  .lt__h :global(strong) { font-weight: var(--fw-semibold); }
+  .lt__h :global(em) { font-style: italic; }
+  .lt__rating { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.75rem 1.25rem; margin-top: 1.5rem; color: inherit; text-decoration: none; font-size: var(--fs-body-lg); }
+  a.lt__rating:hover { opacity: 0.85; }
+  .lt__rating :global(img) { display: block; height: auto; }
+  .lt__rating :global(.lt__tp) { width: 8rem; }
+  .lt__rating :global(.lt__stars) { width: 8.25rem; }
+</style>

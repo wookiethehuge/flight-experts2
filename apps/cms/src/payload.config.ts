@@ -25,6 +25,7 @@ import sharp from 'sharp'
 
 import { Authors } from './collections/Authors'
 import { Enquiries } from './collections/Enquiries'
+import { LandingPages } from './collections/LandingPages'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -97,7 +98,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: ' | Flight Experts CMS' },
     livePreview: {
-      collections: ['pages', 'posts'],
+      collections: ['pages', 'posts', 'landing-pages'],
       breakpoints: [
         { label: 'Mobile', name: 'mobile', width: 390, height: 844 },
         { label: 'Tablet', name: 'tablet', width: 768, height: 1024 },
@@ -106,7 +107,7 @@ export default buildConfig({
     },
     components: {},
   },
-  collections: [Pages, Testimonials, Media, Posts, Authors, Enquiries, Users],
+  collections: [Pages, LandingPages, Testimonials, Media, Posts, Authors, Enquiries, Users],
   globals: [SiteSettings, Navigation],
   // POST /api/jivo-webhook: live chat leads -> enquiries (kind 'chat')
   // POST /api/trustpilot-sync: daily Trustpilot review batch -> testimonials (upsert by reviewId)

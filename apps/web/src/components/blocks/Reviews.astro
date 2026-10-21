@@ -33,8 +33,8 @@ const tpUrl = settings.trustpilot?.url;
 const Rating = tpUrl ? 'a' : 'div';
 const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot (opens in a new tab)`;
 ---
-<section class="rv" aria-labelledby={hid}>
-  <div class="container rv__head">
+<section class:list={['rv', block.hideHeading && 'rv--bare']} aria-labelledby={hid}>
+  <div class:list={['container rv__head', block.hideHeading && 'sr-only']}>
     <h2 class="rv__h" id={hid} set:html={inline(block.heading)} />
     <Rating class="rv__rating" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
       <span class="rv__tp"><Img media={tp} sizes="(min-width: 48rem) 162px, 98px" widths={[98, 162, 196, 324]} /></span>
@@ -144,6 +144,10 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     color: var(--c-sky);
     padding-block: var(--sec-y);
     overflow: hidden;
+  }
+  /* landing pages: heading in the trust strip above, so the cards start right away */
+  .rv--bare { padding-top: calc(var(--sec-y) * 0.5); }
+  .rv--bare .rv__carousel { margin-top: 0 !important;
   }
   .rv :global(picture > source) { display: none; }                           /* keep <source> out of flex gaps */
   .rv__head { padding-inline-start: calc(var(--gutter) + 0.3125rem); }        /* heading x 25 on mobile */

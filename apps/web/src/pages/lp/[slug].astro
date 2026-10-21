@@ -1,0 +1,83 @@
+---
+/**
+ * /lp/<slug>/: ad campaign landing page (CMS "Landing pages"). Campaign texts come from the landing page; How it works,
+ * reviews and FAQ come from the home page so every campaign stays in step with the site. Never indexed and not in
+ * the sitemap; the page URL (with the ad's utm / gclid parameters) is stored on each lead as "Submitted from".
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HomeHero from '../../components/blocks/HomeHero.astro';
+import Benefits from '../../components/blocks/Benefits.astro';
+import HowItWorks from '../../components/blocks/HowItWorks.astro';
+import Reviews from '../../components/blocks/Reviews.astro';
+import Faq from '../../components/blocks/Faq.astro';
+import CtaBanner from '../../components/blocks/CtaBanner.astro';
+import LandingTrust from '../../components/landing/LandingTrust.astro';
+import { getLandingPages, getPage, getSettings } from '../../lib/cms';
+import { heroPreloads } from '../../lib/hero-image';
+import type { BenefitsBlock, CtaBannerBlock, HomeHeroBlock, LandingPage } from '../../lib/types';
+
+export async function getStaticPaths() {
+  return (await getLandingPages()).filter((lp) => lp.slug).map((lp) => ({ params: { slug: lp.slug }, props: { lp } }));
+}
+interface Props { lp: LandingPage }
+const { lp } = Astro.props;
+const settings = await getSettings();
+const home = await getPage('home');
+const of = <T,>(type: string) => home.layout.find((b) => b.blockType === type) as T | undefined;
+const homeHero = of<HomeHeroBlock>('homeHero');
+const homeBenefits = of<BenefitsBlock>('benefits');
+
+const hero: HomeHeroBlock = {
+  blockType: 'homeHero',
+  landing: true,
+  eyebrow: lp.eyebrow ?? undefined,
+  heading: lp.heading,
+  subheading: '',
+  intro: lp.intro ?? undefined,
+  bullets: lp.bullets ?? [],
+  ratingText: homeHero?.ratingText ?? '',
+  mobileRatingText: homeHero?.mobileRatingText ?? '',
+  steps: homeHero?.steps ?? [],
+  image: (lp.image ?? homeHero?.image)!,
+  mobileImage: lp.image ? (lp.mobileImage ?? null) : (homeHero?.mobileImage ?? null),
+};
+// the burgundy band: the campaign's own titles / texts, with the home page's icons in order
+const defaults = [
+  { title: 'Compare More Than Price', text: 'Fares, routes & flexibility.' },
+  { title: 'One Expert, Start to Finish', text: 'We handle the details.' },
+  { title: 'Options Built Around You', text: 'Tailored to your priorities.' },
+  { title: 'Support Throughout Your Trip', text: 'Before and during travel.' },
+];
+const items = (lp.benefits?.length ? lp.benefits : defaults).map((b, i) => ({
+  icon: homeBenefits?.items?.[i % (homeBenefits.items.length || 1)]?.icon!,
+  title: b.title,
+  text: b.text ?? '',
+}));
+const benefits: BenefitsBlock = { blockType: 'benefits', items };
+const cta: CtaBannerBlock = {
+  blockType: 'ctaBanner',
+  heading: lp.cta?.heading || 'Ready to See Your Business-Class Options?',
+  body: lp.cta?.body || 'Share your route and dates and let our flight experts do the searching.',
+  primary: { label: lp.cta?.buttonLabel || 'Get My Flight Options', href: '#quote' },
+  secondary: { label: `Prefer to speak? Call ${settings.phone.display}`, href: settings.phone.href },
+} as CtaBannerBlock;
+const preload = await heroPreloads(hero);
+const how = of<any>('howItWorks'), reviews = of<any>('reviews'), faq = of<any>('faq');
+---
+<BaseLayout
+  title={lp.seo?.title || `${lp.eyebrow ?? 'Business class flights'} | Flight Experts`}
+  description={lp.seo?.description || lp.intro || undefined}
+  seo={lp.seo}
+  headerTheme="dark"
+  noindex
+  sticky={{ plane: true, chat: true, phoneTab: false }}
+  preload={preload}
+>
+  <HomeHero block={hero} settings={settings} page={`lp-${lp.slug}`} index={0} />
+  <LandingTrust heading={lp.trustHeading || 'Trusted by **business class** travelers *worldwide*'} settings={settings} />
+  {items.every((it) => it.icon) && <Benefits block={benefits} settings={settings} page={`lp-${lp.slug}`} index={2} />}
+  {how && <HowItWorks block={how} settings={settings} page={`lp-${lp.slug}`} index={3} />}
+  {reviews && <Reviews block={{ ...reviews, hideHeading: true }} settings={settings} page={`lp-${lp.slug}`} index={4} />}
+  {faq && <Faq block={faq} settings={settings} page={`lp-${lp.slug}`} index={5} />}
+  <CtaBanner block={cta} settings={settings} page={`lp-${lp.slug}`} index={6} />
+</BaseLayout>

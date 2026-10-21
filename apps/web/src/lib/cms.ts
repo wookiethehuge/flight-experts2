@@ -3,7 +3,7 @@
  * falls back to the seed files in src/content/seed (same shapes; the CMS seed script imports the same files), so the
  * front end can be built and previewed without a running CMS.
  */
-import type { Author, Navigation, Page, Post, SiteSettings, Testimonial, Media } from './types';
+import type { Author, LandingPage, Navigation, Page, Post, SiteSettings, Testimonial, Media } from './types';
 import { lexicalFromText } from './richtext';
 
 const CMS_URL = (import.meta.env.PAYLOAD_URL ?? process.env.PAYLOAD_URL ?? '').replace(/\/$/, '');
@@ -150,6 +150,14 @@ export const getPages = () =>
     for (const p of pages) for (const b of p.layout ?? []) if (b.blockType === 'reviews') await resolveReviews(b);
     return pages;
   });
+
+/** Published ad campaign landing pages (seed: src/content/seed/landing/*.json). */
+export const getLandingPages = () =>
+  once<LandingPage[]>('landing-pages', async () =>
+    usingCms
+      // tolerant: a CMS without the collection yet (deploy order) just means no landing pages in this build
+      ? walkMedia((await api<any>('landing-pages?limit=100&depth=2&where[_status][equals]=published').catch(() => ({ docs: [] }))).docs)
+      : seedMedia(seedDir('landing')));
 
 export async function getPage(slug: string): Promise<Page> {
   const page = (await getPages()).find((p) => p.slug === slug);

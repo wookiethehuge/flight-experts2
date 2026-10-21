@@ -1,0 +1,25 @@
+{
+  "name": "Europe",
+  "slug": "europe",
+  "eyebrow": "Flying Business Class to Europe?",
+  "heading": "Get Better Flight Options\nBefore You Book.",
+  "intro": "Share your route and dates. One of our flight experts will compare options based on fare, schedule, flexibility and comfort.",
+  "bullets": [
+    { "text": "Personal flight expert" },
+    { "text": "Multiple flight options compared" },
+    { "text": "Support before and during travel" }
+  ],
+  "trustHeading": "Trusted by **business class** travelers *worldwide*",
+  "benefits": [
+    { "title": "Compare More Than Price", "text": "Fares, routes & flexibility." },
+    { "title": "One Expert, Start to Finish", "text": "We handle the details." },
+    { "title": "Options Built Around You", "text": "Tailored to your priorities." },
+    { "title": "Support Throughout Your Trip", "text": "Before and during travel." }
+  ],
+  "cta": {
+    "heading": "Ready to See Your Business-Class Options?",
+    "body": "Share your route and dates and let our flight experts do the searching.",
+    "buttonLabel": "Get My Flight Options"
+  },
+  "seo": { "title": "Business Class to Europe | Flight Experts", "description": "Share your route and dates. A flight expert compares business class options to Europe on fare, schedule, flexibility and comfort." }
+}

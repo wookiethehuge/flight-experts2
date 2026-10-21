@@ -26,7 +26,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !/\/(thank-you|404)\/?$/.test(page) && !/\/trip\//.test(page),   // private trip links stay out
+      filter: (page) => !/\/(thank-you|404)\/?$/.test(page) && !/\/(trip|lp)\//.test(page),   // private trip links and ad landing pages stay out
     }),
   ],
   vite: { build: { assetsInlineLimit: 2048 } },

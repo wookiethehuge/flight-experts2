@@ -19,6 +19,7 @@ import { HERO_IMAGES, heroVariants } from '../../lib/hero-image';
 import Img from '../ui/Img.astro';
 import AccredLogo from '../ui/AccredLogo.astro';
 import QuoteForm from '../form/QuoteForm.astro';
+import Icon from '../ui/Icon.astro';
 
 interface Props { block: HomeHeroBlock; settings: SiteSettings; page: string; index: number }
 const { block, settings } = Astro.props;
@@ -39,7 +40,7 @@ const tpUrl = settings.trustpilot?.url;
 const Rating = tpUrl ? 'a' : 'div';
 const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot (opens in a new tab)`;
 ---
-<section class="hero" aria-labelledby="hero-h1">
+<section class:list={['hero', block.landing && 'hero--landing']} aria-labelledby="hero-h1">
   {(desk || mob) && (
     <picture class:list={['hero__bg', { 'hero__bg--art': !!mob }]}>
       {desk && mob && <source media="(min-width: 48rem)" type="image/avif" srcset={desk.avif} sizes="100vw" width={desk.width} height={desk.height} />}
@@ -86,14 +87,17 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
 
   <div class="container hero__inner">
     <div class="hero__text">
+      {block.eyebrow && <p class="hero__eyebrow">{block.eyebrow}</p>}
       <h1 class="hero__h1" id="hero-h1" set:html={headingLines} />
       {block.subheading && <p class="hero__sub">{block.subheading}</p>}
-      <Rating class="hero__rating hero__rating--d" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
+      {block.intro && <p class="hero__intro">{block.intro}</p>}
+      {block.bullets?.length ? <ul class="hero__ticks" role="list">{block.bullets.map((b) => <li><Icon name="check" width={12} />{b.text}</li>)}</ul> : null}
+      {!block.landing && <Rating class="hero__rating hero__rating--d" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
         <Img media={stars} sizes="152px" widths={[152, 304]} class="hero__stars" />
         <span class="hero__rt">{block.ratingText}</span>
         <Img media={tp} sizes="142px" widths={[142, 284]} class="hero__tp" />
-      </Rating>
-      {accreditations.length > 0 && (
+      </Rating>}
+      {!block.landing && accreditations.length > 0 && (
         <ul class="hero__accr" role="list" aria-label="Accreditations">
           {accreditations.map((a) => (
             <li>
@@ -119,11 +123,11 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
       <div class="hero__form" id="quote">
         <QuoteForm id="hero-form" variant="hero" settings={settings} />
       </div>
-      <Rating class="hero__rating hero__rating--m" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
+      {!block.landing && <Rating class="hero__rating hero__rating--m" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
         <Img media={stars} sizes="109px" widths={[109, 218]} class="hero__stars" />
         <span class="hero__rt">{block.mobileRatingText || block.ratingText}</span>
         <Img media={tp} sizes="102px" widths={[102, 204]} class="hero__tp" />
-      </Rating>
+      </Rating>}
     </div>
   </div>
 </section>
@@ -185,6 +189,27 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
     font-size: clamp(2.5rem, calc(2.5rem + 40 * var(--f)), 5rem);                   /* 40 -> 80 */
   }
   .hero__sub, .hero__accr, .hero__steps, .hero__rating--d { display: none; }
+
+  /* ---------- landing variant (ad campaigns, Figma "Landing page Desktop"): eyebrow question, smaller heading,
+     intro and ticked bullets; logos and rating move to the trust strip below ---------- */
+  .hero__eyebrow {
+    font-family: var(--ff-serif);
+    font-weight: var(--fw-light);
+    font-size: clamp(1.375rem, calc(1.375rem + 18 * var(--f)), 2.5rem);            /* 22 -> 40 */
+    line-height: 1.3;
+    color: var(--c-sky-hero);
+  }
+  .hero--landing .hero__h1 {
+    margin-top: 0.15em;
+    font-size: clamp(2.125rem, calc(2.125rem + 22 * var(--f)), 3.5rem);            /* 34 -> 56 */
+    line-height: 1.16;
+  }
+  .hero--landing .hero__h1 :global(em) { font-size: inherit; }
+  @media (min-width: 64rem) { .hero--landing .hero__h1 { max-width: none; } }
+  .hero__intro { max-width: 34rem; margin-top: clamp(1rem, calc(1rem + 14 * var(--f)), 1.875rem); font-size: var(--fs-body-lg); line-height: 1.5; color: var(--c-cream); }
+  .hero__ticks { display: grid; gap: 0.35rem; margin: 0.9rem 0 0; padding: 0; list-style: none; font-size: var(--fs-body-lg); color: var(--c-cream); }
+  .hero__ticks li { display: flex; align-items: center; gap: 0.6rem; }
+  .hero__ticks :global(svg) { flex: none; color: var(--c-sky); }
   .hero__sub {
     margin-top: 2.3rem;                                       /* 36.7 */
     font-size: var(--fs-lead);                                /* 24 at desktop */

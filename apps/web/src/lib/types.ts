@@ -152,6 +152,27 @@ export interface HomeHeroBlock {
   steps: { label: string }[];   // 01 Share your route ...
   image: Media;
   mobileImage?: Media | null;
+  /** landing pages (ad campaigns): line above the heading, intro and ticked bullets; no logos / rating in the hero */
+  eyebrow?: string;
+  intro?: string;
+  bullets?: { text: string }[];
+  landing?: boolean;
+}
+/** Ad campaign landing page (CMS collection landing-pages, /lp/<slug>/). Shared sections come from the home page. */
+export interface LandingPage {
+  id?: number | string;
+  name: string;
+  slug: string;
+  eyebrow?: string | null;
+  heading: Inline;
+  intro?: string | null;
+  bullets?: { text: string }[] | null;
+  image?: Media | null;
+  mobileImage?: Media | null;
+  trustHeading?: Inline | null;
+  benefits?: { title: string; text?: string | null }[] | null;
+  cta?: { heading?: Inline | null; body?: string | null; buttonLabel?: string | null } | null;
+  seo?: Seo;
 }
 export interface BenefitsBlock { blockType: 'benefits'; items: { icon: Media; title: Inline; text: string }[] }
 export interface HowItWorksBlock {
@@ -161,6 +182,8 @@ export interface HowItWorksBlock {
   badge: { label: Inline; href: string };   // "Get *Flight*\nOptions"
 }
 export interface ReviewsBlock {
+  /** landing pages: the heading + rating are shown in the trust strip above, so they are kept for screen readers only */
+  hideHeading?: boolean;
   blockType: 'reviews';
   heading: Inline;
   ratingLabel: string;          // "Excellent | Rated 4.9/5.0"
