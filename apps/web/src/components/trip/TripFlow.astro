@@ -967,9 +967,11 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
     /* line 1 "Prepared By: Nate Turner", line 2 phone + e-mail */
     .trip__agent-txt { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.35rem; row-gap: 3px; font-size: var(--fs-12); }
     .trip__agent-br { display: block; flex-basis: 100%; height: 0; }
-    .trip__agent-txt a + a { margin-left: 0.6rem; }
+    /* phone + e-mail: a gap after the phone (not before the e-mail), so when the e-mail wraps on narrow phones it lines up
+       under the phone instead of starting indented */
+    .trip__agent-txt a:not(:last-child) { margin-right: 0.65rem; }
     .trip__agent-n { font-weight: var(--fw-semibold); }
-    .trip__agent a { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: var(--fw-regular); overflow-wrap: normal; white-space: nowrap; }
+    .trip__agent a { display: inline-flex; align-self: center; align-items: center; gap: 0.3rem; font-weight: var(--fw-regular); overflow-wrap: normal; white-space: nowrap; }
     .trip__agent :global(.trip__agent-ico) { display: block; flex: none; width: 10px; height: auto; }
     .trip__agent-ph { width: 2rem; height: 2rem; border-width: 1px; font-size: var(--fs-12); }
     /* the four tabs fit across the full width, right under the agent strip */
