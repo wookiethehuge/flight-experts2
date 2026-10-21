@@ -2,22 +2,23 @@
 /**
  * Trip-flow dropdown (Figma "Addition 2.b"): 57px box with a small label over the value and a chevron; opens a white
  * list with the hovered / selected option on sky. A button + listbox (keyboard: arrows, Home/End, Enter, Escape,
- * type-ahead); behaviour in trip-flow.ts. The chosen value is on the root as data-value.
+ * type-ahead); behaviour in trip-flow.ts. The chosen value is on the root as data-value. With `placeholder` nothing is
+ * chosen at first (data-value is empty and the placeholder shows as the value).
  */
 import Icon from '../ui/Icon.astro';
 
-interface Props { label: string; options: string[]; values?: string[]; f: string; compact?: boolean }
-const { label, options, values = options, f, compact = false } = Astro.props;
+interface Props { label: string; options: string[]; values?: string[]; f: string; compact?: boolean; placeholder?: string }
+const { label, options, values = options, f, compact = false, placeholder } = Astro.props;
 const uid = `tsel-${f}-${Math.random().toString(36).slice(2, 7)}`;
 ---
-<div class:list={['tsel', compact && 'tsel--compact']} data-tsel data-f={f} data-value={values[0]}>
+<div class:list={['tsel', compact && 'tsel--compact']} data-tsel data-f={f} data-value={placeholder ? '' : values[0]}>
   <button type="button" class="tsel__btn" aria-haspopup="listbox" aria-expanded="false" aria-controls={uid} aria-labelledby={`${uid}-l ${uid}-v`}>
     <span class="tsel__l" id={`${uid}-l`}>{label}</span>
-    <span class="tsel__v" id={`${uid}-v`} data-tsel-val>{options[0]}</span>
+    <span class="tsel__v" id={`${uid}-v`} data-tsel-val>{placeholder ?? options[0]}</span>
     <Icon name="chevron-down" width={9} class="tsel__chev" />
   </button>
   <ul class="tsel__list" id={uid} role="listbox" tabindex="-1" aria-labelledby={`${uid}-l`} hidden>
-    {options.map((o, i) => <li role="option" id={`${uid}-${i}`} data-value={values[i]} aria-selected={i === 0 ? 'true' : 'false'}>{o}</li>)}
+    {options.map((o, i) => <li role="option" id={`${uid}-${i}`} data-value={values[i]} aria-selected={i === 0 && !placeholder ? 'true' : 'false'}>{o}</li>)}
   </ul>
 </div>
 

@@ -111,6 +111,15 @@ function init(root: HTMLElement) {
 
   // ------------------------------------------------------------------ dropdowns (TripSelect)
   qa('[data-tsel]').forEach(initSelect);
+  // date-of-birth month: the dropdown writes into the hidden input the check reads (and re-checks it once it shows an error)
+  qa<HTMLElement>('[data-tsel][data-f="dob-m-pick"]').forEach((pick) => {
+    const input = pick.parentElement!.querySelector<HTMLInputElement>('input[data-f="dob-m"]')!;
+    pick.addEventListener('tsel:change', () => {
+      input.value = pick.dataset.value ?? '';
+      input.dataset.text = pick.querySelector('[data-tsel-val]')!.textContent ?? '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  });
 
   // ------------------------------------------------------------------ input masks
   const digits = (v: string) => v.replace(/\D/g, '');
@@ -142,7 +151,7 @@ function init(root: HTMLElement) {
       return { msg: `Enter the ${names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0]} of birth.`, bad: missing.map(([f]) => f) };
     }
     const date = new Date(yr, mo - 1, day);
-    if (date.getMonth() !== mo - 1) return { msg: `${(m as HTMLSelectElement).selectedOptions[0].text} ${yr} has no day ${day}.`, bad: [d] };
+    if (date.getMonth() !== mo - 1) return { msg: `${m.dataset.text ?? ''} ${yr} has no day ${day}.`, bad: [d] };
     if (date > today) return { msg: 'The date of birth can’t be in the future.', bad: [m, d, y] };
     return { msg: '', bad: [] };
   }
@@ -202,7 +211,8 @@ function init(root: HTMLElement) {
     const sec = q(`[data-step="${s}"]`);
     sec.setAttribute('data-tried', '');
     const bad = qa<Field>(FIELDS, sec).filter((el) => !check(el));
-    if (bad.length) { bad[0].focus(); say(`Please check ${bad.length === 1 ? '1 field' : `${bad.length} fields`}.`); return false; }
+    // a hidden input (the month) is focused through its dropdown button
+    if (bad.length) { (bad[0].type === 'hidden' ? bad[0].closest('.trip__field')?.querySelector<HTMLElement>('button') : bad[0])?.focus(); say(`Please check ${bad.length === 1 ? '1 field' : `${bad.length} fields`}.`); return false; }
     return true;
   }
 
