@@ -231,8 +231,9 @@ const isSeal = (name: string, alt = '') => /fdacs|seal/i.test(`${name} ${alt}`);
     const t = e.target as HTMLElement;
     if (t.closest('[data-menu-close]')) { closeMenu(); return; }
     // in-page links (e.g. /#faq on the home page) navigate without a reload: close the menu first
+    // (the phone pill is a tel: link that opens its own dropdown, so it keeps the menu open)
     const a = t.closest<HTMLAnchorElement>('a[href]');
-    if (a && !a.matches('[data-open-booking], [href="#get-flight-options"]')) closeMenu(false);
+    if (a && !a.matches('[data-open-booking], [href="#get-flight-options"], [data-pill-toggle]')) closeMenu(false);
   });
 
   // "Get My Flight Options" anywhere on the site opens the booking modal (BookingModal listens for `open-booking`).

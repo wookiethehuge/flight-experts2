@@ -146,7 +146,8 @@ const spoken = (l: string) => `${l.charAt(0)}${l.slice(1).toLowerCase()}`;
     btn.addEventListener('click', (e) => { e.preventDefault(); set(!isOpen()); });
     btn.addEventListener('keydown', (e) => { if (e.key === ' ') { e.preventDefault(); set(!isOpen()); } });
     document.addEventListener('click', (e) => { if (!wrap.contains(e.target as Node)) set(false); });
-    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) { set(false); btn.focus(); } });
+    // Escape closes only the dropdown (not the menu panel around it)
+    wrap.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) { e.stopPropagation(); set(false); btn.focus(); } });
     wrap.addEventListener('focusout', (e) => { if (!wrap.contains(e.relatedTarget as Node)) set(false); });
   });
 </script>

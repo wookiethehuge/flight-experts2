@@ -88,6 +88,8 @@ const isBooking = (href: string) => href === '#get-flight-options';
   .menu__logo { position: absolute; left: -0.625rem; top: 26px; display: block; width: 159px; color: var(--c-sky); }
   .menu__logo svg { width: 100%; height: auto; aspect-ratio: 312 / 60; fill: currentColor; }
   .menu__top :global(.menu__pill) { display: none; }
+  /* its dropdown opens over the menu links: near-solid so they don't show through the glass */
+  .menu__top :global(.pill__menu) { z-index: 2; background: rgba(15, 21, 36, 0.94); }
   .menu__close {
     position: absolute; right: calc(13.5px - var(--gutter) - 0.625rem); top: 19.4px;
     display: grid; place-items: center;
