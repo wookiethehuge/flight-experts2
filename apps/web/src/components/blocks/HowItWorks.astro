@@ -403,6 +403,26 @@ const sparks = [[7.7, 76, 0.4], [9.4, 76.9, 1.9], [50.8, 74.2, 0.8], [55.3, 74.3
 </style>
 
 <script>
+  // "Review your options" card: fill the rows with fare set n
+  const showFares = (opt: HTMLElement, n: number) => {
+    const sets = JSON.parse(opt.dataset.fares!) as Record<string, string>[][];
+    opt.dataset.set = String(n);
+    opt.querySelectorAll('.opt__row').forEach((row, k) => {
+      row.querySelectorAll<HTMLElement>('[data-f]').forEach((el) => { el.textContent = sets[n][k][el.dataset.f!]; });
+    });
+  };
+  // each page load starts on a random set, never the one shown on the previous load (remembered per browser)
+  document.querySelectorAll<HTMLElement>('[data-fares]').forEach((opt) => {
+    const count = (JSON.parse(opt.dataset.fares!) as unknown[]).length;
+    let last = -1;
+    try { last = Number(localStorage.getItem('hiw-fares') ?? -1); } catch {}
+    let n: number;
+    if (last >= 0 && last < count && count > 1) { n = Math.floor(Math.random() * (count - 1)); if (n >= last) n++; }
+    else n = Math.floor(Math.random() * count);
+    showFares(opt, n);
+    try { localStorage.setItem('hiw-fares', String(n)); } catch {}
+  });
+
   // How it works animations: play when the card is half in view and replay every 10s while it stays in view;
   // reset once it has fully left so they start over on the way back
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -428,12 +448,8 @@ const sparks = [[7.7, 76, 0.4], [9.4, 76.9, 1.9], [50.8, 74.2, 0.8], [55.3, 74.3
     const nextFares = (art: HTMLElement) => {
       const opt = art.querySelector<HTMLElement>('[data-fares]');
       if (!opt) return;
-      const sets = JSON.parse(opt.dataset.fares!) as Record<string, string>[][];
-      const n = (Number(opt.dataset.set ?? 0) + 1) % sets.length;
-      opt.dataset.set = String(n);
-      opt.querySelectorAll('.opt__row').forEach((row, k) => {
-        row.querySelectorAll<HTMLElement>('[data-f]').forEach((el) => { el.textContent = sets[n][k][el.dataset.f!]; });
-      });
+      const count = (JSON.parse(opt.dataset.fares!) as unknown[]).length;
+      showFares(opt, (Number(opt.dataset.set ?? 0) + 1) % count);
     };
     const reset = (art: HTMLElement) => {
       clear(art);

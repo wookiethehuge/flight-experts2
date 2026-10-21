@@ -71,7 +71,7 @@ export const HomeHero = block('homeHero', 'Home hero', 'Home', 'Full-bleed hero 
     type: 'row',
     fields: [
       { ...text('ratingText', { description: 'Desktop, e.g. "4.9/5.0 star rating"' }), admin: { width: '50%', description: 'Desktop, e.g. "4.9/5.0 star rating"' } },
-      { ...text('mobileRatingText', { description: 'Mobile, e.g. "5 star rating"' }), admin: { width: '50%', description: 'Mobile, e.g. "5 star rating"' } },
+      { ...text('mobileRatingText', { description: 'Mobile, e.g. "4.9 star rating"' }), admin: { width: '50%', description: 'Mobile, e.g. "4.9 star rating"' } },
     ],
   },
   {
