@@ -4,25 +4,35 @@
  * Artboards: About (centred; H2 48/62; body 16/24; buttons 379 wide, 50 + 52 tall, 13 apart) and AboutMobile
  * (left aligned; H2 32/33; body 14/20; buttons 347 wide, 16 apart).
  * primary always opens the booking modal (data-open-booking); its href is the no-JS fallback (e.g. /contact/).
- * secondary is a plain link (tel: in the design); falls back to the site phone number when empty.
+ * secondary is a plain link (tel: in the design); falls back to the site phone number when empty. When it is a phone
+ * link it dials the Flight-Experts general line, (888) 998-2855 (client; not the sales number in Site Settings), and
+ * shows that number on the button.
  * body is Inline: a newline forces the designed line break.
  */
 import type { CtaBannerBlock, SiteSettings } from '../../lib/types';
 import { inline } from '../../lib/inline';
 import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
 
 interface Props { block: CtaBannerBlock; settings: SiteSettings; page: string; index: number }
 const { block, settings, index } = Astro.props;
 const id = `cta-${index}`;
 const btnW = 'clamp(21.6875rem, calc(21.6875rem + 32 * (100vw - 24.375rem) / 1050), 23.6875rem)'; /* 347 -> 379 */
-const secondaryHref = block.secondary?.href || settings.phone.href;
+const GENERAL_LINE = { href: 'tel:+18889982855', display: '(888) 998-2855' };
+const isCall = !block.secondary?.href || block.secondary.href.startsWith('tel:');
+const secondaryHref = isCall ? GENERAL_LINE.href : block.secondary!.href;
 ---
 <section class="cta container on-light" aria-labelledby={id}>
   <h2 class="cta__title" id={id} set:html={inline(block.heading)} />
   {block.body && <p class="cta__body" set:html={inline(block.body)} />}
   <div class="cta__actions">
     {block.primary?.label && <Button href={block.primary.href || undefined} openBooking variant="primary" width={btnW}>{block.primary.label}</Button>}
-    {block.secondary?.label && <Button href={secondaryHref} variant="outline" width={btnW}>{block.secondary.label}</Button>}
+    {block.secondary?.label && (isCall
+      ? <Button href={secondaryHref} variant="outline" width={btnW} class="cta__call" aria-label={`${block.secondary.label}: call ${GENERAL_LINE.display}`}>
+          <Icon name="phone" width={15} height={15} class="cta__call-icon" />
+          <span>{block.secondary.label} — {GENERAL_LINE.display}</span>
+        </Button>
+      : <Button href={secondaryHref} variant="outline" width={btnW}>{block.secondary.label}</Button>)}
   </div>
 </section>
 
@@ -40,6 +50,8 @@ const secondaryHref = block.secondary?.href || settings.phone.href;
     color: var(--c-navy);
   }
   .cta__title :global(em) { font-style: italic; }
+  .cta :global(.cta__call) { gap: 0.5rem; padding-inline: 0.75rem; font-size: clamp(0.875rem, 3.9vw, 1rem); white-space: nowrap; }   /* number fits on 360 phones */
+  .cta :global(.cta__call-icon) { flex: none; }
   .cta__body {
     margin-top: var(--sec-head);
     font-size: var(--fs-body);                                                                       /* 14 -> 16 */
