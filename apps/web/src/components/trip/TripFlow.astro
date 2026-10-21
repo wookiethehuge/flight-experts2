@@ -315,21 +315,21 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
         <section class="trip__step trip__done" data-step="done" aria-labelledby="ts-done" hidden tabindex="-1">
           {/* confirmation after payment (client copy) */}
           <svg class="trip__done-ico" viewBox="0 0 24 24" width="40" height="40" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="m7.5 12.3 3 3 6-6.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
-          <h2 class="trip__h2 trip__done-h" id="ts-done">Your Booking Request Has Been Received!</h2>
+          <h2 class="trip__h2 trip__done-h" id="ts-done">Your Booking Request Is Confirmed!</h2>
           <p class="trip__done-thanks">Thank you for choosing <strong>Flight-Experts</strong>.</p>
-          <p class="trip__done-p">Your booking request has been successfully submitted and is now being reviewed by our ticketing team.</p>
+          <p class="trip__done-p">Your booking request has been successfully submitted and is now being processed by our ticketing team.</p>
           <div class="trip__done-box">
             <h3 class="trip__done-h3"><Icon name="card" width={16} height={16} />Payment &amp; Ticket Confirmation</h3>
-            <p>Your payment details have been securely received. <strong>Your card will only be charged once your booking is confirmed.</strong></p>
-            <p>Once confirmed, we'll email you your booking confirmation and e-ticket within <strong>2–48 hours</strong>, depending on processing times, business hours, and weekends.</p>
+            <p>Your payment details have been securely submitted. Your card will only be authorized and charged once your booking is confirmed.</p>
+            <p>Your official booking confirmation and e-ticket details will be emailed to you within <strong>2–48 hours</strong>, depending on the processing queue, business hours, and weekends.</p>
           </div>
-          <h3 class="trip__done-h3 trip__done-h3--c">Need Assistance?</h3>
-          <p class="trip__done-sub">Your dedicated travel expert is here to help with any questions about your booking.</p>
+          <h3 class="trip__done-h3 trip__done-h3--c">We're Here If You Need Us</h3>
+          <p class="trip__done-sub">Your dedicated travel expert is available to assist you with any booking-related questions.</p>
           <div class="trip__done-lines">
             <a class="trip__done-line" href={tel(trip.agent.phone)}><span>Your Travel Expert's Direct Line</span><strong>{trip.agent.phone}</strong></a>
-            <a class="trip__done-line trip__done-line--main" href={settings.phone.href}><span>Flight-Experts Customer Support</span><strong><Icon name="phone" width={15} height={15} />{settings.phone.display}</strong></a>
+            <a class="trip__done-line trip__done-line--main" href={settings.phone.href}><span>Flight-Experts General Line</span><strong><Icon name="phone" width={15} height={15} />{settings.phone.display}</strong></a>
           </div>
-          <p class="trip__done-note"><em>Please note: Your reservation is not yet confirmed. Your booking will be finalized once your e-ticket has been issued.</em></p>
+          <p class="trip__done-note">Your reservation is not finalized until your booking is confirmed and your e-ticket has been issued.</p>
           <p class="trip__demo trip__demo--inline"><strong>Demo:</strong> no booking was made and nothing was charged.</p>
         </section>
       </div>
