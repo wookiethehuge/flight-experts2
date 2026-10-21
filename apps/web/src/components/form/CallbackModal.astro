@@ -3,6 +3,8 @@
  * "Request a callback" dialog: name, phone, email and a preferred time to call. Saved to the CMS as an enquiry
  * (kind 'contact', topic 'sales', subject "Callback request"), so it lands in Leads > Enquiries like the other forms.
  * Opens from any element with [data-open-callback] (the "Request a callback" links on the contact cards).
+ * The time is picked on a calendar (client: "like Calendly"): wide screens show the month and that day's slots side
+ * by side, phones stack them.
  * Same spam protection as the other forms: honeypot, elapsed-time check, Turnstile when a site key is set.
  */
 import Icon from '../ui/Icon.astro';
@@ -11,7 +13,6 @@ import { FORMS_ENDPOINT, TURNSTILE_SITE_KEY } from '../../lib/forms';
 import type { SiteSettings } from '../../lib/types';
 interface Props { settings: SiteSettings }
 const { settings } = Astro.props;
-const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (12pm – 5pm ET)', 'Evening (5pm – 8pm ET)'];
 ---
 <dialog class="cb on-light" id="callback-modal" aria-labelledby="cb-title" data-callback-modal>
   <form class="cb__panel" novalidate data-endpoint={FORMS_ENDPOINT} data-turnstile={TURNSTILE_SITE_KEY || undefined}>
@@ -23,9 +24,33 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
       <label class="cb__field" data-field="name"><span>Name</span><input name="name" type="text" autocomplete="name" required /><em class="cb__err" hidden></em></label>
       <label class="cb__field" data-field="phone"><span>Phone</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required /><em class="cb__err" hidden></em></label>
       <label class="cb__field" data-field="email"><span>Email</span><input name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" required /><em class="cb__err" hidden></em></label>
-      <label class="cb__field" data-field="time"><span>Best time to call</span>
-        <select name="time">{times.map((t) => <option>{t}</option>)}</select>
-      </label>
+      {/* best time to call, picked Calendly-style: a day on the month calendar, then a 30-minute slot that day
+          (9am-7:30pm ET, next 30 days); or "As soon as possible". Built by the script below. */}
+      <fieldset class="cb__when" data-field="time">
+        <legend>Best time to call</legend>
+        <div class="cb__mode">
+          <label><input type="radio" name="when" value="pick" checked /><span>Pick a time</span></label>
+          <label><input type="radio" name="when" value="asap" /><span>As soon as possible</span></label>
+        </div>
+        <div class="cal" data-cal>
+          <div class="cal__pick">
+            <div class="cal__head">
+              <button type="button" class="cal__nav" data-cal-prev aria-label="Previous month"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+              <span class="cal__month" data-cal-month aria-live="polite"></span>
+              <button type="button" class="cal__nav" data-cal-next aria-label="Next month"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+            </div>
+            <div class="cal__dow" aria-hidden="true">{['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => <span>{d}</span>)}</div>
+            <div class="cal__grid" data-cal-grid></div>
+          </div>
+          <div class="cal__slots">
+            <p class="cal__day" data-cal-day></p>
+            <div class="cal__times" data-cal-times role="group" aria-label="Available times"></div>
+            <p class="cal__tz">Times in Eastern Time (ET)<span data-cal-local></span></p>
+          </div>
+        </div>
+        <input type="hidden" name="time" value="" />
+        <em class="cb__err" hidden></em>
+      </fieldset>
     </div>
     <div class="cb__ts" data-turnstile-slot></div>
     <Honeypot />
@@ -57,11 +82,113 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
       wrap?.classList.toggle('is-invalid', !!msg); if (err) { err.textContent = msg; err.hidden = !msg; }
       if (msg) input?.setAttribute('aria-invalid', 'true'); else input?.removeAttribute('aria-invalid');
     };
+
+    // ---------- calendar: days are Eastern dates (kept as UTC midnights, so day sums never hit DST); each slot is the
+    // real instant of that ET time, so "your time" is right for visitors elsewhere ----------
+    const TZ = 'America/New_York';
+    const FIRST = 9 * 60, LAST = 19 * 60 + 30, STEP = 30;   // slots 9:00am-7:30pm ET (calls until 8pm), minutes
+    const DAYS = 30, LEAD = 30, DAY = 864e5;                 // bookable days ahead; minutes of notice for a slot today
+    const fmt = (o: Intl.DateTimeFormatOptions, timeZone = 'UTC') => new Intl.DateTimeFormat('en-US', { timeZone, ...o });
+    const etParts = (d: Date) => Object.fromEntries(fmt({ hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' }, TZ)
+      .formatToParts(d).map((p) => [p.type, Number(p.value)]));
+    const etInstant = (k: number, min: number) => {
+      const guess = k + min * 6e4; const p = etParts(new Date(guess));
+      return new Date(guess - (Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - guess));
+    };
+    const slotsFor = (k: number) => {
+      const soon = Date.now() + LEAD * 6e4; const out: Date[] = [];
+      for (let t = FIRST; t <= LAST; t += STEP) { const at = etInstant(k, t); if (at.getTime() >= soon) out.push(at); }
+      return out;
+    };
+    const monthStart = (k: number) => { const d = new Date(k); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1); };
+    const time = (at: Date, tz = TZ) => fmt({ hour: 'numeric', minute: '2-digit' }, tz).format(at).toLowerCase().replace(' ', ' ');
+    const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const differs = (at: Date) => fmt({ day: 'numeric', hour: 'numeric', minute: 'numeric' }, localTz).format(at) !== fmt({ day: 'numeric', hour: 'numeric', minute: 'numeric' }, TZ).format(at);
+
+    const cal = form.querySelector<HTMLElement>('[data-cal]')!;
+    const grid = cal.querySelector<HTMLElement>('[data-cal-grid]')!;
+    const monthEl = cal.querySelector<HTMLElement>('[data-cal-month]')!;
+    const dayEl = cal.querySelector<HTMLElement>('[data-cal-day]')!;
+    const timesEl = cal.querySelector<HTMLElement>('[data-cal-times]')!;
+    const localEl = cal.querySelector<HTMLElement>('[data-cal-local]')!;
+    const prev = cal.querySelector<HTMLButtonElement>('[data-cal-prev]')!;
+    const next = cal.querySelector<HTMLButtonElement>('[data-cal-next]')!;
+    const timeInput = form.elements.namedItem('time') as HTMLInputElement;
+    const mode = () => (form.querySelector<HTMLInputElement>('input[name="when"]:checked')?.value ?? 'pick');
+    let today = 0, last = 0, view = 0, day = 0, slot: Date | null = null;
+    const bookable = (k: number) => k >= today && k <= last && (k !== today || slotsFor(k).length > 0);
+
+    const renderSlots = () => {
+      dayEl.textContent = fmt({ weekday: 'long', month: 'long', day: 'numeric' }).format(day);
+      timesEl.replaceChildren(...slotsFor(day).map((at) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'cal__time'; b.textContent = time(at); b.dataset.t = String(at.getTime());
+        b.setAttribute('aria-pressed', String(slot?.getTime() === at.getTime()));
+        return b;
+      }));
+      localEl.textContent = slot && differs(slot) ? ` · ${time(slot)} ET is ${`${fmt({ weekday: 'short' }, localTz).format(slot)} ${time(slot, localTz)}`} your time` : '';
+    };
+    const render = (focusKey?: number) => {
+      const v = new Date(view); const y = v.getUTCFullYear(), m = v.getUTCMonth();
+      monthEl.textContent = fmt({ month: 'long', year: 'numeric' }).format(v);
+      prev.disabled = view <= monthStart(today);
+      next.disabled = Date.UTC(y, m + 1, 1) > last;
+      const days = Array.from({ length: new Date(Date.UTC(y, m + 1, 0)).getUTCDate() }, (_, i) => {
+        const k = Date.UTC(y, m, i + 1); const b = document.createElement('button');
+        b.type = 'button'; b.className = 'cal__date'; b.textContent = String(i + 1); b.dataset.k = String(k);
+        b.setAttribute('aria-label', fmt({ weekday: 'long', month: 'long', day: 'numeric' }).format(k));
+        b.setAttribute('aria-pressed', String(k === day)); b.disabled = !bookable(k); b.tabIndex = -1;
+        if (k === today) b.classList.add('is-today');
+        return b;
+      });
+      grid.replaceChildren(...Array.from({ length: v.getUTCDay() }, () => document.createElement('span')), ...days);
+      // one day in the tab order (the picked one, else the first open one); arrows move between days
+      const tab = days.find((b) => Number(b.dataset.k) === (focusKey ?? day) && !b.disabled) ?? days.find((b) => !b.disabled);
+      if (tab) { tab.tabIndex = 0; if (focusKey != null) tab.focus(); }
+      renderSlots();
+    };
+    const init = () => {
+      const p = etParts(new Date());
+      today = Date.UTC(p.year, p.month - 1, p.day); last = today + (DAYS - 1) * DAY;
+      day = bookable(today) ? today : today + DAY; view = monthStart(day); slot = null; timeInput.value = '';
+      cal.hidden = mode() === 'asap';
+      render();
+    };
+    prev.addEventListener('click', () => { view = monthStart(view - DAY); render(); });
+    next.addEventListener('click', () => { view = Date.UTC(new Date(view).getUTCFullYear(), new Date(view).getUTCMonth() + 1, 1); render(); });
+    grid.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.cal__date');
+      if (!b || b.disabled) return;
+      day = Number(b.dataset.k); slot = null; timeInput.value = ''; render(day);
+    });
+    grid.addEventListener('keydown', (e) => {
+      const step = ({ ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 } as Record<string, number>)[e.key];
+      const from = Number((e.target as HTMLElement).dataset.k);
+      if (!step || !from) return;
+      e.preventDefault();
+      const k = from + step * DAY;
+      if (!bookable(k)) return;
+      if (monthStart(k) !== view) view = monthStart(k);
+      render(k);
+    });
+    timesEl.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.cal__time');
+      if (!b) return;
+      slot = new Date(Number(b.dataset.t));
+      timeInput.value = `${fmt({ weekday: 'short', month: 'short', day: 'numeric' }, TZ).format(slot)}, ${time(slot)} ET`
+        + (differs(slot) ? ` (${`${fmt({ weekday: 'short' }, localTz).format(slot)} ${time(slot, localTz)}`} ${localTz})` : '');
+      setErr('time', '');
+      renderSlots();
+      timesEl.querySelector<HTMLElement>(`[data-t="${b.dataset.t}"]`)?.focus();
+    });
+    form.querySelectorAll('input[name="when"]').forEach((r) => r.addEventListener('change', () => { cal.hidden = mode() === 'asap'; setErr('time', ''); }));
+
     const validate = () => {
       const checks: [string, string][] = [
         ['name', val('name') ? '' : 'Please enter your name.'],
         ['phone', !val('phone') ? 'Please enter your phone number.' : phoneOk(val('phone')) ? '' : 'Please enter a valid phone number.'],
         ['email', !val('email') ? 'Please enter your email address.' : EMAIL.test(val('email')) ? '' : 'Please enter a valid email address.'],
+        ['time', mode() === 'pick' && !timeInput.value ? 'Please pick a time, or choose “As soon as possible”.' : ''],
       ];
       let first: string | null = null;
       for (const [n, m] of checks) { setErr(n, m); if (m && !first) first = n; }
@@ -71,6 +198,7 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
     const open = (trigger?: HTMLElement | null) => {
       if (dialog.open) return;
       opener = trigger ?? null;
+      init();   // "today" and the slots left today are worked out each time it opens
       dialog.showModal();
       void ts?.ensure();
       (form.elements.namedItem('name') as HTMLInputElement).focus();
@@ -93,13 +221,16 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
       if (form.getAttribute('aria-busy') === 'true') return;
       alertEl.hidden = true;
       const first = validate();
-      if (first) { (form.elements.namedItem(first) as HTMLInputElement).focus(); return; }
+      if (first) {
+        (first === 'time' ? timesEl.querySelector<HTMLElement>('.cal__time') ?? grid.querySelector<HTMLElement>('[tabindex="0"]') : form.elements.namedItem(first) as HTMLInputElement)?.focus();
+        return;
+      }
       if (ts && !ts.token()) await ts.ensure();
       form.setAttribute('aria-busy', 'true'); submit.disabled = true; submit.textContent = 'Sending…';
       const res = await submitEnquiry(form, {
         kind: 'contact', topic: 'sales', name: val('name'), firstName: val('name'),
         phone: val('phone'), email: val('email'),
-        subject: 'Callback request', message: `Please call me back. Best time: ${val('time')}.`,
+        subject: 'Callback request', message: `Please call me back. Best time: ${mode() === 'asap' ? 'As soon as possible' : val('time')}.`,
       }, t0);
       form.removeAttribute('aria-busy'); submit.disabled = false; submit.textContent = 'Request my callback';
       if (res.ok) {
@@ -118,6 +249,7 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
   .cb {
     width: min(26rem, calc(100vw - 2rem));
     max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
     margin: auto;
     padding: 0;
     border: 0;
@@ -152,6 +284,61 @@ const times = ['As soon as possible', 'Morning (9am – 12pm ET)', 'Afternoon (1
   }
   .cb__field :is(input, select):focus { outline: none; border-color: var(--c-navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sky) 55%, transparent); }
   .cb__field.is-invalid :is(input, select) { border-color: var(--c-burgundy); }
+  /* best time to call: mode pills + calendar */
+  .cb__when { display: grid; gap: 0.5rem; min-width: 0; margin: 0; padding: 0; border: 0; }
+  .cb__when legend { padding: 0; margin-bottom: 0.25rem; font-size: var(--fs-14); font-weight: var(--fw-medium); }
+  .cb__mode { display: flex; gap: 0.375rem; }
+  .cb__mode label { position: relative; flex: 1; }
+  .cb__mode input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .cb__mode span {
+    display: block; padding: 0.5rem 0.75rem;
+    border: 1px solid var(--c-sky); border-radius: 999px; background: var(--c-white);
+    font-size: var(--fs-14); text-align: center; white-space: nowrap;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .cb__mode input:checked + span { border-color: var(--c-navy); background: var(--c-navy); color: var(--c-cream); font-weight: var(--fw-medium); }
+  .cb__mode input:focus-visible + span { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+  .cal { display: grid; gap: 1rem; padding: 0.875rem; border: 1px solid var(--c-sky); border-radius: var(--r-7); background: var(--c-white); }
+  .cal[hidden] { display: none; }
+  .cal__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem; }
+  .cal__month { font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+  .cal__nav { display: grid; place-items: center; width: 2rem; height: 2rem; border: 0; border-radius: 50%; background: none; color: var(--c-navy); cursor: pointer; }
+  .cal__nav:hover:not(:disabled) { background: color-mix(in srgb, var(--c-sky) 55%, transparent); }
+  .cal__nav:disabled { opacity: 0.3; cursor: default; }
+  .cal__dow, .cal__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.125rem; text-align: center; }
+  .cal__dow { margin-bottom: 0.25rem; font-size: 0.75rem; color: var(--c-navy-60); }
+  .cal :global(.cal__date) {
+    position: relative; justify-self: center; width: 100%; max-width: 2.5rem; aspect-ratio: 1;
+    border: 0; border-radius: 50%; background: color-mix(in srgb, var(--c-sky) 45%, transparent); color: var(--c-navy);
+    font: inherit; font-size: var(--fs-14); font-weight: var(--fw-semibold); cursor: pointer;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .cal :global(.cal__date:hover:not(:disabled)) { background: var(--c-sky); }
+  .cal :global(.cal__date:disabled) { background: none; color: color-mix(in srgb, var(--c-navy) 35%, transparent); font-weight: var(--fw-regular); cursor: default; }
+  .cal :global(.cal__date[aria-pressed='true']) { background: var(--c-navy); color: var(--c-cream); }
+  .cal :global(.cal__date.is-today)::after { content: ''; position: absolute; left: 50%; bottom: 14%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: currentColor; }
+  .cal :global(.cal__date:focus-visible), .cal :global(.cal__time:focus-visible) { outline: 2px solid var(--c-navy); outline-offset: 2px; }
+  .cal__slots { display: grid; gap: 0.5rem; align-content: start; min-width: 0; }
+  .cal__day { font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+  .cal :global(.cal__times) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.375rem; max-height: 11.5rem; overflow-y: auto; padding: 3px; margin: -3px; }
+  .cal :global(.cal__time) {
+    height: 2.5rem; border: 1px solid var(--c-burgundy); border-radius: var(--r-3); background: var(--c-white); color: var(--c-burgundy);
+    font: inherit; font-size: var(--fs-14); font-weight: var(--fw-semibold); cursor: pointer;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .cal :global(.cal__time:hover) { background: color-mix(in srgb, var(--c-burgundy) 7%, var(--c-white)); }
+  .cal :global(.cal__time[aria-pressed='true']) { background: var(--c-burgundy); color: var(--c-cream); }
+  .cal__tz { font-size: var(--fs-13); line-height: 1.4; color: color-mix(in srgb, var(--c-navy) 70%, transparent); }
+  /* wide screens: Calendly layout, the month and that day's times side by side; contact fields in one row */
+  @media (min-width: 46rem) {
+    .cb { width: min(44rem, calc(100vw - 2rem)); }
+    .cb__fields { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 0.75rem; }
+    .cb__when { grid-column: 1 / -1; margin-top: 0.25rem; }
+    .cb__mode { max-width: 22rem; }
+    .cal { grid-template-columns: minmax(0, 1fr) 11rem; gap: 1.5rem; padding: 1rem 1.25rem; }
+    .cal__slots { padding-left: 1.5rem; border-left: 1px solid var(--c-sky); }
+    .cal :global(.cal__times) { grid-template-columns: 1fr; max-height: 15.5rem; }
+  }
   .cb__err { font-style: normal; font-size: var(--fs-13); color: var(--c-burgundy); }
   .cb__ts:empty { display: none; }
   .cb__ts:not([data-ts-visible]) { margin-top: -1rem; }   /* rendered but hidden: cancel its grid gap (kept in the DOM so the check still runs) */
