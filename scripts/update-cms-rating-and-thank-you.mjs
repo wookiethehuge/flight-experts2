@@ -24,7 +24,7 @@ const RATING_TO = '4.9 star rating';
 const CONFIRMATION = {
   heading: 'Your Request Is Confirmed!',
   subheading: 'Thank you for choosing Flight-Experts.',
-  body: 'Your travel request has been successfully submitted and is now being reviewed by our travel experts.',
+  body: 'A dedicated travel expert will contact you shortly to go over your route, dates and preferences, then send you personalised flight and hotel options.',
 };
 
 function ask(question, { hidden = false } = {}) {
