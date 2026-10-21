@@ -39,6 +39,10 @@ const headingLines = inline(block.heading).split(/<br\s*\/?>/i).map((l, i) => `<
 const tpUrl = settings.trustpilot?.url;
 const Rating = tpUrl ? 'a' : 'div';
 const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot (opens in a new tab)`;
+// mobile line follows the Trustpilot score in Site Settings ("4.9/5.0" -> "4.9 star rating") so it can't drift from the
+// real rating (client: it said "5 star rating"); the CMS text is only the fallback when no score is set
+const tpScore = (settings.trustpilot?.rating ?? '').split('/')[0].trim();
+const mobileRating = /^\d(\.\d)?$/.test(tpScore) ? `${tpScore} star rating` : block.mobileRatingText || block.ratingText;
 ---
 <section class:list={['hero', block.landing && 'hero--landing']} aria-labelledby="hero-h1">
   {(desk || mob) && (
@@ -125,7 +129,7 @@ const tpLabel = `Rated ${settings.trustpilot?.rating ?? '4.9/5.0'} on Trustpilot
       </div>
       {!block.landing && <Rating class="hero__rating hero__rating--m" {...(tpUrl ? { href: tpUrl, target: '_blank', rel: 'noopener', 'aria-label': tpLabel } : {})}>
         <Img media={stars} sizes="109px" widths={[109, 218]} class="hero__stars" />
-        <span class="hero__rt">{block.mobileRatingText || block.ratingText}</span>
+        <span class="hero__rt">{mobileRating}</span>
         <Img media={tp} sizes="102px" widths={[102, 204]} class="hero__tp" />
       </Rating>}
     </div>

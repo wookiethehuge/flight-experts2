@@ -14,7 +14,7 @@
  * and a token is required before sending (verified by the CMS).
  *
  * Public API
- *   <QuoteForm settings={settings} id="hero-form" variant="hero" showRating="mobile" ratingText="5 star rating" />
+ *   <QuoteForm settings={settings} id="hero-form" variant="hero" showRating="mobile" ratingText="4.9 star rating" />
  *   - `id` goes on the outer element (the sticky phone tab observes #hero-form) and prefixes every inner id.
  *   - width: fluid 360px (390 viewport) -> 474px (1440), never wider than its container. The parent positions it.
  *   - `showRating`: true | 'mobile' renders the Trustpilot row under the panel ('mobile' hides it from 48rem up).
@@ -39,7 +39,9 @@ interface Props {
   showRating?: boolean | 'mobile';
   ratingText?: string;
 }
-const { settings, id, variant = 'hero', showRating = false, ratingText = '5 star rating' } = Astro.props;
+const { settings } = Astro.props;
+const tpScore = (settings.trustpilot?.rating ?? '').split('/')[0].trim();
+const { id, variant = 'hero', showRating = false, ratingText = `${/^\d(\.\d)?$/.test(tpScore) ? tpScore : '4.9'} star rating` } = Astro.props;
 const p = id;
 const trips = [
   ['round', 'Round trip'],

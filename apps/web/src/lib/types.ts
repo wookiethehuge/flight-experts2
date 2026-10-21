@@ -147,7 +147,7 @@ export interface HomeHeroBlock {
   blockType: 'homeHero';
   heading: Inline;              // "Fly Business.\n*Pay Insider Rates.*"
   subheading: string;
-  ratingText: string;           // "4.9/5.0 star rating" (desktop) ; mobile shows "5 star rating"
+  ratingText: string;           // "4.9/5.0 star rating" (desktop) ; mobile shows "<Trustpilot score> star rating"
   mobileRatingText: string;
   steps: { label: string }[];   // 01 Share your route ...
   image: Media;
