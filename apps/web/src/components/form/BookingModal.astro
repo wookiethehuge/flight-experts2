@@ -122,4 +122,6 @@ const { settings } = Astro.props;
   /* desktop too: centred in the window (client; it used to sit right-aligned where the hero form is, which looked
      off when opened from further down the page) */
   :global(html.bm-lock) { overflow: hidden; }
+  /* only one form on screen (client: the hero form showing under the scrim read as a second, overlapping window) */
+  :global(html.bm-lock .qf:not(.qf--modal)) { visibility: hidden; }
 </style>
