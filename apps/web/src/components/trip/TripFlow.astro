@@ -396,6 +396,11 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
         </div>
 
         <p class="trip__side-total" data-side="protection" hidden>Total: <span data-sum="total2"></span></p>
+        {/* every problem on the step at once, by the button (client example): each line jumps to its field */}
+        <div class="trip__errsum" data-errsum role="alert" hidden>
+          <p class="trip__errsum-h"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V9h2v4Z" /></svg>Please fix the following:</p>
+          <ul class="trip__errsum-l" data-errsum-list></ul>
+        </div>
         <button type="button" class="trip__next" data-next>Next Step</button>
         <p class="sr-only" aria-live="polite" data-live></p>
       </aside>
@@ -810,6 +815,15 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__sugg :global(li small) { overflow: hidden; color: var(--c-grey-text); font-size: var(--fs-12); text-overflow: ellipsis; white-space: nowrap; }
   .trip__sugg :global(li:hover), .trip__sugg :global(li.is-active) { background: var(--c-sky); }
   .trip__err { display: block; margin-top: 0.3rem; color: var(--c-burgundy); font-size: var(--fs-12); font-style: normal; }
+  /* a field with a problem: its label turns burgundy too */
+  .trip__field > input[aria-invalid='true'] + span, .trip__phone-in > input[aria-invalid='true'] + span { color: var(--c-burgundy); opacity: 1; }
+  .trip__errsum { margin: 1.25rem 0 0.75rem; padding: 0.9rem 1rem; border: 1px solid color-mix(in srgb, var(--c-burgundy) 45%, transparent); border-radius: 7px; background: color-mix(in srgb, var(--c-burgundy) 7%, var(--c-white)); color: var(--c-burgundy); }
+  .trip__errsum[hidden] { display: none; }
+  .trip__errsum-h { display: flex; align-items: center; gap: 0.4rem; font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+  .trip__errsum-h svg { flex: none; }
+  .trip__errsum-l { margin: 0.5rem 0 0; padding: 0 0 0 1.1rem; font-size: var(--fs-12); line-height: 1.35; }
+  .trip__errsum-l :global(li + li) { margin-top: 0.2rem; }
+  .trip__errsum-l :global(button) { vertical-align: top; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
   .trip__err[hidden] { display: none; }
 
   /* ---------------------------------------------------------------- 3. ticket protection */

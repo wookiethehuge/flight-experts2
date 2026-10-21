@@ -62,6 +62,7 @@ function init(root: HTMLElement) {
   function show(s: Step, focus = true) {
     step = s;
     root.dataset.at = s;   // CSS hooks per step (agent photo hidden on payment)
+    root.querySelector<HTMLElement>('[data-errsum]')?.toggleAttribute('hidden', true);   // the error summary belongs to the step it was made for
     const i = STEPS.indexOf(s);
     reached = Math.max(reached, i);
     qa('[data-step]').forEach((el) => { el.hidden = el.dataset.step !== s; });
@@ -205,14 +206,51 @@ function init(root: HTMLElement) {
   }
   // re-check while fixing; a date-of-birth part re-checks whenever its group shows an error (changing the month can fix the day)
   const showing = (el: Field) => el.getAttribute('aria-invalid') || (el.closest('[data-dob]') && errOf(el)?.hidden === false);
-  root.addEventListener('input', (e) => { const el = e.target as Field; if (el.matches(FIELDS) && showing(el)) check(el); });
-  root.addEventListener('focusout', (e) => { const el = e.target as Field; if (el.matches(FIELDS) && el.closest('[data-step]')?.hasAttribute('data-tried')) check(el); });
+  root.addEventListener('input', (e) => { const el = e.target as Field; if (el.matches(FIELDS) && showing(el)) { check(el); summary(); } });
+  root.addEventListener('focusout', (e) => { const el = e.target as Field; if (el.matches(FIELDS) && el.closest('[data-step]')?.hasAttribute('data-tried')) { check(el); summary(); } });
+  // error summary by the Next button: one line per problem on the current step ("Card Number: Enter a valid card
+  // number."), each one focusing its field; it updates as fields are fixed and goes away when none are left
+  const sumBox = q('[data-errsum]');
+  const sumList = q('[data-errsum-list]');
+  let sumRows: { text: string; el: Field }[] = []; let sumKey = '';
+  const focusField = (el: Field) => (el.type === 'hidden' ? el.closest('.trip__field')?.querySelector<HTMLElement>('button') : el)?.focus();
+  function summary() {
+    const sec = q(`[data-step="${step}"]`);
+    if (!sec.hasAttribute('data-tried')) { sumBox.hidden = true; return; }
+    const many = qa('[data-pax-panel]', sec).length > 1;
+    const seen = new Set<HTMLElement>();
+    const rows: { text: string; el: Field }[] = [];
+    qa<Field>(FIELDS, sec).filter((el) => el.getAttribute('aria-invalid') === 'true').forEach((el) => {
+      const err = errOf(el);
+      if (!err || err.hidden || seen.has(err)) return;
+      seen.add(err);
+      const group = el.closest('[data-dob]');
+      const raw = group ? 'Date of birth' : el.closest('.trip__field, .trip__phone-in')?.querySelector(':scope > span')?.textContent ?? '';
+      const label = raw.replace(/\s*\*.*$/, '').trim();
+      const who = many ? `${el.closest('[data-pax-panel]')?.querySelector('legend')?.textContent?.trim()}, ` : '';
+      rows.push({ text: `${who}${label}: ${err.textContent}`, el });
+    });
+    sumRows = rows;
+    // rebuilt only when the wording changes: leaving a field re-checks it as a summary line is clicked, and a rebuilt
+    // list would swallow that click
+    const key = rows.map((r) => r.text).join('\n');
+    if (key !== sumKey) {
+      sumKey = key;
+      sumList.replaceChildren(...rows.map(({ text }, i) => {
+        const li = document.createElement('li'); const b = document.createElement('button');
+        b.type = 'button'; b.textContent = text; b.addEventListener('click', () => focusField(sumRows[i].el));
+        li.append(b); return li;
+      }));
+    }
+    sumBox.hidden = !rows.length;
+  }
   function validStep(s: Step) {
     const sec = q(`[data-step="${s}"]`);
     sec.setAttribute('data-tried', '');
     const bad = qa<Field>(FIELDS, sec).filter((el) => !check(el));
     // a hidden input (the month) is focused through its dropdown button
-    if (bad.length) { (bad[0].type === 'hidden' ? bad[0].closest('.trip__field')?.querySelector<HTMLElement>('button') : bad[0])?.focus(); say(`Please check ${bad.length === 1 ? '1 field' : `${bad.length} fields`}.`); return false; }
+    summary();
+    if (bad.length) { focusField(bad[0]); say(`Please check ${bad.length === 1 ? '1 field' : `${bad.length} fields`}.`); return false; }
     return true;
   }
 
