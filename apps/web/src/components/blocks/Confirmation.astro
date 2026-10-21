@@ -1,17 +1,19 @@
 ---
 /**
- * Confirmation block: the thank-you hero shown after an enquiry (quote form, contact form) is sent.
+ * Confirmation block: the thank-you hero ("Request Confirmed") shown after an enquiry is sent.
  *
  * Block shape (ConfirmationBlock in lib/types.ts):
- *   heading     Inline  "Your Request Is Confirmed!" (page H1, IBM Plex Serif medium)
- *   subheading  string  bold line under the heading ("Thank you for choosing Flight-Experts.")
- *   body        string  first line of the "Your Flight Options" box
+ *   heading     Inline  "Request Confirmed" (page H1, IBM Plex Serif medium)
+ *   subheading  string  bold line under the heading
+ *   body        string  short paragraph
  *   button      Link    { label: "Return to Homepage", href: "/" } (outline button, under the call button)
  *
- * Laid out like the trip checkout confirmation (client: same wording style): heading with a tick, thanks, a grey
- * "Your Flight Options" box, "We're Here If You Need Us" with the "Call Now" button (Site Settings > phone), then a
- * small note. Type as the rest of the site: the serif only on the H1, everything else General Sans. The box, help text and note are fixed copy adapted for an enquiry: nothing has been paid
- * and no agent is assigned yet, so there is no payment paragraph and no direct-line box.
+ * Under the CMS text, fixed (client copy): "Want better fares faster?" (styled as the subheading) + one line, then a
+ * "Call Now — <number>" button (burgundy primary, dials Site Settings > phone) above "Return to Homepage", so the
+ * strongest next step is to call.
+ *
+ * Values: ThankYou (1440: centred, H1 80/104, button 379 x 50) and ThankYouMobile (390: left aligned, H1 40/36 on two
+ * lines, full-width button).
  */
 import type { ConfirmationBlock, SiteSettings } from '../../lib/types';
 import { inline } from '../../lib/inline';
@@ -22,101 +24,73 @@ interface Props { block: ConfirmationBlock; settings: SiteSettings; page: string
 const { block, settings } = Astro.props;
 ---
 <section class="confirm container on-light" aria-labelledby={`confirm-h-${Astro.props.index}`}>
-  <h1 id={`confirm-h-${Astro.props.index}`} class="confirm__title">
-    <span set:html={inline(block.heading)} /><svg class="confirm__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="m7.5 12.3 3 3 6-6.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
-  </h1>
+  <h1 id={`confirm-h-${Astro.props.index}`} class="confirm__title" set:html={inline(block.heading)} />
   {block.subheading && <p class="confirm__sub">{block.subheading}</p>}
-
-  {/* the CMS body is the box's first line (client: one sentence about the expert getting in touch, not two) */}
-  <div class="confirm__box">
-    <h2 class="confirm__h3"><Icon name="flight" width={18} height={18} />Your Flight Options</h2>
-    {block.body && <p>{block.body}</p>}
-    <p><strong>There is nothing to pay</strong> until you choose your flights.</p>
-  </div>
-
+  {block.body && <p class="confirm__body">{block.body}</p>}
   {settings.phone?.href && (
     <>
-      <h2 class="confirm__h3 confirm__h3--c">We're Here If You Need Us</h2>
-      <p class="confirm__help">Our travel experts are available to assist you with any questions about your request.</p>
+      <p class="confirm__sub confirm__sub--call">Want better fares faster?</p>
+      <p class="confirm__body">Call now to speak directly with a travel expert and explore exclusive deals.</p>
     </>
   )}
   <div class="confirm__actions">
     {settings.phone?.href && (
-      <Button href={settings.phone.href} variant="primary" width="100%" class="confirm__btn confirm__call" aria-label={`Call now: ${settings.phone.display}`}>
+      <Button href={settings.phone.href} variant="primary" width="23.6875rem" class="confirm__btn confirm__call" aria-label={`Call now: ${settings.phone.display}`}>
         <Icon name="phone" width={15} height={15} class="confirm__call-icon" />
         <span>Call Now — {settings.phone.display}</span>
       </Button>
     )}
-    {block.button?.href && <Button href={block.button.href} variant="outline" width="100%" class="confirm__btn">{block.button.label}</Button>}
+    {block.button?.href && <Button href={block.button.href} variant="outline" width="23.6875rem" class="confirm__btn">{block.button.label}</Button>}
   </div>
-  <p class="confirm__note">Your trip is not booked until you confirm your flight options and your e-ticket has been issued.</p>
 </section>
 
 <style>
   .confirm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 48rem;
+    /* H1 top 82 (390) -> 183 (1440) from the top of the page, below the in-flow light header (58 -> 89 tall) */
     padding-top: var(--page-top);
     padding-bottom: var(--sec-y);
-    text-align: center;
     color: var(--c-navy);
   }
-  /* green tick after the heading's last word (5.3:1 on cream) */
-  .confirm__ico { display: inline-block; width: 0.62em; height: 0.62em; margin-left: 0.22em; vertical-align: -0.02em; color: #1d7340; }
   .confirm__title {
+    max-width: 20rem;                                                                             /* two lines on phones, as designed */
     font-family: var(--ff-serif);
     font-weight: var(--fw-medium);
-    font-size: clamp(2rem, calc(2rem + 24 * (100vw - 24.375rem) / 1050), 3.5rem);                 /* 32 -> 56 */
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+    font-size: var(--fs-display);                                                                 /* 40 -> 80 */
+    line-height: clamp(2.25rem, calc(2.25rem + 68 * (100vw - 24.375rem) / 1050), 6.5rem);         /* 36 -> 104 */
+    letter-spacing: clamp(-0.1531rem, calc(-0.0594rem + -1.5 * (100vw - 24.375rem) / 1050), -0.0594rem); /* -0.95 -> -2.45px */
     color: var(--c-navy);
-    text-wrap: balance;
   }
+  .confirm__sub, .confirm__body { max-width: 20.375rem; }                                         /* wraps as the 390 frame */
   .confirm__sub {
-    margin-top: 1rem;
+    margin-top: clamp(2rem, calc(2rem + 5 * (100vw - 24.375rem) / 1050), 2.3125rem);              /* 32 -> 37 */
     font-size: clamp(1rem, calc(1rem + 2 * (100vw - 24.375rem) / 1050), 1.125rem);                /* 16 -> 18 */
-    line-height: 1.4;
+    line-height: clamp(1.4375rem, calc(1.4375rem + 1 * (100vw - 24.375rem) / 1050), 1.5rem);      /* 23 -> 24 */
     font-weight: var(--fw-semibold);
   }
-  .confirm__help {
-    max-width: 38rem;
-    margin-top: 0.75rem;
+  .confirm__body {
+    margin-top: clamp(0.6875rem, calc(0.6875rem + 3 * (100vw - 24.375rem) / 1050), 0.875rem);     /* 11 -> 14 */
     font-size: var(--fs-body);                                                                    /* 14 -> 16 */
-    line-height: 1.5;
+    line-height: clamp(1.25rem, calc(1.25rem + 4 * (100vw - 24.375rem) / 1050), 1.5rem);          /* 20 -> 24 */
   }
-  .confirm__box {
-    width: 100%;
-    margin-top: 1.75rem;
-    padding: 1.25rem 1.4rem;
-    border-radius: var(--r-7);
-    background: rgba(15, 21, 36, 0.05);
-    text-align: left;
-    font-size: var(--fs-body);
-    line-height: 1.5;
-  }
-  .confirm__box p { margin-top: 0.6rem; }
-  .confirm__h3 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--fs-18);
-    line-height: 1.3;
-    font-weight: var(--fw-semibold);
-    color: var(--c-navy);
-  }
-  .confirm__h3 :global(svg) { flex: none; color: var(--c-burgundy); }
-  .confirm__h3--c { justify-content: center; margin-top: 2rem; }
-  .confirm__help { margin-top: 0.5rem; color: color-mix(in srgb, var(--c-navy) 80%, transparent); }
+  .confirm__sub--call { margin-top: clamp(1.5rem, calc(1.5rem + 6 * (100vw - 24.375rem) / 1050), 1.875rem); }
   .confirm__actions {
     display: grid;
     gap: 0.75rem;
-    width: min(100%, 23.6875rem);                                                                 /* 379 */
-    margin-top: 1.25rem;
+    margin-top: clamp(1.8125rem, calc(1.8125rem + 15 * (100vw - 24.375rem) / 1050), 2.75rem);     /* 29 -> 44 */
   }
   .confirm :global(.confirm__btn) { display: flex; width: 100%; }
   .confirm :global(.confirm__call) { gap: 0.5rem; }
   .confirm :global(.confirm__call-icon) { flex: none; }
-  .confirm__note { max-width: 34rem; margin-top: 1.25rem; font-size: var(--fs-13); line-height: 1.45; color: color-mix(in srgb, var(--c-navy) 70%, transparent); }
+
+  @media (min-width: 48rem) {
+    .confirm { text-align: center; }
+    .confirm__title {
+      max-width: none;
+      /* the Figma title box sits 14px left of the frame centre */
+      translate: clamp(-0.875rem, calc(-14 * (100vw - 24.375rem) / 1050), 0rem) 0;
+    }
+    .confirm__sub { max-width: none; }
+    .confirm__body { max-width: 33.125rem; margin-inline: auto; }                                  /* 530 */
+    .confirm :global(.confirm__btn) { width: var(--btn-w); margin-inline: auto; }
+  }
 </style>
