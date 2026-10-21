@@ -57,7 +57,7 @@ const isBooking = (href: string) => href === '#get-flight-options';
   .menu[hidden] { display: none; }
   .menu__scrim {
     position: absolute; inset: 0;
-    background: var(--c-menu-scrim);
+    background: rgba(15, 21, 36, 0.4);   /* lighter than --c-menu-scrim: the glass panel does the separating */
     opacity: 0;
     transition: opacity calc(var(--dur) * 1.5) var(--ease);
   }
@@ -66,13 +66,20 @@ const isBooking = (href: string) => href === '#get-flight-options';
     max-height: 100dvh;
     overflow-y: auto;
     overscroll-behavior: contain;
-    background: var(--c-navy);
+    /* frosted glass like the phone-number dropdown (client: less navy, more blur); tint kept strong enough for the
+       cream / sky text over light sections (>= 4.5:1) */
+    background: rgba(15, 21, 36, 0.66);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
     color: var(--c-cream);
     /* mobile: full screen (client: the 632-tall Figma panel ended mid-page, cutting through the content under it) */
     min-height: 100dvh;
     padding: 0 calc(var(--gutter) + 0.625rem) 4rem;
     transform: translateY(-100%);
     transition: transform calc(var(--dur) * 1.5) var(--ease);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .menu__panel { background: var(--c-navy); }
   }
   .menu[data-open] .menu__scrim { opacity: 1; }
   .menu[data-open] .menu__panel { transform: none; }
