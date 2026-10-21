@@ -1,7 +1,7 @@
 ---
 /**
  * Hamburger menu (Figma "Hamburger menu" frames).
- *   < 48rem : navy panel from the top (390 x 632 at the design width), light logo + close X, items left-aligned
+ *   < 48rem : full-screen navy panel from the top, light logo + close X, items left-aligned
  *   >= 48rem: navy panel 600px wide on the right, phone pill + close X, items right-aligned (Main menuOpen state)
  * Both sit over a navy scrim. Behaviour (open/close, focus, Esc, scroll lock) lives in Header.astro's script.
  * Items: navigation.menu. Contacts: settings.menuContacts.
@@ -68,8 +68,8 @@ const isBooking = (href: string) => href === '#get-flight-options';
     overscroll-behavior: contain;
     background: var(--c-navy);
     color: var(--c-cream);
-    /* mobile: 390 x 632 */
-    min-height: min(39.5rem, 100dvh);
+    /* mobile: full screen (client: the 632-tall Figma panel ended mid-page, cutting through the content under it) */
+    min-height: 100dvh;
     padding: 0 calc(var(--gutter) + 0.625rem) 4rem;
     transform: translateY(-100%);
     transition: transform calc(var(--dur) * 1.5) var(--ease);
@@ -100,7 +100,7 @@ const isBooking = (href: string) => href === '#get-flight-options';
   }
   .menu__nav a:hover, .menu__nav a[aria-current='page'] { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 
-  .menu__contacts { display: grid; gap: 29.45px; margin-top: 39.85px; }
+  .menu__contacts { display: grid; gap: 29.45px; margin-top: 28px; padding-top: 28px; border-top: 1px solid color-mix(in srgb, var(--c-sky) 18%, transparent); }
   .menu__contacts li { display: grid; gap: 5.7px; justify-items: start; }
   .menu__clabel { font-size: var(--fs-18); line-height: 24.3px; }
   .menu__cvalue {
@@ -133,7 +133,7 @@ const isBooking = (href: string) => href === '#get-flight-options';
     .menu__nav ul { justify-items: end; margin-top: 12px; }
     .menu__nav a { padding-block: 12px; font-size: 1.375rem; line-height: 29px; }  /* 22 / 29, 53 step */
 
-    .menu__contacts { gap: 24px; margin-top: 36px; padding-top: 32px; border-top: 1px solid color-mix(in srgb, var(--c-sky) 18%, transparent); }
+    .menu__contacts { gap: 24px; margin-top: 36px; padding-top: 32px; }
     .menu__contacts li { gap: 6px; justify-items: end; }
     .menu__clabel { font-size: 1.375rem; line-height: 29px; }
     .menu__cvalue { line-height: 21px; }
