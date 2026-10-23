@@ -51,6 +51,7 @@ function init(root: HTMLElement) {
     set('prot', fmt(protPrice())); set('tip', fmt(tipAmount())); set('extras', fmt(extras));
     const total = fmt(base() + extras);
     set('total', total); set('total2', total);
+    set('opt', `Option ${options.indexOf(o) + 1}`);
     q('[data-tip-amt]').textContent = fmt(tipAmount());
     q('[data-sum-extra]').hidden = !(step === 'payment' || step === 'done');
   }

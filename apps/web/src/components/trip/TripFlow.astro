@@ -395,7 +395,8 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
           <p class="trip__err trip__err--confirm" data-confirm-err hidden>Please confirm to continue.</p>
         </div>
 
-        <p class="trip__side-total" data-side="protection" hidden>Total: <span data-sum="total2"></span></p>
+        {/* chosen option + total: ticket protection step, and on phones the itinerary / passengers steps in place of the summary card */}
+        <p class="trip__side-total"><span class="trip__side-opt" data-sum="opt">Option 1</span> · Total: <strong data-sum="total2"></strong></p>
         {/* every problem on the step at once, by the button (client example): each line jumps to its field */}
         <div class="trip__errsum" data-errsum role="alert" hidden>
           <p class="trip__errsum-h"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2 1 21h22L12 2Zm1 15h-2v-2h2v2Zm0-4h-2V9h2v4Z" /></svg>Please fix the following:</p>
@@ -920,9 +921,13 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__terms li + li { margin-top: 0.2rem; }
   .trip__err--confirm { margin-top: 0.6rem; }
 
-  .trip__side-total { margin-top: 1.6rem; font-size: var(--fs-18); }
-  .trip__side-total[hidden] { display: none; }
-  .trip__side-total span { font-weight: var(--fw-semibold); }
+  .trip__side-total { display: none; margin-top: 1.6rem; font-size: var(--fs-18); }
+  .trip[data-at='protection'] .trip__side-total { display: block; }
+  .trip__side-total strong { font-weight: var(--fw-semibold); }
+  @media (max-width: 47.9988rem) {   /* phones (Ethan): no summary card before payment, the option + total line instead */
+    .trip[data-at='itinerary'] .trip__sum, .trip[data-at='passengers'] .trip__sum { display: none; }
+    .trip[data-at='itinerary'] .trip__side-total, .trip[data-at='passengers'] .trip__side-total { display: block; }
+  }
   .trip__next, .trip__btn {
     display: flex; align-items: center; justify-content: center;
     min-height: 3.125rem; padding: 0 1.5rem;
