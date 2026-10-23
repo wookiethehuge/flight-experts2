@@ -576,6 +576,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__tab:focus-visible { outline: 2px solid var(--c-navy); outline-offset: 1px; }
   .trip__agent {
     grid-area: agent;
+    align-self: end;   /* bottom in line with the tabs' bottom */
     display: flex;
     align-items: center;
     gap: 0.875rem;
