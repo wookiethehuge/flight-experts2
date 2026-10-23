@@ -24,6 +24,7 @@ function init(root: HTMLElement) {
   const qa = <T extends Element = HTMLElement>(s: string, scope: ParentNode = root) => [...scope.querySelectorAll<T>(s)];
   const currency = root.dataset.currency || 'USD';
   const payers = Number(root.dataset.pax || 1);
+  const freeTabs = root.hasAttribute('data-free-tabs');   // test pages: jump to any step
   const options: Option[] = JSON.parse(root.dataset.options || '[]');
   const plans: Plan[] = JSON.parse(root.dataset.plans || '[]');
   const fmt = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(n);
@@ -76,7 +77,7 @@ function init(root: HTMLElement) {
     tabs.forEach((t, ti) => {
       const cur = ti === Math.min(i, 3);
       if (cur) t.setAttribute('aria-current', 'step'); else t.removeAttribute('aria-current');
-      t.disabled = s === 'done' || ti > reached;
+      t.disabled = !freeTabs && (s === 'done' || ti > reached);
     });
     paintSummary();
     if (focus) {

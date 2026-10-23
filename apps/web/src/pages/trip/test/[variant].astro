@@ -32,9 +32,9 @@ const href = (key: keyof Pick, id: string) => `/trip/test/${slugOf({ ...pick, [k
         ))}
       </div>
     ))}
-    <p class="tv__n">3 flight options per case. Times and fares are made up.</p>
+    <p class="tv__n">3 flight options per case. Times and fares are made up. The step tabs jump to any step.</p>
   </details>
-  <TripFlow trip={trip} />
+  <TripFlow trip={trip} freeTabs />
   <script is:inline>if (matchMedia('(max-width: 47.99rem)').matches) document.querySelector('[data-tv]')?.removeAttribute('open');</script>
 </BaseLayout>
 

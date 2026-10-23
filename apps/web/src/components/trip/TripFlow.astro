@@ -30,8 +30,8 @@ import icoBag from '../../assets/trip/ico-bag.svg';
 import icoPlane from '../../assets/trip/ico-plane.svg';
 import icoPlaneSm from '../../assets/trip/ico-plane-sm.svg';
 
-interface Props { trip: TripOffer }
-const { trip } = Astro.props;
+interface Props { trip: TripOffer; freeTabs?: boolean }   // freeTabs (test pages): every step tab works, none locked
+const { trip, freeTabs = false } = Astro.props;
 const settings = await getSettings();   // the general line on the confirmation
 const logos = import.meta.glob<{ default: ImageMetadata }>('../../assets/trip/*.{png,jpg,jpeg,webp,svg}', { eager: true });
 const logoOf = (f?: string) => (f ? logos[`../../assets/trip/${f}`]?.default : undefined);
@@ -64,7 +64,7 @@ const dials = [{ v: '+1', l: '🇺🇸 +1' }, { v: '+44', l: '🇬🇧 +44' }, {
 const initials = trip.agent.name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2);
 const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
 ---
-<div class="trip" data-trip data-currency={cur} data-pax={pax}
+<div class="trip" data-trip data-currency={cur} data-pax={pax} data-free-tabs={freeTabs ? '' : undefined}
      data-options={JSON.stringify(trip.options.map((o) => ({ id: o.id, price: o.pricePerAdult, cabin: o.cabin, bags: o.segments[0].bags,
        from: o.segments[0].from.code, to: o.segments[o.segments.length - 1].to.code,
        when: `${fmtDay(o.segments[0].depart)}, ${fmtTime(o.segments[0].depart)}`, time: o.travelTime.replace(/^0?(\d+)h (\d+)m$/, (_, h, m) => `${String(h).padStart(2, '0')}:${m} h`) })))}
@@ -88,7 +88,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
       <h1 class="trip__title" id="trip-title">Review details and <em>confirm your trip</em></h1>
       <ol class="trip__tabs" role="list" aria-label="Booking steps" data-tabs>
         {steps.map((s, i) => (
-          <li><button type="button" class="trip__tab" data-tab={s.id} aria-current={i === 0 ? 'step' : undefined} disabled={i > 0}>{s.label}</button></li>
+          <li><button type="button" class="trip__tab" data-tab={s.id} aria-current={i === 0 ? 'step' : undefined} disabled={!freeTabs && i > 0}>{s.label}</button></li>
         ))}
       </ol>
       <aside class="trip__agent" aria-label="Your travel expert">
