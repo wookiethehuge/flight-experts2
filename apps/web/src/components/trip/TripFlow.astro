@@ -889,6 +889,7 @@ const tel = (p: string) => `tel:${p.replace(/[^\d+]/g, '')}`;
   .trip__tip-amt { margin-top: 1.3rem; font-size: var(--fs-14); font-weight: var(--fw-semibold); }
 
   .trip__sum { display: grid; gap: 1.625rem; padding: 2.125rem 1.5rem; border-radius: 5px; background: var(--c-cream); line-height: 1.19; }
+  .trip[data-at='protection'] .trip__sum { display: none; }   /* ticket protection: only the Total line (with the chosen plan) */
   .trip__sum-h { font-size: var(--fs-18); font-weight: var(--fw-semibold); }
   .trip__sum-trip { display: grid; gap: 0.6875rem; }
   .trip__sum-route { display: flex; justify-content: space-between; font-size: var(--fs-16); font-weight: var(--fw-medium); }
